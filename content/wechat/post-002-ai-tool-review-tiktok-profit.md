@@ -36,7 +36,7 @@ feefact.com 上的 TikTok Shop 利润计算器。两点先说清楚：免费，�
 
 **第四步，填成本和运费。** Product cost (COGS) 填商品成本，Shipping cost per unit 填每件运费。算例分别是 8 和 3.5。
 
-**第五步，展开 More options。** 这里面有两项要填：Creator / affiliate commission % 是达人佣金比例，算例填 5；Ad spend % of price 是广告费占售价的比例，算例填 15。其他几项用不上的保持 0 就行。
+**第五步，展开 More options。** 这里面有两项要填：Creator / affiliate commission % 是达人佣金比例，算例填 5；Ad spend % of price 是广告费占售价的比例，算例填 15。其他几项保持默认就行。
 
 **第六步，看结果。** Net profit per sale 是每单净利润，Margin 是利润率。下面还有一张逐项扣减的明细，哪一项扣了多少，一眼看得见。
 
