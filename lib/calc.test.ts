@@ -22,6 +22,9 @@ describe("calcProcessingFee", () => {
   it("supports a zero fee", () => {
     expect(calcProcessingFee(25, { rate: 0, fixed: 0 })).toEqual({ processingFee: 0, net: 25 });
   });
+  it.each([[125, 3.93, 121.07], [625, 18.43, 606.57], [1125, 32.93, 1092.07]])("rounds half-cent fees up for sale %s", (sale, processingFee, net) => {
+    expect(calcProcessingFee(sale, fees[0])).toEqual({ processingFee, net });
+  });
   it.each([-1, NaN, Infinity])("rejects invalid sale %s", sale => {
     expect(() => calcProcessingFee(sale, fees[0])).toThrow(RangeError);
   });

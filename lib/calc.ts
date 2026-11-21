@@ -18,7 +18,7 @@ export function calcNetProfit({ sale = 35, referralRate = 0.06, creatorRate = 0.
   return { sale, referral, creator, ads, totalFees, net, margin: net / sale };
 }
 
-const roundCents = (amount: number) => Math.round((amount + Number.EPSILON) * 100) / 100;
+const roundCents = (amount: number) => Math.round(Number((amount * 100).toPrecision(15))) / 100;
 
 export function calcProcessingFee(sale: number, fee: Pick<ProcessingFee, "rate" | "fixed">) {
   if (![sale, fee.rate, fee.fixed].every(value => Number.isFinite(value) && value >= 0)) {
