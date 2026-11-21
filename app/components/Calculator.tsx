@@ -10,7 +10,9 @@ export default function Calculator({ fee }: { fee: ProcessingFee }) {
   const pathname = usePathname();
   const urlSale = searchParams.get("sale");
   const [sale, setSale] = useState(() => String(parseSale(urlSale)));
-  useEffect(() => { setSale(String(parseSale(urlSale))); }, [urlSale]);
+  useEffect(() => {
+    setSale(current => parseSale(current) === parseSale(urlSale) ? current : String(parseSale(urlSale)));
+  }, [urlSale]);
   const result = useMemo(() => calcProcessingFee(parseSale(sale), fee), [sale, fee]);
 
   function updateSale(value: string) {
