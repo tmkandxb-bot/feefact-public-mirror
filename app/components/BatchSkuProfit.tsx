@@ -45,7 +45,7 @@ export default function BatchSkuProfit() {
           return <tr key={rowIndex} className={`border-b ${losing ? "bg-red-50" : ""}`}>
             {cells.slice(0, COLUMNS.length).map((value, columnIndex) => <td key={columnIndex} className="px-1 py-1">
               <input aria-label={`${COLUMNS[columnIndex]}, row ${rowIndex + 1}`} value={value} placeholder={placeholders[columnIndex]} inputMode={columnIndex === 0 ? "text" : "decimal"}
-                onChange={event => setRows(rows.map((row, index) => index === rowIndex ? row.map((old, column) => column === columnIndex ? event.target.value.replace(/,/g, "") : old) : row))}
+                onChange={event => setRows(rows.map((row, index) => index === rowIndex ? row.map((old, column) => column === columnIndex ? event.target.value : old) : row))}
                 className={`w-full rounded border border-slate-200 bg-white px-2 py-1 ${columnIndex === 0 ? "min-w-[7rem]" : "min-w-[4.5rem] text-right"}`} />
             </td>)}
             {result ? <>
