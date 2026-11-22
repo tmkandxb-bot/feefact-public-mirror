@@ -64,7 +64,7 @@
     clearTimeout(timer);
     timer = setTimeout(function () {
       if (typeof window.TPDB_countTokens !== 'function') { $('count-note').textContent = 'Tokenizer still loading…'; return; }
-      inTok.value = text.value ? window.TPDB_countTokens(text.value) : 0;
+      inTok.value = text.value ? window.TPDB_countTokens(text.value, { disallowedSpecial: new Set() }) : 0;
       fromText = !!text.value;
       $('count-note').textContent = fromText
         ? 'Counted with the o200k_base encoding (gpt-tokenizer). Exact for OpenAI models marked "exact"; an estimate for every other model.'
