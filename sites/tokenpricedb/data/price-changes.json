@@ -1,0 +1,29 @@
+[
+  {
+    "date": "2026-11-17",
+    "provider": "OpenAI",
+    "model": "GPT-6.2 Astra",
+    "slug": "gpt-6-2-astra",
+    "change": "Launch pricing: $8 input / $40 output per 1M tokens.",
+    "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+    "checkedDate": "2026-11-21"
+  },
+  {
+    "date": "2026-11-17",
+    "provider": "OpenAI",
+    "model": "GPT-6.2 Sol",
+    "slug": "gpt-6-2-sol",
+    "change": "Launch pricing: $2 input / $10 output per 1M tokens.",
+    "sourceUrl": "https://developers.openai.com/api/docs/pricing",
+    "checkedDate": "2026-11-21"
+  },
+  {
+    "date": "2026-11-10",
+    "provider": "Google",
+    "model": "Gemini 4 Carbon",
+    "slug": "gemini-4-carbon",
+    "change": "Launch pricing: $2 input / $10 output per 1M tokens. Announced increase: from Dec 1, 2026 (after Nov 30, 2026) input rises to $4 and output to $20 per 1M.",
+    "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+    "checkedDate": "2026-11-21"
+  }
+]

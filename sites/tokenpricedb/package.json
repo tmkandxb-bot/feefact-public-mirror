@@ -1,0 +1,14 @@
+{
+  "name": "tokenpricedb",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vendor": "esbuild scripts/tokenizer-entry.mjs --bundle --minify --format=iife --outfile=vendor/gpt-tokenizer-o200k_base.js",
+    "build": "node scripts/gen-models.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "gpt-tokenizer": "4.1.2"
+  }
+}
