@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calcNetProfit, calcProcessingFee, calcRefundAdminFee, parseSale, refundCapSalePrice } from "./calc";
+import { calcNetProfit, calcPreOwnedReferralFee, calcProcessingFee, calcRefundAdminFee, parseSale, refundCapSalePrice } from "./calc";
 import { fees } from "./fees";
 import { calcNetProfit as legacy } from "../src/calculator.js";
 
@@ -60,5 +60,16 @@ describe("calcRefundAdminFee", () => {
   });
   it("rejects invalid inputs", () => {
     expect(() => calcRefundAdminFee(-1, 0.06)).toThrow(RangeError);
+  });
+});
+
+describe("calcPreOwnedReferralFee", () => {
+  it("charges 5% up to $10,000 and 3% on the portion above it", () => {
+    expect(calcPreOwnedReferralFee(100)).toBe(5);
+    expect(calcPreOwnedReferralFee(10000)).toBe(500);
+    expect(calcPreOwnedReferralFee(12000)).toBe(560);
+  });
+  it("rejects invalid sales", () => {
+    expect(() => calcPreOwnedReferralFee(-1)).toThrow(RangeError);
   });
 });

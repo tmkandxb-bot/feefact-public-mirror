@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { calcRefundAdminFee, refundCapSalePrice } from "../../lib/calc";
-import { formatMoney, tiktokShopRefund as refund, tiktokShopReturnProtection as protection } from "../../lib/fees";
+import { calcPreOwnedReferralFee, calcRefundAdminFee, refundCapSalePrice } from "../../lib/calc";
+import { formatMoney, tiktokShopRefund as refund, tiktokShopReturnProtection as protection, tiktokShopUsReferral as referral } from "../../lib/fees";
 import { returnShippingChecked, returnShippingFaqs, returnShippingRows, returnShippingSources as sources, type PolicySource } from "../../lib/returnShipping";
 
 const percent = (rate: number) => `${Number((rate * 100).toFixed(2))}%`;
@@ -28,11 +28,13 @@ const td = "py-3 pr-4";
 
 export default function RefundFeePage() {
   const [promo, jewelry, , reported] = refund.referralRates;
+  const [exemptA, exemptB] = refund.exemptions;
+  const { preOwned, reducedJewelry } = referral;
   const faqs = [
-    { question: "Is the admin fee charged on every refund?", answer: "Yes — on every refunded US order. TikTok deducts it automatically from the referral fee being returned, so there is nothing to opt out of and no way to waive it. The only number you control is how often refunds happen." },
+    { question: "Is the admin fee charged on every refund?", answer: `No. It is charged on most refunded US orders, deducted automatically from the referral fee being returned, but TikTok Shop's policy lists two cases with no refund administration fee: ${exemptA}, and ${exemptB}. On every other refund the fee applies and there is nothing to opt out of.` },
     { question: `Does the ${cap} cap apply per order or per SKU?`, answer: `Per SKU. A refunded order with two different SKUs can incur up to ${cap} on each one — the cap does not pool across the order.` },
     { question: `Do new sellers on the ${percent(promo.rate)} promo pay the admin fee too?`, answer: `Yes, but ${share} of a smaller referral fee. A refunded ${whole(35)} order costs ${money(adminFee(35, promo.rate))} in admin fees at ${percent(promo.rate)}, against ${money(adminFee(35))} at ${percent(standard)} — the promo quietly cuts your refund cost as well as your referral fee.` },
-    { question: "Can I avoid the admin fee?", answer: "Not directly — it is charged automatically on refunds. The lever is the return rate itself: accurate sizing charts, honest photos and clear descriptions. Every point of return rate you cut is admin fees you never pay, before you count the return shipping you also save." },
+    { question: "Can I avoid the admin fee?", answer: "Only in the two exempt cases above; otherwise it is charged automatically on refunds. The lever is the return rate itself: accurate sizing charts, honest photos and clear descriptions. Every point of return rate you cut is admin fees you never pay, before you count the return shipping you also save." },
     ...returnShippingFaqs,
   ];
   const schema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(faq => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
@@ -43,11 +45,17 @@ export default function RefundFeePage() {
     <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">TikTok Shop Refund Administration Fee</h1>
     <p className="mt-5 max-w-2xl text-lg text-slate-600">The fee almost nobody models — and the reason high-return categories quietly bleed money.</p>
     <p className="mt-3 text-sm text-slate-500">Rates last verified: {refund.verified} · US rule</p>
-    <p className="mt-8 max-w-3xl rounded-2xl border border-indigo-200 bg-indigo-50 p-6 leading-relaxed"><strong>The short answer:</strong> when a US order is refunded, you do not get the whole referral fee back — TikTok keeps a refund administration fee of {share} of the referral fee, capped at {cap} per SKU. Return shipping is a separate cost that this fee does not cover; see <a className="font-semibold text-indigo-700 underline" href="#return-shipping">who pays for return shipping</a>.</p>
+    <p className="mt-8 max-w-3xl rounded-2xl border border-indigo-200 bg-indigo-50 p-6 leading-relaxed"><strong>The short answer:</strong> when a US order is refunded, you do not get the whole referral fee back — TikTok keeps a refund administration fee of {share} of the referral fee, capped at {cap} per SKU. Two cases are exempt: {exemptA}, and {exemptB}. Return shipping is a separate cost that this fee does not cover; see <a className="font-semibold text-indigo-700 underline" href="#return-shipping">who pays for return shipping</a>.</p>
 
     <section className={card} aria-labelledby="rule-heading">
       <h2 id="rule-heading" className="text-2xl font-bold">The rule</h2>
       <p className="mt-4 leading-relaxed text-slate-600">When a TikTok Shop order is refunded, the referral fee is not fully returned. TikTok charges a <strong className="text-slate-900">refund administration fee equal to {share} of the referral fee, capped at {cap} per SKU</strong>.</p>
+      <p className="mt-4 leading-relaxed text-slate-600"><strong className="text-slate-900">Two refunds carry no administration fee:</strong></p>
+      <ul className="mt-2 list-disc space-y-2 pl-5 leading-relaxed text-slate-600">
+        <li>Refunds on {exemptA}.</li>
+        <li>{exemptB.charAt(0).toUpperCase() + exemptB.slice(1)}.</li>
+      </ul>
+      <p className="mt-3 text-sm text-slate-500">Source: <a className="text-indigo-700 underline" href={refund.source} rel="noopener noreferrer" target="_blank">TikTok Shop Academy: Referral Fee Updates</a>, section &quot;Refunds and Returns&quot;.</p>
     </section>
 
     <section className={card} aria-labelledby="examples-heading">
@@ -59,7 +67,7 @@ export default function RefundFeePage() {
           return <td key={rate} className={td}>{money(result.fee)}{result.capped ? " (capped)" : result.atCap ? " (at cap)" : ""}</td>;
         })}</tr>)}</tbody>
       </table></div>
-      <p className="mt-4 text-sm leading-relaxed text-slate-600">Read it as: admin fee = {share} × referral fee. The {percent(jewelry.rate)} column is for fine jewelry and pre-owned — the two categories on the published table at {percent(jewelry.rate)}. The {percent(reported.rate)} column is the widely reported effective rate; the fee scales with whatever rate your account actually pays, so check your settlement lines.</p>
+      <p className="mt-4 text-sm leading-relaxed text-slate-600">Read it as: admin fee = {share} × referral fee. The {percent(jewelry.rate)} column applies only to the five jewelry sub-categories TikTok Shop lists at {percent(jewelry.rate)} ({reducedJewelry.join(", ")}) and to pre-owned categories; other jewelry, such as silver and pearl, is {percent(standard)}. On pre-owned sales above {whole(preOwned.threshold)}, the portion over {whole(preOwned.threshold)} is charged {percent(preOwned.rateAboveThreshold)} instead of {percent(preOwned.rate)}, so a {whole(12000)} pre-owned sale carries a {whole(calcPreOwnedReferralFee(12000))} referral fee (<a className="text-indigo-700 underline" href={referral.source} rel="noopener noreferrer" target="_blank">Category Referral Rates</a>). The {percent(reported.rate)} column is the widely reported effective rate; the fee scales with whatever rate your account actually pays, so check your settlement lines.</p>
     </section>
 
     <section className={card} aria-labelledby="why-heading">

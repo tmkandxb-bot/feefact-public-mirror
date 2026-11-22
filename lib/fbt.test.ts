@@ -71,9 +71,9 @@ describe("fbtBillableWeightLb", () => {
 describe("shipping examples", () => {
   it("reproduces the live page's worked example", () => {
     const { price, carrierCost, buyerShippingCharge } = shippingExample;
-    expect(keptAfterShipping({ price, shippingCost: carrierCost, buyerShippingCharge })).toEqual({ collected: 33.98, referralFee: 1.8, shippingCost: 4.8, kept: 27.38 });
-    expect(keptAfterShipping({ price, shippingCost: carrierCost }).kept).toBe(23.39);
-    expect(priceToKeep(27.38, carrierCost)).toBe(34.23);
+    expect(keptAfterShipping({ price, shippingCost: carrierCost, buyerShippingCharge })).toEqual({ collected: 33.98, referralFee: 2.04, shippingCost: 4.8, kept: 27.14 });
+    expect(keptAfterShipping({ price, shippingCost: carrierCost })).toMatchObject({ referralFee: 1.8, kept: 23.39 });
+    expect(priceToKeep(27.14, carrierCost)).toBe(33.98);
   });
   it("compares the example item seller-shipped and with FBT", () => {
     const result = compareSellerShippedWithFbt();

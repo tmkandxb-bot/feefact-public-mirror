@@ -1,4 +1,4 @@
-import { tiktokShopRefund, type ProcessingFee } from "./fees";
+import { tiktokShopRefund, tiktokShopUsReferral, type ProcessingFee } from "./fees";
 
 type ProfitInput = {
   sale?: number;
@@ -26,6 +26,12 @@ export function calcProcessingFee(sale: number, fee: Pick<ProcessingFee, "rate" 
   }
   const processingFee = roundCents(sale * fee.rate + fee.fixed);
   return { processingFee, net: roundCents(sale - processingFee) };
+}
+
+/** US referral fee on a pre-owned sale: the reduced rate up to the threshold, the lower rate on the portion above it. */
+export function calcPreOwnedReferralFee(base: number, tier: { rate: number; threshold: number; rateAboveThreshold: number } = tiktokShopUsReferral.preOwned) {
+  if (!Number.isFinite(base) || base < 0) throw new RangeError("Sale must be a finite non-negative number.");
+  return roundCents(Math.min(base, tier.threshold) * tier.rate + Math.max(base - tier.threshold, 0) * tier.rateAboveThreshold);
 }
 
 export function calcRefundAdminFee(sale: number, referralRate: number, rule: { adminShareOfReferral: number; capPerSku: number } = tiktokShopRefund) {

@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://feefact.com/tiktok-shop-shipping-fees/" },
 };
 
-const referralVerifiedOn = "October 30, 2026";
+const referralVerifiedOn = "November 21, 2026";
+const referralSource = "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682&lang=en";
 const percent = (rate: number, digits = 0) => `${(rate * 100).toFixed(digits).replace(/\.0$/, "")}%`;
 const longDate = (isoDate: string) => new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
 
@@ -34,6 +35,7 @@ export default function ShippingFeesPage() {
   const buyerPaid = keptAfterShipping({ price, shippingCost: carrierCost, buyerShippingCharge });
   const freeShipping = keptAfterShipping({ price, shippingCost: carrierCost });
   const coveringPrice = priceToKeep(buyerPaid.kept, carrierCost);
+  const freeShippingCost = Math.round((buyerPaid.kept - freeShipping.kept) * 100) / 100;
   const affiliate = Math.round(price * affiliateRate * 100) / 100;
   const fullStack = (kept: number) => Math.round((kept - productCost - affiliate) * 100) / 100;
   const breakEvenLift = fullStack(buyerPaid.kept) / fullStack(freeShipping.kept) - 1;
@@ -48,7 +50,7 @@ export default function ShippingFeesPage() {
 
   const faqs = [
     { question: "Who pays for shipping on TikTok Shop?", answer: "It depends on how you set the listing up. With buyer-paid shipping, the buyer pays a shipping charge at checkout — but if your actual carrier cost is higher, you absorb the difference. With free shipping, you absorb the whole cost. Either way, your real shipping cost is a number from your carrier, not from TikTok." },
-    { question: "Is free shipping worth offering?", answer: `Only if the price covers it. Free shipping shifts the full shipping charge onto your side of the order — in our example, ${formatMoney(buyerShippingCharge)} per order versus a ${formatMoney(carrierCost - buyerShippingCharge)} shortfall under buyer-paid shipping. If the conversion lift does not pay for that difference, it is a discount you did not mean to give.` },
+    { question: "Is free shipping worth offering?", answer: `Only if the price covers it. Free shipping shifts the full shipping charge onto your side of the order — in our example you absorb the full ${formatMoney(carrierCost)} carrier cost instead of a ${formatMoney(carrierCost - buyerShippingCharge)} shortfall under buyer-paid shipping, and keep ${formatMoney(freeShippingCost)} less per order after the referral fee. If the conversion lift does not pay for that difference, it is a discount you did not mean to give.` },
     { question: "What changes if I use Fulfilled by TikTok (FBT)?", answer: `Your own carrier cost is replaced by FBT's per-unit fulfillment fee, which covers picking, packing, packaging materials and delivery to the buyer. On the rate card effective ${effective}, the fee starts at ${formatMoney(fbtRateCard.tiers[0].perUnit[0])} per unit for a single-unit order of ${fbtRateCard.tiers[0].label} and depends on billable weight and how many units are in the order. The line item changes; the discipline does not — the fulfillment cost still has to be inside your price.` },
     { question: "How is FBT billable weight worked out?", answer: `If the item weighs ${actualWeightOnly.maxLb} lb or less and its length × width × height is ${actualWeightOnly.maxCubicInches} cubic inches or less, FBT bills on actual weight. Otherwise it bills on the greater of actual weight and dimensional weight (length × width × height in inches ÷ ${dimensionalDivisor}).` },
     { question: "Why does free shipping hurt low-priced items more?", answer: `Because shipping is a fixed cost per order while the price is not. A ${formatMoney(carrierCost)} shipping cost is ${percent(carrierCost / lowest, 1)} of a ${formatMoney(lowest)} item but only ${percent(carrierCost / highest, 1)} of a ${formatMoney(highest)} item.` },
@@ -72,14 +74,14 @@ export default function ShippingFeesPage() {
 
     <section className={card} aria-labelledby="example-heading">
       <h2 id="example-heading" className="text-2xl font-bold">Worked example: the same product, two shipping setups</h2>
-      <p className={body}>Example product priced at <strong>{formatMoney(price)}</strong>, your actual carrier cost is <strong>{formatMoney(carrierCost)}</strong> per order (example — your cost is your number), and the referral fee is the verified US baseline of <strong>{percent(rate)}</strong> on the item price = <strong>{formatMoney(buyerPaid.referralFee)}</strong>.</p>
+      <p className={body}>Example product priced at <strong>{formatMoney(price)}</strong>, your actual carrier cost is <strong>{formatMoney(carrierCost)}</strong> per order (example — your cost is your number), and the referral fee is the verified US baseline of <strong>{percent(rate)}</strong>. TikTok Shop charges it on what the customer pays, <strong>including buyer-paid shipping</strong> (<a className="font-semibold text-indigo-700 underline" href={referralSource} rel="noopener noreferrer" target="_blank">TikTok Shop Academy: Category Referral Rates</a>), so it is <strong>{formatMoney(buyerPaid.referralFee)}</strong> on {formatMoney(buyerPaid.collected)} when the buyer pays shipping and <strong>{formatMoney(freeShipping.referralFee)}</strong> on {formatMoney(freeShipping.collected)} with free shipping. The example assumes no platform discount or tax.</p>
       <MoneyTable caption="Buyer-paid shipping compared with free shipping" columns={[`A: Buyer pays ${formatMoney(buyerShippingCharge)} shipping`, "B: Free shipping"]} rows={[
         { label: "Collected from buyer", values: [formatMoney(buyerPaid.collected), formatMoney(freeShipping.collected)] },
         { label: `− Referral fee (${percent(rate)})`, values: [formatMoney(buyerPaid.referralFee), formatMoney(freeShipping.referralFee)] },
         { label: "− Your actual shipping cost (example)", values: [formatMoney(carrierCost), formatMoney(carrierCost)] },
         { label: "Kept, before product cost", values: [formatMoney(buyerPaid.kept), formatMoney(freeShipping.kept)], total: true },
       ]} />
-      <p className={body}>Two things to notice. First, in setup A the buyer &quot;paid for shipping&quot; but not all of it: the {formatMoney(carrierCost - buyerShippingCharge)} gap between the {formatMoney(buyerShippingCharge)} charge and your {formatMoney(carrierCost)} cost still came out of your side. Second, free shipping costs exactly the {formatMoney(buyerShippingCharge)} you stopped charging — <strong>{formatMoney(buyerShippingCharge)} per order, ${(buyerShippingCharge * orderVolume).toLocaleString("en-US")} across {orderVolume} orders</strong> — unless the price rises to cover it. To keep the same {formatMoney(buyerPaid.kept)} under free shipping you would need to price at about <strong>{formatMoney(coveringPrice)}</strong>, not {formatMoney(buyerPaid.collected)}, because the higher price also raises the {percent(rate)} referral fee a little.</p>
+      <p className={body}>Two things to notice. First, in setup A the buyer &quot;paid for shipping&quot; but not all of it: the {formatMoney(carrierCost - buyerShippingCharge)} gap between the {formatMoney(buyerShippingCharge)} charge and your {formatMoney(carrierCost)} cost still came out of your side. Second, free shipping costs the {formatMoney(buyerShippingCharge)} you stopped charging, less the {formatMoney(buyerPaid.referralFee - freeShipping.referralFee)} of referral fee you no longer pay on it — <strong>{formatMoney(freeShippingCost)} per order, {formatMoney(freeShippingCost * orderVolume)} across {orderVolume} orders</strong> — unless the price rises to cover it. To keep the same {formatMoney(buyerPaid.kept)} under free shipping you would need to price at about <strong>{formatMoney(coveringPrice)}</strong>: the same total the buyer paid in setup A, because the {percent(rate)} referral fee is charged on that total either way.</p>
     </section>
 
     <section className={card} aria-labelledby="price-points-heading">
@@ -99,7 +101,7 @@ export default function ShippingFeesPage() {
 
     <section className={card} aria-labelledby="break-even-heading">
       <h2 id="break-even-heading" className="text-2xl font-bold">Free shipping break-even: how many more orders do you need?</h2>
-      <p className={body}>Free shipping only pays if the extra orders it brings cover what it costs. Take the same {formatMoney(price)} item and run the full stack: product cost <strong>{formatMoney(productCost)}</strong> (example — your number), affiliate commission {percent(affiliateRate)} = <strong>{formatMoney(affiliate)}</strong> (example — your rate), referral fee {percent(rate)} = <strong>{formatMoney(buyerPaid.referralFee)}</strong>, shipping <strong>{formatMoney(carrierCost)}</strong> (example).</p>
+      <p className={body}>Free shipping only pays if the extra orders it brings cover what it costs. Take the same {formatMoney(price)} item and run the full stack: product cost <strong>{formatMoney(productCost)}</strong> (example — your number), affiliate commission {percent(affiliateRate)} = <strong>{formatMoney(affiliate)}</strong> (example — your rate), referral fee {percent(rate)} = <strong>{formatMoney(buyerPaid.referralFee)}</strong> with buyer-paid shipping or <strong>{formatMoney(freeShipping.referralFee)}</strong> with free shipping, shipping <strong>{formatMoney(carrierCost)}</strong> (example).</p>
       <MoneyTable caption="Full cost stack with buyer-paid shipping and with free shipping" columns={[`A: Buyer pays ${formatMoney(buyerShippingCharge)} shipping`, "B: Free shipping"]} rows={[
         { label: "Collected from buyer", values: [formatMoney(buyerPaid.collected), formatMoney(freeShipping.collected)] },
         { label: `− Referral fee (${percent(rate)})`, values: [formatMoney(buyerPaid.referralFee), formatMoney(freeShipping.referralFee)] },
