@@ -129,3 +129,90 @@ footer.site.hp-foot{background:#071a33;color:#9fb6cf;border-top:0}
   .hp-sec h2.hp-h2{font-size:25px}
   .hp-in{padding:0 16px}
 }
+
+/* ===== PAGE-413-design-polish (presentation only) ===== */
+
+/* wizard: CSS layer over /style.css, scoped to the band that wraps #start.
+   The wizard markup, ids/classes and JS are untouched. */
+.hp-wizard{padding:48px 0 8px}
+.hp-wizard .start-h{font-size:28px;line-height:1.2;letter-spacing:-.01em;color:var(--hp-navy);margin:0 0 14px}
+.hp-wizard .privacy{border-radius:10px;padding:14px 16px;font-size:14.5px}
+.hp-wizard .progress{gap:8px;margin:22px 0 6px}
+.hp-wizard .progress span{font-size:13px;font-weight:600;padding:7px 13px}
+.hp-wizard .progress span.on{background:var(--hp-navy)}
+.hp-wizard .progress span.done{background:#d5f1ed;color:#0a6f66}
+.hp-wizard .card{border-color:var(--hp-line);border-radius:14px;padding:34px 36px 32px;box-shadow:0 10px 30px rgba(11,37,69,.08)}
+.hp-wizard .card h2{font-size:24px;line-height:1.25;letter-spacing:-.01em;color:var(--hp-navy);margin:0 0 6px;padding-bottom:14px;border-bottom:1px solid var(--hp-line);position:relative}
+.hp-wizard .card h2::after{content:"";position:absolute;left:0;bottom:-1px;width:56px;height:3px;border-radius:2px;background:var(--hp-teal)}
+.hp-wizard .card h2+.small{margin:12px 0 0;font-size:14px}
+.hp-wizard label{font-size:14.5px;font-weight:650;color:var(--hp-ink);margin:20px 0 0;line-height:1.4}
+.hp-wizard label .hint{font-size:13px;line-height:1.45;margin-top:3px}
+.hp-wizard .grid2{gap:0 22px}
+.hp-wizard input[type=text],.hp-wizard input[type=tel],.hp-wizard input[type=date],.hp-wizard select,.hp-wizard textarea{min-height:44px;margin-top:7px;padding:10px 13px;border:1px solid #bccbdc;border-radius:9px;font-size:16px;font-family:inherit;color:var(--hp-ink);transition:border-color .15s ease,box-shadow .15s ease}
+.hp-wizard textarea{min-height:96px;line-height:1.5}
+.hp-wizard input:hover,.hp-wizard select:hover,.hp-wizard textarea:hover{border-color:#8fa6c0}
+.hp-wizard input:focus,.hp-wizard select:focus,.hp-wizard textarea:focus{outline:0;border-color:var(--hp-teal-d);box-shadow:0 0 0 3px rgba(18,181,165,.3)}
+.hp-wizard table.sched input[type=text]{margin-top:0;border:0;border-radius:4px;padding:8px 7px;font-size:14px}
+/* schedule tables are wider than a phone: scroll inside the card instead of widening the page */
+.hp-wizard #notesRows,.hp-wizard #securitiesRows{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.hp-wizard table.sched input[type=text]{min-width:84px}
+.hp-wizard table.sched th{background:#f3f7fb;color:var(--hp-navy);padding:8px 7px;text-align:left}
+.hp-wizard .rowline{padding:12px 0}
+.hp-wizard .rowline.total{font-size:18px;color:var(--hp-navy)}
+.hp-wizard .check{border-radius:10px;padding:13px 16px}
+.hp-wizard details{margin:14px 0}
+.hp-wizard summary{font-size:16px;color:var(--hp-navy);padding:6px 0}
+.hp-wizard .btnrow{margin-top:30px;padding-top:22px;border-top:1px solid var(--hp-line)}
+.hp-wizard .btn{min-height:46px;padding:12px 24px;border-radius:10px;font-weight:650;background:var(--hp-navy)}
+.hp-wizard .btn:hover{background:var(--hp-navy2)}
+.hp-wizard .btn.ghost{background:#fff;color:var(--hp-navy);border:1px solid #9fb3c9}
+.hp-wizard .btn.ghost:hover{background:#f3f7fb}
+.hp-wizard .btn:focus-visible,.hp-wizard summary:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(18,181,165,.45)}
+@media(max-width:640px){
+  .hp-wizard{padding-top:34px}
+  .hp-wizard .start-h{font-size:24px}
+  .hp-wizard .card{padding:24px 18px 22px}
+  .hp-wizard .card h2{font-size:21px}
+  .hp-wizard .btn{padding:12px 16px}
+}
+
+/* hero: larger sample card over the photo, cool edge blend, softer bottom rule */
+.hp-hero::after{height:2px;opacity:.55;background:linear-gradient(90deg,transparent,var(--hp-teal) 30%,#5ad1ff 70%,transparent)}
+.hp-hero-img{position:relative}
+.hp-hero-img::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(ellipse at 55% 42%,rgba(11,37,69,0) 48%,rgba(11,37,69,.46) 100%),linear-gradient(rgba(18,75,130,.1),rgba(18,75,130,.1))}
+@media(min-width:821px){
+  .hp-hero-media{padding-bottom:176px}
+  .hp-hero .hp-hero-media .samplecard{left:-36px;transform:scale(.66) rotate(-1.5deg);box-shadow:0 30px 70px rgba(2,12,28,.6),0 0 0 1px rgba(255,255,255,.5)}
+}
+
+/* three steps: equal-height cards, titles and body text on shared rows */
+@media(min-width:821px){
+  @supports(grid-template-rows:subgrid){
+    .hp-steps{grid-template-rows:auto auto 1fr;row-gap:0}
+    .hp-step{display:grid;grid-row:span 3;grid-template-rows:subgrid}
+    .hp-step>div:not(.how-num){display:contents}
+  }
+}
+
+/* data band: one rule for all four stats - white number, smaller teal suffix */
+.hp-data-grid{align-items:start}
+.hp-stat-num{white-space:nowrap;line-height:1.05;word-spacing:-.1em}
+.hp-stat-num em{font-size:.56em;font-weight:700;letter-spacing:0;color:var(--hp-teal)}
+
+/* comparison table: zebra rows, hover, header corner cell */
+.hp-cmp table.cmp th:first-child{background:#f3f7fb}
+.hp-cmp table.cmp tr:nth-child(odd) td:not(.us){background:#f8fafd}
+.hp-cmp table.cmp td{transition:background-color .12s ease}
+.hp-cmp table.cmp tr:hover td:not(.us){background:#edf3fa}
+.hp-cmp table.cmp tr:hover td.us{background:#d2f1ec}
+
+/* FAQ: keep the illustration beside the questions */
+.hp-illus{background:#fff;border:1px solid var(--hp-line);box-shadow:0 6px 20px rgba(11,37,69,.06)}
+@media(min-width:821px){.hp-faq-side{position:sticky;top:24px}}
+
+/* footer links */
+footer.site.hp-foot{padding:30px 16px 26px}
+.hp-foot-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 26px;margin:0 0 14px}
+.hp-foot-nav a{color:#dcebfb;font-size:14.5px;font-weight:600;text-decoration:none;padding:4px 0;border-bottom:1px solid transparent}
+.hp-foot-nav a:hover,.hp-foot-nav a:focus-visible{color:#fff;border-bottom-color:var(--hp-teal)}
+.hp-foot-line{margin:0 auto;max-width:760px}
