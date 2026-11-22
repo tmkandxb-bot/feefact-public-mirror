@@ -20,7 +20,7 @@ export default function BatchSkuProfit() {
 
   return <div>
     <label htmlFor="rows" className="mb-2 block text-sm font-semibold">Paste your SKUs, one per line</label>
-    <p className="mb-2 text-sm text-slate-500">Format: <code>{COLUMNS.join(", ")}</code>. Leave a rate blank to use the single-item calculator default ({DEFAULT_RATES.referral}% referral, {DEFAULT_RATES.creator}% creator, {DEFAULT_RATES.ads}% ads).</p>
+    <p className="mb-2 text-sm text-slate-500">Format: <code>{COLUMNS.join(", ")}</code>. Leave a rate blank to use the single-item calculator default ({DEFAULT_RATES.referral}% referral, {DEFAULT_RATES.creator}% creator, {DEFAULT_RATES.ads}% ads). A comma always starts a new column, so put a number with a thousands comma in quotes (<code>&quot;1,200&quot;</code>), drop the comma, or paste tab-separated rows from a spreadsheet.</p>
     {isSample && <p role="note" className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900">These 5 rows are SAMPLE examples, not real products or fee quotes. Paste your own rows to replace them.</p>}
     <textarea id="rows" rows={7} spellCheck={false} value={text} onChange={event => setText(event.target.value)}
       onPaste={event => { if (isSample) { event.preventDefault(); setText(event.clipboardData.getData("text")); } }}
