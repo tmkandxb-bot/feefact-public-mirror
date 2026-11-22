@@ -26,7 +26,7 @@ The statement is required from **every owner of 20% or more** of the business. I
 
 Two practical points follow from that:
 
-1. **It is one statement per person, not one per business.** If three people each own 20% or more, expect three statements.
+1. **The requirement attaches to people, not just to the business.** If three people each own 20% or more, all three are covered by it. [VERIFY: whether each person files a separate form or spouses may complete one together]
 2. **Ask early who else needs one.** Whether a spouse or a guarantor must also submit a statement depends on your situation, so ask your lender at the start. Finding out late that another person needs to complete a form means starting that form from scratch at the last minute.
 
 ## Why SBA lenders require it
@@ -112,7 +112,7 @@ A clean statement is mostly a matter of order and patience.
 - **Forgetting debts tied to assets.** A car listed under automobiles usually has a matching entry under the auto installment line if it is financed. A property in Section 4 with a mortgage needs the holder, balance, payment, and status filled in.
 - **Mixing dates.** A bank balance from one month and a brokerage balance from another make the statement harder to verify.
 - **Leaving out contingent liabilities.** If you have co-signed or guaranteed someone else's debt, it belongs in the contingent liabilities part of Section 1 even though you are not making the payments.
-- **One owner's statement missing.** Every owner of 20% or more needs one.
+- **An owner left out.** The statement is required from every owner of 20% or more.
 
 ## Pre-submission checklist
 
@@ -123,7 +123,7 @@ Work through this list with the completed form in front of you.
 - [ ] Applicant name and address are your personal details
 - [ ] Business name is filled in
 - [ ] Statement date is filled in and current
-- [ ] One loan purpose is marked: 7(a) / 504 / surety, 8(a), WOSB, or disaster loan
+- [ ] Loan purpose is marked: 7(a) / 504 / surety, 8(a), WOSB, or disaster loan
 - [ ] Business type is marked
 - [ ] Marital status is marked
 - [ ] Social Security number is entered and correct
@@ -163,7 +163,7 @@ Work through this list with the completed form in front of you.
 
 ### The whole package
 
-- [ ] Every owner of 20% or more has completed their own statement
+- [ ] Every owner of 20% or more is covered by a completed statement
 - [ ] You have asked your lender whether a spouse or any guarantor must also complete one
 - [ ] You are using the current version of the form (05-24, expires 08/31/2027)
 - [ ] You have kept a copy of what you submitted, along with the records behind each figure

@@ -63,7 +63,7 @@ The header collects:
 
 - Putting the business's address or tax ID where your personal details belong.
 - Leaving the statement date blank, or using a date that does not match the balances you report.
-- Selecting more than one loan purpose, or the wrong program.
+- Marking the wrong program. [VERIFY: whether version 05-24 allows more than one loan purpose to be marked]
 - Skipping marital status because it seems unrelated to a business loan. It is part of the header; fill it in.
 
 ## Section 1: The balance sheet summary
@@ -178,7 +178,7 @@ A contingent liability is a debt you do not owe today but could become responsib
 #### Common mistakes
 
 - Skipping this part because nothing is currently due. The point of the question is debts that are *not yet* due from you.
-- Adding contingent amounts into total liabilities when they are already asked for separately.
+- Assuming you know how contingent amounts relate to total liabilities. [VERIFY: whether contingent liabilities are excluded from total liabilities on version 05-24]
 
 ## Section 2: Notes payable detail
 
@@ -291,7 +291,7 @@ The form ends with a signature and a date.
 
 ### What counts
 
-Read the statements printed above the signature line before you sign, because your signature applies to them. Sign your own name and enter the date you actually sign.
+Read the whole form, including anything printed near the signature line, before you sign. [VERIFY: what text appears with the signature block on version 05-24] Sign your own name and enter the date you actually sign.
 
 ### Common mistakes
 
