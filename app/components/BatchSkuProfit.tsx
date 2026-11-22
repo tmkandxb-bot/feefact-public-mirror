@@ -31,7 +31,7 @@ export default function BatchSkuProfit() {
       <button type="button" onClick={() => setText(SAMPLE_TEXT)} className="rounded-lg border border-slate-300 px-4 py-2 font-semibold">Load sample rows</button>
     </div>
 
-    <div className="mt-8 overflow-x-auto">
+    <div className="relative mt-8 overflow-x-auto">
       <table className="w-full min-w-[60rem] text-left text-sm">
         <caption className="mb-3 text-left font-semibold">Profit per SKU{isSample ? " (sample rows)" : ""}</caption>
         <thead><tr className="border-b text-slate-500">
