@@ -22,7 +22,7 @@ export default function BatchSkuProfitPage() {
         <div><dt className="font-semibold text-slate-900">Ads</dt><dd>Your ad spend attributed to the sale: price × ads %.</dd></div>
         <div><dt className="font-semibold text-slate-900">Total fees, net profit and margin</dt><dd>Total fees = referral fee + creator commission + ads. Net profit = price − total fees − product cost − shipping. Margin = net profit ÷ price.</dd></div>
       </dl>
-      <p className="mt-6 leading-relaxed text-slate-600">The rates are the ones you enter. They are not quotes from any platform, so check your own seller account for the rates that apply to you. This is the same calculation as the single-item calculator, run once per row.</p>
+      <p className="mt-6 leading-relaxed text-slate-600">The rates are the ones you enter. They are not quotes from any platform, so check your own seller account for the rates that apply to you. This is the same calculation as the single-item calculator, run once per row. Payment processing fees (for example from Stripe or PayPal) are not included; subtract them separately if they apply to you.</p>
       <h3 className="mt-8 font-semibold">Fee pages</h3>
       <ul className="mt-2 list-disc pl-5">{fees.map(fee => <li key={fee.slug}><Link className="font-semibold text-indigo-700 underline" href={`/fees/${fee.slug}`}>{fee.name} fees</Link></li>)}</ul>
     </section>
