@@ -31,7 +31,12 @@
 .home .btn:hover{filter:brightness(1.08)}
 
 /* Hero */
-.home .hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px 48px;align-items:center;padding:64px 0}
+.home .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px 48px;align-items:center;padding:56px 0}
+.home .hero-art{display:block;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 60px rgba(124,92,255,.28)}
+.home .hero-art img,.home .promo-art{display:block;width:100%;height:auto}
+.home .promo-art{border-radius:var(--radius);margin-bottom:16px}
+.home .hero .stats{grid-column:1/-1;grid-template-columns:repeat(5,minmax(0,1fr))}
+.home .hero .stats>div:last-child{grid-column:auto}
 .home .hero h1{margin:0 0 14px;font-size:46px;line-height:1.08;letter-spacing:-.02em;color:#fff}
 .home .hero .lead{font-size:19px;margin:0;max-width:34em}
 .home .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0}
@@ -95,6 +100,8 @@
 .home .hero{padding-top:40px}
 .home .hero h1{font-size:34px}
 .home .band{padding:40px 0}
+.home .hero .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.home .hero .stats>div:last-child{grid-column:1/-1}
 }
 .home #pricing-table{font-size:14px}
 .home #pricing-table th,.home #pricing-table td{padding-left:7px;padding-right:7px}

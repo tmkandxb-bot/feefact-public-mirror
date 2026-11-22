@@ -187,6 +187,11 @@ ${[...models].sort((a, b) => blended(a, p) - blended(b, p)).map((m, i) => `<tr><
 // Same calculator markup and hooks as the landing pages; only the layout around it differs.
 const provClass = (p) => 'prov-' + p.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 const range = (xs) => { const lo = Math.min(...xs), hi = Math.max(...xs); return lo === hi ? price(lo) : `${price(lo)} – ${price(hi)}` }
+const IMG = {
+  hero: { file: 'llm-api-token-price-database.webp', w: 1536, h: 864, alt: 'LLM API token price database: token streams flowing into one pricing database' },
+  compare: { file: 'cheapest-llm-api-price-comparison.webp', w: 1200, h: 675, alt: 'Comparing LLM API prices to find the cheapest model per million tokens' },
+  changes: { file: 'llm-api-price-change-alerts.webp', w: 1200, h: 600, alt: 'LLM API price change history shown as a trend line with an alert bell' },
+}
 const HOME_LEAD = 'Count the tokens in a prompt and compare what it costs on every major LLM API.'
 const chat = PROFILES[0]
 const latest = [...changes].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3)
@@ -197,6 +202,7 @@ page('', 'TokenPriceDB — LLM API Token & Cost Calculator', HOME_LEAD, (base) =
 <p class="lead">${esc(HOME_LEAD)}</p>
 <p class="cta"><a class="btn btn-primary" href="#calculator">Open the calculator</a><a class="btn btn-ghost" href="#pricing">Browse all ${models.length} prices</a></p>
 </div>
+<a class="hero-art" href="#calculator"><img src="${base}assets/img/${IMG.hero.file}" alt="${IMG.hero.alt}" width="${IMG.hero.w}" height="${IMG.hero.h}" fetchpriority="high"></a>
 <dl class="stats">
 <div><dt>Models tracked</dt><dd>${models.length}</dd></div>
 <div><dt>Providers</dt><dd>${providers.length}</dd></div>
@@ -221,6 +227,7 @@ ${costTable(base)}
 <p class="cta"><a class="btn btn-primary" href="${base}compare/cheapest-llm-api/">See the full ranking</a></p>
 </div>
 <div class="promo-data">
+<img class="promo-art" src="${base}assets/img/${IMG.compare.file}" alt="${IMG.compare.alt}" width="${IMG.compare.w}" height="${IMG.compare.h}" loading="lazy">
 <ol class="rank">
 ${[...models].sort((a, b) => blended(a, chat) - blended(b, chat)).slice(0, 3).map((m) => `<li><span class="prov ${provClass(m.provider)}">${esc(m.provider)}</span> <a href="${base}models/${m.slug}/">${esc(m.model)}</a> <span class="rank-v">${usd(blended(m, chat))} / 1M</span></li>`).join('\n')}
 </ol>
@@ -242,18 +249,19 @@ ${pricingTable(base)}
 <p class="cta"><a class="btn btn-dark" href="${base}price-changes/">Open the price-change log</a></p>
 </div>
 <div class="promo-data">
+<img class="promo-art" src="${base}assets/img/${IMG.changes.file}" alt="${IMG.changes.alt}" width="${IMG.changes.w}" height="${IMG.changes.h}" loading="lazy">
 <ul class="changes">
 ${latest.map((c) => `<li><time datetime="${c.date}">${c.date}</time> <span class="prov ${provClass(c.provider)}">${esc(c.provider)}</span> ${models.some((m) => m.slug === c.slug) ? `<a href="${base}models/${c.slug}/">${esc(c.model)}</a>` : esc(c.model)}<span class="change">${esc(c.change)}</span></li>`).join('\n')}
 </ul>
 </div>
-</section>`, { scripts: calcScripts, head: (base) => `<link rel="stylesheet" href="${base}assets/home.css">`, bodyClass: 'home' })
+</section>`, { scripts: calcScripts, head: (base) => `<meta property="og:image" content="${SITE}/assets/img/${IMG.hero.file}">
+<link rel="stylesheet" href="${base}assets/home.css">`, bodyClass: 'home' })
 
 // ---------- /sitemap.xml ----------
-const urls = ['', 'token-calculator/', 'token-cost-calculator/', 'compare/cheapest-llm-api/', 'price-changes/', ...models.map((m) => `models/${m.slug}/`)]
+const urls = ['', 'token-calculator/', 'token-cost-calculator/']
+const homeImages = Object.values(IMG).map((i) => `<image:image><image:loc>${SITE}/assets/img/${i.file}</image:loc></image:image>`).join('')
 writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `<url><loc>${SITE}/${u}</loc></url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${urls.map((u) => `<url><loc>${SITE}/${u}</loc>${u === '' ? homeImages : ''}</url>`).join('\n')}
 </urlset>
 `)
-
-console.log(`Generated ${models.length} model pages + calculator, price-changes and compare pages.`)
