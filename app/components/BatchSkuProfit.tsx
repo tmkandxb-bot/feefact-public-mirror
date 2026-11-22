@@ -9,12 +9,13 @@ const placeholders = ["SKU", "0.00", "0.00", "0.00", String(DEFAULT_RATES.referr
 const emptyRow = COLUMNS.map(() => "");
 
 export default function BatchSkuProfit() {
-  const [text, setText] = useState(SAMPLE_TEXT);
-  const rows = useMemo(() => parseCells(text), [text]);
+  // The table edits rows directly and only rewrites the text; re-parsing its own edits would trim what is being typed.
+  const [{ text, rows }, setState] = useState(() => ({ text: SAMPLE_TEXT, rows: parseCells(SAMPLE_TEXT) }));
+  const setText = (next: string) => setState({ text: next, rows: parseCells(next) });
   const results = useMemo(() => rows.map(calcRow), [rows]);
   const summary = useMemo(() => summarize(results), [results]);
   const isSample = text === SAMPLE_TEXT;
-  const setRows = (next: string[][]) => setText(serializeCells(next));
+  const setRows = (next: string[][]) => setState({ text: serializeCells(next), rows: next });
   const cell = "px-2 py-2 text-right tabular-nums";
 
   return <div>
@@ -42,7 +43,7 @@ export default function BatchSkuProfit() {
           const { result, error } = results[rowIndex];
           const losing = result !== undefined && result.net < 0;
           return <tr key={rowIndex} className={`border-b ${losing ? "bg-red-50" : ""}`}>
-            {cells.map((value, columnIndex) => <td key={columnIndex} className="px-1 py-1">
+            {cells.slice(0, COLUMNS.length).map((value, columnIndex) => <td key={columnIndex} className="px-1 py-1">
               <input aria-label={`${COLUMNS[columnIndex]}, row ${rowIndex + 1}`} value={value} placeholder={placeholders[columnIndex]} inputMode={columnIndex === 0 ? "text" : "decimal"}
                 onChange={event => setRows(rows.map((row, index) => index === rowIndex ? row.map((old, column) => column === columnIndex ? event.target.value.replace(/,/g, "") : old) : row))}
                 className={`w-full rounded border border-slate-200 bg-white px-2 py-1 ${columnIndex === 0 ? "min-w-[7rem]" : "min-w-[4.5rem] text-right"}`} />
