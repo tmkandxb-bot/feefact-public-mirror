@@ -47,8 +47,11 @@
 2. 文件名用英文关键词（如 llm-api-token-price-database.webp），不许 img1 这类名字。
 3. alt 写自然的目标词句子，不堆砌。
 4. Hero 图至少 1200px 宽，其余至少 800px。
-5. sitemap.xml 加 image:image 图片条目（没有 sitemap 就建，含主要页面 URL）。模型页只放索引页和两个计算器落地页，不用全量 43 页。
+5. sitemap.xml 加 image:image 图片条目（没有 sitemap 就建，含主要页面 URL）。模型页只放索引页和两个计算器落地页，不用全量 43 页。仓库里没有单独的模型索引页，Remy 另行说明之前按以下 URL 清单写（这是 Anita 的读法，待 Remy 确认）：
+   - https://tokenpricedb.com/ （首页，含模型总表）
+   - https://tokenpricedb.com/token-calculator/
+   - https://tokenpricedb.com/token-cost-calculator/
 6. Hero 图设为 og:image。
-7. 生图工具（Remy 2026-11-21 批准）：可用现有生图工具，PR 里注明「模型未标明」；两件共六张图（本件三张）照任务文件的构图要求生成，由 Remy 验收，不合格不上线。
+7. 生图工具（Remy 2026-11-21 批准）：可用现有生图工具，PR 里注明「模型未标明」；两件共六张图（本件三张）照任务文件的构图要求生成，由 Remy 验收，不合格不上线。本条取代上文「图片」一节里的两处：「用 Fable 5.2 生成」和「生成不了就停下」。其余红线照旧：不用图库照片、不用占位图、不外链图片，图片里不许出现可读的文字、数字、价格、模型名。
 
 本站特有：图里无数字红线不变，数字只进 alt 和正文真实数据。
