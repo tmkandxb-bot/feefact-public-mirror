@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { calcRefundAdminFee, refundCapSalePrice } from "../../lib/calc";
-import { formatMoney, tiktokShopRefund as refund } from "../../lib/fees";
+import { formatMoney, tiktokShopRefund as refund, tiktokShopReturnProtection as protection } from "../../lib/fees";
 import { returnShippingChecked, returnShippingFaqs, returnShippingRows, returnShippingSources as sources, type PolicySource } from "../../lib/returnShipping";
 
 const percent = (rate: number) => `${Number((rate * 100).toFixed(2))}%`;
@@ -115,6 +115,7 @@ export default function RefundFeePage() {
 
       <h3 className="mt-6 text-lg font-semibold">Protection against return shipping costs</h3>
       <p className="mt-2 leading-relaxed text-slate-600">TikTok Shop offers an optional Return Shipping Protection Program, run by third-party vendors, that covers eligible return shipping fees. You enroll in Seller Center under Logistics → Fulfillment → Shipping Protection Settings. Coverage applies to eligible orders placed after you enroll, and return shipping fee claims are processed automatically once the buyer drops off the return parcel. The program&apos;s own charges appear on your Seller Center invoices (<Source source={sources.protection} />).</p>
+      <p className="mt-3 leading-relaxed text-slate-600"><strong className="text-slate-900">The program is not free.</strong> It is voluntary: you can opt in or out, and sellers who opt in pay a fee on each covered order. TikTok Shop&apos;s guide sets the fee at {percent(protection.feeShareOfTcov)} of the order&apos;s Total Covered Order Value (the amount the buyer paid, plus platform subsidy, minus tax) (<Source source={sources.protectionGuide} />).</p>
 
       <h3 className="mt-6 text-lg font-semibold">What to do with this</h3>
       <p className="mt-2 leading-relaxed text-slate-600">Budget for return shipping on every return that comes back through TikTok Shop&apos;s drop-off option, whatever the reason, on top of the refund administration fee above. The actual amount charged per return shows on your settlement lines.</p>

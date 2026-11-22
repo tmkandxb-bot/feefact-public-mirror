@@ -35,6 +35,10 @@ export const tiktokShopRefund = {
   monthly: { orders: 100, returnRates: [0.05, 0.1, 0.2, 0.3], sales: [35, 80] },
 } as const;
 
+// Optional Return Shipping Protection Program fee, per covered order, as a share of
+// Total Covered Order Value (TCOV). Source: returnShippingSources.protectionGuide.
+export const tiktokShopReturnProtection = { feeShareOfTcov: 0.015 } as const;
+
 export function formatMoney(amount: number, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
 }

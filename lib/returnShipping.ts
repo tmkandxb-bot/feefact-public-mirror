@@ -23,6 +23,11 @@ export const returnShippingSources = {
     url: "https://seller-us.tiktok.com/university/essay?knowledge_id=3869201543218957&lang=en",
     updated: "November 17, 2026",
   },
+  protectionGuide: {
+    title: "A Guide to the Return Shipping Protection Program",
+    url: "https://seller-us.tiktok.com/university/essay?knowledge_id=616831178131201&lang=en",
+    updated: "July 1, 2026",
+  },
 } as const satisfies Record<string, PolicySource>;
 
 export type ReturnShippingRow = {
