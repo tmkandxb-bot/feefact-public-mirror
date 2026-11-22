@@ -8,7 +8,6 @@ const money = (amount: number) => formatMoney(amount, affiliate.currency);
 const sale = affiliate.exampleSale;
 const referral = percent(affiliate.referralRate);
 const example = calcAffiliateStack(sale, affiliate.exampleCommission);
-const reported = calcAffiliateStack(sale, affiliate.exampleCommission, affiliate.reportedReferralRate);
 const noCreator = calcAffiliateStack(sale, 0);
 const { cogs, shipping, ads, commissions } = affiliate.breakEven;
 const margin = sale - cogs;
@@ -47,7 +46,7 @@ export default function AffiliateCommissionPage() {
 
     <section className="mt-14 max-w-3xl" aria-labelledby="owners-heading">
       <h2 id="owners-heading" className="text-2xl font-bold">Two fees, two different owners</h2>
-      <p className="mt-4 leading-relaxed text-slate-600">The <strong>referral fee</strong> is TikTok Shop&apos;s platform fee. In the US, TikTok&apos;s published table lists {referral} for most categories (many sellers report an effective {percent(affiliate.reportedReferralRate)} since August 2026). You cannot negotiate it and it applies to every order.</p>
+      <p className="mt-4 leading-relaxed text-slate-600">The <strong>referral fee</strong> is TikTok Shop&apos;s platform fee. In the US, TikTok&apos;s published table lists {referral} for most categories. You cannot negotiate it and it applies to every order.</p>
       <p className="mt-4 leading-relaxed text-slate-600">The <strong>affiliate (creator) commission</strong> is different: you choose the percentage when you list a product for creator promotion. It is only charged when a creator&apos;s video, LIVE or product link actually drives the sale. There is no platform-published standard rate. The number is yours.</p>
     </section>
 
@@ -64,7 +63,7 @@ export default function AffiliateCommissionPage() {
           <tr><th scope="row" className="py-3 font-semibold">Paid out to you, before product &amp; shipping costs</th><td className="text-right font-semibold">{money(example.payout)}</td></tr>
         </tbody>
       </table>
-      <p className="mt-6 leading-relaxed text-slate-600">The same {money(sale)} order sold without a creator loses only the {money(noCreator.referral)} referral fee, so you would be paid {money(noCreator.payout)}. The creator-driven order pays you {money(example.commission)} less. If your settlement reflects the widely reported {percent(affiliate.reportedReferralRate)} referral rate instead of {referral}, the same example takes {money(reported.referral)} + {money(reported.commission)} = {money(reported.total)} off the top ({percent(reported.totalRate)}) and pays out {money(reported.payout)}.</p>
+      <p className="mt-6 leading-relaxed text-slate-600">The same {money(sale)} order sold without a creator loses only the {money(noCreator.referral)} referral fee, so you would be paid {money(noCreator.payout)}. The creator-driven order pays you {money(example.commission)} less.</p>
     </section>
 
     <section className="mt-14 max-w-3xl" aria-labelledby="ladder-heading">

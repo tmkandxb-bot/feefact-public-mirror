@@ -4,7 +4,6 @@ import { affiliate, calcAffiliateStack, categoryBenchmarks } from "./affiliate";
 describe("calcAffiliateStack", () => {
   it("matches the live page's $40 worked example", () => {
     expect(calcAffiliateStack(40, 0.15)).toMatchObject({ referral: 2.4, commission: 6, total: 8.4, payout: 31.6 });
-    expect(calcAffiliateStack(40, 0.15, 0.08)).toMatchObject({ total: 9.2, payout: 30.8 });
     expect(calcAffiliateStack(40, 0)).toMatchObject({ commission: 0, payout: 37.6 });
   });
   it("matches the live commission ladder", () => {

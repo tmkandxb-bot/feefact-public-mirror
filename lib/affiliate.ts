@@ -4,7 +4,6 @@ export const affiliate = {
   currency: "USD",
   verified: "October 30, 2026",
   referralRate: 0.06,
-  reportedReferralRate: 0.08,
   exampleSale: 40,
   exampleCommission: 0.15,
   ladder: [0.05, 0.1, 0.15, 0.2, 0.25],
