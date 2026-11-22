@@ -119,7 +119,7 @@ export default function ShippingFeesPage() {
       <h3 className="mt-6 font-semibold">How to read the table</h3>
       <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-slate-700">
         <li><strong>Find your billable weight.</strong> If the item weighs {actualWeightOnly.maxLb} lb or less and its length × width × height is {actualWeightOnly.maxCubicInches} cubic inches or less, that is its actual weight. Otherwise it is the greater of actual weight and dimensional weight (length × width × height in inches ÷ {dimensionalDivisor}).</li>
-        <li><strong>Pick the column for the number of units in the order.</strong> Every price is per unit. Under 15 lb, each unit costs less when the order holds more units; from 15 lb up, the price is the same for every order size.</li>
+        <li><strong>Pick the column for the number of units in the order.</strong> Every price is per unit. Up to 15 lb, a multi-unit order costs less per unit than a single-unit order; above 15 lb, the price is the same for every order size.</li>
         <li><strong>Size limit.</strong> An item can weigh up to {maxItemLb} lb, with no side longer than {maxSideInches} inches.</li>
         <li>A few heavier tiers cost less than the tier just below them (for example {findFbtTier(81)!.label} at {formatMoney(fbtFeePerUnit(81)!)} versus {findFbtTier(80)!.label} at {formatMoney(fbtFeePerUnit(80)!)}). That is how the official card is published.</li>
       </ul>
