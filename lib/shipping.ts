@@ -17,14 +17,15 @@ export const shippingExample = {
   orderVolume: 500,
 } as const;
 
-/** What is left of one order after the referral fee and the shipping or fulfillment cost, before product cost. */
+/** What is left of one order after the referral fee and the shipping or fulfillment cost, before product cost. Assumes no platform discount or tax. */
 export function keptAfterShipping({ price, shippingCost, buyerShippingCharge = 0, referralRate = referralRates.verified }: { price: number; shippingCost: number; buyerShippingCharge?: number; referralRate?: number }) {
   const collected = roundCents(price + buyerShippingCharge);
-  const referralFee = roundCents(price * referralRate);
+  // US referral fee base = customer payment + platform discount − tax, which includes buyer-paid shipping.
+  const referralFee = roundCents(collected * referralRate);
   return { collected, referralFee, shippingCost, kept: roundCents(collected - referralFee - shippingCost) };
 }
 
-/** Item price that keeps `targetKept` when the seller absorbs shipping and the referral fee applies to the item price. */
+/** Item price that keeps `targetKept` when the seller absorbs shipping (no separate buyer shipping charge), so the referral fee applies to the item price. */
 export function priceToKeep(targetKept: number, shippingCost: number, referralRate: number = referralRates.verified) {
   return roundCents((targetKept + shippingCost) / (1 - referralRate));
 }
