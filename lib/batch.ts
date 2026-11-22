@@ -16,17 +16,22 @@ export const SAMPLE_ROWS: readonly string[][] = [
   ["SAMPLE-SOCKS", 9.99, 2.5, 3],
 ].map(row => [...row, DEFAULT_RATES.referral, DEFAULT_RATES.creator, DEFAULT_RATES.ads].map(String));
 
+// Tab-separated lines (spreadsheet paste) split on tabs only, so "1,200" stays one cell; CSV lines honor double quotes.
+const splitLine = (line: string) => line.includes("\t")
+  ? line.split("\t")
+  : Array.from(line.matchAll(/(?:^|,)\s*(?:"((?:[^"]|"")*)"|([^,]*))/g), match => match[1]?.replace(/""/g, '"') ?? match[2]);
+
 export const parseCells = (text: string) => text.split(/\r?\n/).filter(line => line.trim() !== "").map(line => {
-  const cells = line.split(/[,\t]/).map(cell => cell.trim());
-  return COLUMNS.map((_, index) => cells[index] ?? "");
-}).filter((cells, index) => !(index === 0 && cells[0].toLowerCase() === COLUMNS[0]));
+  const cells = splitLine(line).map(cell => cell.trim());
+  return [...cells, ...COLUMNS.slice(cells.length).map(() => "")];
+}).filter((cells, index) => !(index === 0 && cells[0].toLowerCase() === COLUMNS[0] && cells[1].toLowerCase() === COLUMNS[1]));
 
 export const serializeCells = (rows: readonly string[][]) => rows.map(cells => cells.map(cell => cell.replace(/[,\t\r\n]/g, " ")).join(", ")).join("\n");
 
 export const SAMPLE_TEXT = serializeCells(SAMPLE_ROWS);
 
 const toNumber = (cell: string) => {
-  const cleaned = cell.replace(/[$%\s]/g, "");
+  const cleaned = cell.replace(/[$%,\s]/g, "");
   if (cleaned === "") return undefined;
   const value = Number(cleaned);
   return Number.isFinite(value) && value >= 0 ? value : NaN;
@@ -36,6 +41,7 @@ export type SkuResult = { sku: string; error?: string; result?: ReturnType<typeo
 
 export function calcRow(cells: readonly string[]): SkuResult {
   const sku = cells[0] ?? "";
+  if (cells.length > COLUMNS.length) return { sku, error: `Too many columns: expected ${COLUMNS.length}. Remove commas inside numbers` };
   const [sale, cogs, shipping, referral, creator, ads] = cells.slice(1, 7).map(cell => toNumber(cell ?? ""));
   if ([sale, cogs, shipping, referral, creator, ads].some(Number.isNaN)) return { sku, error: "Numbers must be 0 or more" };
   if (sale === undefined || cogs === undefined || shipping === undefined) return { sku, error: "Price, product cost and shipping are required" };

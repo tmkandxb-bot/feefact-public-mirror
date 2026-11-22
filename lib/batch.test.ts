@@ -36,6 +36,16 @@ describe("batch SKU profit", () => {
     expect(calcRow(parseCells("A, -5, 1, 1")[0]).error).toBeDefined();
     expect(calcRow(parseCells("A, 10")[0]).error).toBeDefined();
   });
+  it("keeps thousands separators in tab-separated and quoted cells, and flags unquoted ones", () => {
+    const [tabbed, quoted, shifted] = parseCells('A\t1,200\t300\t20\t6\t5\t15\nB, "1,200", 300, 20, 6, 5, 15\nC, 1,200, 300, 20, 6, 5, 15');
+    expect(calcRow(tabbed).result).toMatchObject(legacy({ sale: 1200, cogs: 300, shipping: 20 }));
+    expect(calcRow(quoted).result).toMatchObject(legacy({ sale: 1200, cogs: 300, shipping: 20 }));
+    expect(calcRow(shifted).error).toMatch(/Too many columns/);
+  });
+  it("only treats a real header line as a header", () => {
+    expect(parseCells("SKU, 35, 8, 3.5")).toHaveLength(1);
+    expect(parseCells("sku, , , , , , ")).toHaveLength(1);
+  });
   it("summarizes totals, average margin and losing SKUs", () => {
     const summary = summarize(parseCells("A, 20, 9, 4, 8, 10, 12\nB, 12, 7, 3.5, 6, 5, 15\nC, oops, 1, 1").map(calcRow));
     expect(summary).toMatchObject({ count: 2, skipped: 1, losing: 1, sale: 32 });
