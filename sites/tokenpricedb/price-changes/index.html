@@ -33,5 +33,12 @@
 Batch, priority and long-context tiers are not included. Always confirm on the provider's pricing page before budgeting.</p>
 </footer>
 
+<script>
+// Opened from disk: directory links have no index.html resolution, so add it.
+if (location.protocol === 'file:') document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[href]');
+  if (a && a.protocol === 'file:' && a.pathname.slice(-1) === '/') { e.preventDefault(); location.href = a.href.split(/[?#]/)[0] + 'index.html'; }
+});
+</script>
 </body>
 </html>
