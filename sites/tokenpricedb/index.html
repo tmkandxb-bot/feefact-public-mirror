@@ -32,13 +32,13 @@
 <dl class="stats">
 <div><dt>Models tracked</dt><dd>43</dd></div>
 <div><dt>Providers</dt><dd>6</dd></div>
-<div><dt>Prices with a source link</dt><dd>43 / 43</dd></div>
-<div><dt>Price-change entries logged</dt><dd>3</dd></div>
-<div><dt>Last checked</dt><dd>2026-11-21</dd></div>
+<div><dt>Source-linked prices</dt><dd>43 / 43</dd></div>
+<div><dt>Changes logged</dt><dd>3</dd></div>
+<div><dt>Last checked</dt><dd><time datetime="2026-11-21">21 Nov 2026</time></dd></div>
 </dl>
 </section>
 <section class="band band-light" id="calculator">
-<h2 class="section-title">Token &amp; cost calculator</h2>
+<h2 class="section-title">Price a prompt</h2>
 <div class="panel">
 <section class="calc">
 <div>
@@ -55,6 +55,7 @@
 </div>
 <h2>Cost for <span id="usage"></span></h2>
 <p class="muted">Cheapest first. Click a column header to sort. Token counts are exact only for OpenAI models that gpt-tokenizer maps to o200k_base; every other model is labeled "estimate".</p>
+<p class="muted table-note">Token counts read "as entered" until you paste a prompt.</p>
 <div class="table-wrap"><table class="sortable" id="cost-table" data-base="./">
 <thead><tr><th>Provider</th><th>Model</th><th>Token count</th><th class="num">Input cost</th><th class="num">Output cost</th><th class="num">Total</th></tr></thead>
 <tbody></tbody></table></div>
@@ -80,12 +81,12 @@
 <h2>LLM API pricing table (USD per 1M tokens)</h2>
 <p class="muted">43 models across OpenAI, Anthropic, Google, DeepSeek, xAI, Mistral.</p>
 <div class="families">
-<div class="family prov-openai"><div class="family-head">OpenAI</div><div class="family-body"><div class="v">14 <span>models</span></div><div class="k">Input $0.1 – $10 / 1M</div><div class="k">Output $0.5 – $50 / 1M</div></div></div>
-<div class="family prov-anthropic"><div class="family-head">Anthropic</div><div class="family-body"><div class="v">8 <span>models</span></div><div class="k">Input $0.1 – $10 / 1M</div><div class="k">Output $0.5 – $50 / 1M</div></div></div>
-<div class="family prov-google"><div class="family-head">Google</div><div class="family-body"><div class="v">8 <span>models</span></div><div class="k">Input $0.25 – $3 / 1M</div><div class="k">Output $1.5 – $15 / 1M</div></div></div>
-<div class="family prov-deepseek"><div class="family-head">DeepSeek</div><div class="family-body"><div class="v">4 <span>models</span></div><div class="k">Input $0.09 – $1.32 / 1M</div><div class="k">Output $0.18 – $3.96 / 1M</div></div></div>
-<div class="family prov-xai"><div class="family-head">xAI</div><div class="family-body"><div class="v">4 <span>models</span></div><div class="k">Input $1.25 – $2 / 1M</div><div class="k">Output $2.5 – $6 / 1M</div></div></div>
-<div class="family prov-mistral"><div class="family-head">Mistral</div><div class="family-body"><div class="v">5 <span>models</span></div><div class="k">Input $0.15 – $0.7 / 1M</div><div class="k">Output $0.6 – $2.1 / 1M</div></div></div>
+<div class="family prov-openai"><div class="family-head">OpenAI</div><div class="family-body"><div class="v">14 <span>models</span></div><div class="k"><span>Input</span> <span class="k-v">$0.1 – $10 <span class="unit">/ 1M</span></span></div><div class="k"><span>Output</span> <span class="k-v">$0.5 – $50 <span class="unit">/ 1M</span></span></div></div></div>
+<div class="family prov-anthropic"><div class="family-head">Anthropic</div><div class="family-body"><div class="v">8 <span>models</span></div><div class="k"><span>Input</span> <span class="k-v">$0.1 – $10 <span class="unit">/ 1M</span></span></div><div class="k"><span>Output</span> <span class="k-v">$0.5 – $50 <span class="unit">/ 1M</span></span></div></div></div>
+<div class="family prov-google"><div class="family-head">Google</div><div class="family-body"><div class="v">8 <span>models</span></div><div class="k"><span>Input</span> <span class="k-v">$0.25 – $3 <span class="unit">/ 1M</span></span></div><div class="k"><span>Output</span> <span class="k-v">$1.5 – $15 <span class="unit">/ 1M</span></span></div></div></div>
+<div class="family prov-deepseek"><div class="family-head">DeepSeek</div><div class="family-body"><div class="v">4 <span>models</span></div><div class="k"><span>Input</span> <span class="k-v">$0.09 – $1.32 <span class="unit">/ 1M</span></span></div><div class="k"><span>Output</span> <span class="k-v">$0.18 – $3.96 <span class="unit">/ 1M</span></span></div></div></div>
+<div class="family prov-xai"><div class="family-head">xAI</div><div class="family-body"><div class="v">4 <span>models</span></div><div class="k"><span>Input</span> <span class="k-v">$1.25 – $2 <span class="unit">/ 1M</span></span></div><div class="k"><span>Output</span> <span class="k-v">$2.5 – $6 <span class="unit">/ 1M</span></span></div></div></div>
+<div class="family prov-mistral"><div class="family-head">Mistral</div><div class="family-body"><div class="v">5 <span>models</span></div><div class="k"><span>Input</span> <span class="k-v">$0.15 – $0.7 <span class="unit">/ 1M</span></span></div><div class="k"><span>Output</span> <span class="k-v">$0.6 – $2.1 <span class="unit">/ 1M</span></span></div></div></div>
 </div>
 <div class="table-wrap"><table class="sortable" id="pricing-table">
 <thead><tr><th>Provider</th><th>Model</th><th class="num">Input / 1M</th><th class="num">Output / 1M</th><th class="num">Cached input / 1M</th><th class="num">Context window</th><th>Source</th><th>Checked</th></tr></thead>
@@ -153,6 +154,13 @@
 </section>
 </main>
 <footer class="site">
+<nav class="foot-nav" aria-label="Footer">
+<a class="brand" href="./">TokenPriceDB</a>
+<a href="./token-calculator/">Token calculator</a>
+<a href="./token-cost-calculator/">Token cost calculator</a>
+<a href="./compare/cheapest-llm-api/">Cheapest LLM API</a>
+<a href="./price-changes/">Price changes</a>
+</nav>
 <p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked 2026-11-21. Every row links to its source.
 Batch, priority and long-context tiers are not included. Always confirm on the provider's pricing page before budgeting.</p>
 </footer>
