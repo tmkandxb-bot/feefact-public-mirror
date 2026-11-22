@@ -47,7 +47,7 @@
 2. 文件名用英文关键词（如 llm-api-token-price-database.webp），不许 img1 这类名字。
 3. alt 写自然的目标词句子，不堆砌。
 4. Hero 图至少 1200px 宽，其余至少 800px。
-5. sitemap.xml 加 image:image 图片条目（没有 sitemap 就建，含主要页面 URL）。
+5. sitemap.xml 加 image:image 图片条目（没有 sitemap 就建，含主要页面 URL）。模型页只放索引页和两个计算器落地页，不用全量 43 页。
 6. Hero 图设为 og:image。
 
 本站特有：图里无数字红线不变，数字只进 alt 和正文真实数据。
