@@ -38,3 +38,16 @@
 
 - 直接改仓库 `sites/tokenpricedb/index.html`（及同目录 CSS，如有）+ 新增 `assets/img/`，开 PR。PR 描述写清：改了哪些区块、数据文件未动的声明、每张图的生成提示词。
 - QA 审：models.json / price-changes.json 的 diff 必须为零、计算器实测可用（拿一个已知算例验）、图片无文字数字、移动端不破版、页重增幅报告。
+
+## 补充要求（号主追加）
+
+图片要当点击钩子 + 谷歌图片收录资产，不只是装饰。
+
+1. 关键图（尤其 Hero）用标准 img 标签，不用 CSS 背景图；Hero 图可点击、锚到工具区（本站锚到计算器）。
+2. 文件名用英文关键词（如 llm-api-token-price-database.webp），不许 img1 这类名字。
+3. alt 写自然的目标词句子，不堆砌。
+4. Hero 图至少 1200px 宽，其余至少 800px。
+5. sitemap.xml 加 image:image 图片条目（没有 sitemap 就建，含主要页面 URL）。
+6. Hero 图设为 og:image。
+
+本站特有：图里无数字红线不变，数字只进 alt 和正文真实数据。
