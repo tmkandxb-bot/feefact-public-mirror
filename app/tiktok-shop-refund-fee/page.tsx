@@ -27,7 +27,7 @@ const th = "py-3 pr-4 font-medium";
 const td = "py-3 pr-4";
 
 export default function RefundFeePage() {
-  const [promo] = refund.referralRates;
+  const [promo, jewelry, , reported] = refund.referralRates;
   const faqs = [
     { question: "Is the admin fee charged on every refund?", answer: "Yes — on every refunded US order. TikTok deducts it automatically from the referral fee being returned, so there is nothing to opt out of and no way to waive it. The only number you control is how often refunds happen." },
     { question: `Does the ${cap} cap apply per order or per SKU?`, answer: `Per SKU. A refunded order with two different SKUs can incur up to ${cap} on each one — the cap does not pool across the order.` },
@@ -59,7 +59,7 @@ export default function RefundFeePage() {
           return <td key={rate} className={td}>{money(result.fee)}{result.capped ? " (capped)" : result.atCap ? " (at cap)" : ""}</td>;
         })}</tr>)}</tbody>
       </table></div>
-      <p className="mt-4 text-sm leading-relaxed text-slate-600">Read it as: admin fee = {share} × referral fee. The 5% column is for fine jewelry and pre-owned — the two categories on the published table at 5%. The 8% column is the widely reported effective rate; the fee scales with whatever rate your account actually pays, so check your settlement lines.</p>
+      <p className="mt-4 text-sm leading-relaxed text-slate-600">Read it as: admin fee = {share} × referral fee. The {percent(jewelry.rate)} column is for fine jewelry and pre-owned — the two categories on the published table at {percent(jewelry.rate)}. The {percent(reported.rate)} column is the widely reported effective rate; the fee scales with whatever rate your account actually pays, so check your settlement lines.</p>
     </section>
 
     <section className={card} aria-labelledby="why-heading">

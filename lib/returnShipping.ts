@@ -1,6 +1,8 @@
 // TikTok Shop US return-shipping rules. Every entry is taken from the official
 // TikTok Shop Academy (Seller Center) page named in `sources`; nothing here is estimated.
 
+import { tiktokShopRefund } from "./fees";
+
 export type PolicySource = { title: string; url: string; updated: string };
 
 export const returnShippingChecked = "November 21, 2026";
@@ -55,7 +57,7 @@ export const returnShippingRows: readonly ReturnShippingRow[] = [
 export const returnShippingFaqs = [
   {
     question: "Does the refund administration fee cover return shipping?",
-    answer: "No. The refund administration fee is 20% of the referral fee, capped at $5 per SKU, and it is only about the referral fee. Return shipping is a separate cost, and TikTok Shop's US return policy decides who pays it.",
+    answer: `No. The refund administration fee is ${tiktokShopRefund.adminShareOfReferral * 100}% of the referral fee, capped at $${tiktokShopRefund.capPerSku} per SKU, and it is only about the referral fee. Return shipping is a separate cost, and TikTok Shop's US return policy decides who pays it.`,
   },
   {
     question: "Who pays return shipping when a buyer simply changes their mind?",
