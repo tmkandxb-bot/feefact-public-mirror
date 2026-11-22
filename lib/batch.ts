@@ -17,16 +17,33 @@ export const SAMPLE_ROWS: readonly string[][] = [
 ].map(row => [...row, DEFAULT_RATES.referral, DEFAULT_RATES.creator, DEFAULT_RATES.ads].map(String));
 
 // Tab-separated lines (spreadsheet paste) split on tabs only, so "1,200" stays one cell; CSV lines honor double quotes.
-const splitLine = (line: string) => line.includes("\t")
-  ? line.split("\t")
-  : Array.from(line.matchAll(/(?:^|,)\s*(?:"((?:[^"]|"")*)"|([^,]*))/g), match => match[1]?.replace(/""/g, '"') ?? match[2]);
+const splitCsv = (line: string) => {
+  const cells: string[] = [];
+  let cell = "", quoted = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (quoted) {
+      if (char !== '"') cell += char;
+      else if (line[i + 1] === '"') { cell += '"'; i++; }
+      else quoted = false;
+    } else if (char === '"' && cell.trim() === "") { cell = ""; quoted = true; }
+    else if (char === ",") { cells.push(cell); cell = ""; }
+    else cell += char;
+  }
+  return [...cells, cell];
+};
+const splitLine = (line: string) => line.includes("\t") ? line.split("\t") : splitCsv(line);
 
 export const parseCells = (text: string) => text.split(/\r?\n/).filter(line => line.trim() !== "").map(line => {
   const cells = splitLine(line).map(cell => cell.trim());
   return [...cells, ...COLUMNS.slice(cells.length).map(() => "")];
 }).filter((cells, index) => !(index === 0 && cells[0].toLowerCase() === COLUMNS[0] && cells[1].toLowerCase() === COLUMNS[1]));
 
-export const serializeCells = (rows: readonly string[][]) => rows.map(cells => cells.map(cell => cell.replace(/[,\t\r\n]/g, " ")).join(", ")).join("\n");
+const serializeCell = (cell: string) => {
+  const clean = cell.replace(/[\t\r\n]/g, " ");
+  return /[,"]/.test(clean) ? `"${clean.replace(/"/g, '""')}"` : clean;
+};
+export const serializeCells = (rows: readonly string[][]) => rows.map(cells => cells.map(serializeCell).join(", ")).join("\n");
 
 export const SAMPLE_TEXT = serializeCells(SAMPLE_ROWS);
 

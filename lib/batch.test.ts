@@ -46,6 +46,13 @@ describe("batch SKU profit", () => {
     expect(parseCells("SKU, 35, 8, 3.5")).toHaveLength(1);
     expect(parseCells("sku, , , , , , ")).toHaveLength(1);
   });
+  it("keeps the columns of a row with a blank SKU", () => {
+    expect(parseCells(", 35, 8, 3.5, 6, 5, 15")[0]).toEqual(["", "35", "8", "3.5", "6", "5", "15"]);
+  });
+  it("round-trips cells that contain commas or quotes", () => {
+    const rows = [["BLUE, LARGE", "1,200", "300", "20", "6", "5", "15"], ['6" RULER', "5", "1", "1", "", "", ""]];
+    expect(parseCells(serializeCells(rows))).toEqual(rows);
+  });
   it("summarizes totals, average margin and losing SKUs", () => {
     const summary = summarize(parseCells("A, 20, 9, 4, 8, 10, 12\nB, 12, 7, 3.5, 6, 5, 15\nC, oops, 1, 1").map(calcRow));
     expect(summary).toMatchObject({ count: 2, skipped: 1, losing: 1, sale: 32 });
