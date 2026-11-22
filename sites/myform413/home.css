@@ -153,6 +153,8 @@ footer.site.hp-foot{background:#071a33;color:#9fb6cf;border-top:0}
 .hp-wizard input:hover,.hp-wizard select:hover,.hp-wizard textarea:hover{border-color:#8fa6c0}
 .hp-wizard input:focus,.hp-wizard select:focus,.hp-wizard textarea:focus{outline:0;border-color:var(--hp-teal-d);box-shadow:0 0 0 3px rgba(18,181,165,.3)}
 .hp-wizard table.sched input[type=text]{margin-top:0;border:0;border-radius:4px;padding:8px 7px;font-size:14px}
+/* schedule tables are wider than a phone: scroll inside the card instead of widening the page */
+.hp-wizard #notesRows,.hp-wizard #securitiesRows{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .hp-wizard table.sched th{background:#f3f7fb;color:var(--hp-navy);padding:8px 7px;text-align:left}
 .hp-wizard .rowline{padding:12px 0}
 .hp-wizard .rowline.total{font-size:18px;color:var(--hp-navy)}
