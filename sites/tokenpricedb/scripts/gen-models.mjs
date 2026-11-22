@@ -15,8 +15,10 @@ const usd = (n) => '$' + (n >= 1 ? n.toFixed(2) : n >= 0.01 ? n.toFixed(4) : n.t
 const price = (n) => '$' + String(n) // per-1M prices are printed exactly as stored
 const num = (n) => n.toLocaleString('en-US')
 const checked = models.map((m) => m.checkedDate).sort().at(-1)
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const prettyDate = (iso) => { const [y, m, d] = iso.split('-'); return `${+d} ${MONTHS[+m - 1]} ${y}` }
 
-function page(path, title, description, body, { scripts = '', head = '', bodyClass = '' } = {}) {
+function page(path, title, description, body, { scripts = '', head = '', bodyClass = '', footer = '' } = {}) {
   const depth = path === '' ? 0 : path.split('/').length
   const base = depth ? '../'.repeat(depth) : './'
   const html = `<!doctype html>
@@ -42,7 +44,7 @@ function page(path, title, description, body, { scripts = '', head = '', bodyCla
 <main>
 ${body(base)}
 </main>
-<footer class="site">
+<footer class="site">${footer ? '\n' + footer(base) : ''}
 <p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked ${checked}. Every row links to its source.
 Batch, priority and long-context tiers are not included. Always confirm on the provider's pricing page before budgeting.</p>
 </footer>
@@ -187,6 +189,7 @@ ${[...models].sort((a, b) => blended(a, p) - blended(b, p)).map((m, i) => `<tr><
 // Same calculator markup and hooks as the landing pages; only the layout around it differs.
 const provClass = (p) => 'prov-' + p.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 const range = (xs) => { const lo = Math.min(...xs), hi = Math.max(...xs); return lo === hi ? price(lo) : `${price(lo)} – ${price(hi)}` }
+const familyRange = (xs) => `<span class="k-v">${range(xs)} <span class="unit">/ 1M</span></span>`
 const IMG = {
   hero: { file: 'llm-api-token-price-database.webp', w: 1536, h: 864, alt: 'LLM API token price database: token streams flowing into one pricing database' },
   compare: { file: 'cheapest-llm-api-price-comparison.webp', w: 1200, h: 675, alt: 'Comparing LLM API prices to find the cheapest model per million tokens' },
@@ -206,17 +209,18 @@ page('', 'TokenPriceDB — LLM API Token & Cost Calculator', HOME_LEAD, (base) =
 <dl class="stats">
 <div><dt>Models tracked</dt><dd>${models.length}</dd></div>
 <div><dt>Providers</dt><dd>${providers.length}</dd></div>
-<div><dt>Prices with a source link</dt><dd>${models.filter((m) => m.sourceUrl).length} / ${models.length}</dd></div>
-<div><dt>Price-change entries logged</dt><dd>${changes.length}</dd></div>
-<div><dt>Last checked</dt><dd>${checked}</dd></div>
+<div><dt>Source-linked prices</dt><dd>${models.filter((m) => m.sourceUrl).length} / ${models.length}</dd></div>
+<div><dt>Changes logged</dt><dd>${changes.length}</dd></div>
+<div><dt>Last checked</dt><dd><time datetime="${checked}">${prettyDate(checked)}</time></dd></div>
 </dl>
 </section>
 <section class="band band-light" id="calculator">
-<h2 class="section-title">Token &amp; cost calculator</h2>
+<h2 class="section-title">Price a prompt</h2>
 <div class="panel">
 ${calcForm}
 </div>
 ${costHead}
+<p class="muted table-note">Token counts read "as entered" until you paste a prompt.</p>
 ${costTable(base)}
 </section>
 <section class="band band-dark promo">
@@ -237,7 +241,7 @@ ${[...models].sort((a, b) => blended(a, chat) - blended(b, chat)).slice(0, 3).ma
 <section class="band band-soft" id="pricing">
 ${pricingHead}
 <div class="families">
-${providers.map((p) => { const ms = models.filter((m) => m.provider === p); return `<div class="family ${provClass(p)}"><div class="family-head">${esc(p)}</div><div class="family-body"><div class="v">${ms.length} <span>models</span></div><div class="k">Input ${range(ms.map((m) => m.inputPer1M))} / 1M</div><div class="k">Output ${range(ms.map((m) => m.outputPer1M))} / 1M</div></div></div>` }).join('\n')}
+${providers.map((p) => { const ms = models.filter((m) => m.provider === p); return `<div class="family ${provClass(p)}"><div class="family-head">${esc(p)}</div><div class="family-body"><div class="v">${ms.length} <span>models</span></div><div class="k"><span>Input</span> ${familyRange(ms.map((m) => m.inputPer1M))}</div><div class="k"><span>Output</span> ${familyRange(ms.map((m) => m.outputPer1M))}</div></div></div>` }).join('\n')}
 </div>
 ${pricingTable(base)}
 </section>
@@ -255,7 +259,13 @@ ${latest.map((c) => `<li><time datetime="${c.date}">${c.date}</time> <span class
 </ul>
 </div>
 </section>`, { scripts: calcScripts, head: (base) => `<meta property="og:image" content="${SITE}/assets/img/${IMG.hero.file}">
-<link rel="stylesheet" href="${base}assets/home.css">`, bodyClass: 'home' })
+<link rel="stylesheet" href="${base}assets/home.css">`, bodyClass: 'home', footer: (base) => `<nav class="foot-nav" aria-label="Footer">
+<a class="brand" href="${base}">TokenPriceDB</a>
+<a href="${base}token-calculator/">Token calculator</a>
+<a href="${base}token-cost-calculator/">Token cost calculator</a>
+<a href="${base}compare/cheapest-llm-api/">Cheapest LLM API</a>
+<a href="${base}price-changes/">Price changes</a>
+</nav>` })
 
 // ---------- /sitemap.xml ----------
 // Main pages only: the owner asked to leave the per-model pages out.
