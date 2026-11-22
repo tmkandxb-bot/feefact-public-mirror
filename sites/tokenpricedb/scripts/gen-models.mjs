@@ -66,10 +66,10 @@ if (location.protocol === 'file:') (function () {
 }
 
 // ---------- calculator pages (/, /token-calculator/, /token-cost-calculator/) ----------
-const pricingTable = (base, list = models) => `<div class="table-wrap"><table class="sortable" id="pricing-table">
+const pricingTable = (base, list = models, notes = {}) => `<div class="table-wrap"><table class="sortable" id="pricing-table">
 <thead><tr><th>Provider</th><th>Model</th><th class="num">Input / 1M</th><th class="num">Output / 1M</th><th class="num">Cached input / 1M</th><th class="num">Context window</th><th>Source</th><th>Checked</th></tr></thead>
 <tbody>
-${list.map((m) => `<tr><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a></td><td class="num" data-v="${m.inputPer1M}">${price(m.inputPer1M)}</td><td class="num" data-v="${m.outputPer1M}">${price(m.outputPer1M)}</td><td class="num" data-v="${m.cachedInputPer1M}">${price(m.cachedInputPer1M)}</td><td class="num" data-v="${m.contextWindow}">${num(m.contextWindow)}</td><td data-v="${esc(m.sourceUrl)}"><a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></td><td data-v="${m.checkedDate}">${m.checkedDate}</td></tr>`).join('\n')}
+${list.map((m) => `<tr><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a>${notes[m.slug] ? ' <a href="#price-notes" title="Price has an announced end date">*</a>' : ''}</td><td class="num" data-v="${m.inputPer1M}">${price(m.inputPer1M)}</td><td class="num" data-v="${m.outputPer1M}">${price(m.outputPer1M)}</td><td class="num" data-v="${m.cachedInputPer1M}">${price(m.cachedInputPer1M)}</td><td class="num" data-v="${m.contextWindow}">${num(m.contextWindow)}</td><td data-v="${esc(m.sourceUrl)}"><a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></td><td data-v="${m.checkedDate}">${m.checkedDate}</td></tr>`).join('\n')}
 </tbody></table></div>`
 
 const calcForm = `<section class="calc">
@@ -115,9 +115,19 @@ const calcPages = [
 for (const [path, title, h1, lead] of calcPages) page(path, title, lead, calculator(h1, lead), { scripts: calcScripts })
 
 // ---------- /llm-cost-calculator/ and /openrouter-alternatives/ ----------
-// Rows whose stored price is disputed against the provider's own page stay off these two pages
-// until data/models.json is corrected through the normal price-update path.
-const HELD_BACK = ['gemini-3-8-flash', 'claude-haiku-5-5', 'deepseek-v4-1-flash-1017', 'deepseek-v4-pro-0813', 'deepseek-v4-pro', 'deepseek-v4-flash']
+// Rows whose stored price is disputed against, or can no longer be confirmed on, the provider's own
+// page stay off these two pages until data/models.json is corrected through the normal price-update path.
+const HELD_BACK = ['gemini-3-8-flash', 'claude-haiku-5-5', 'deepseek-v4-1-flash-1017', 'deepseek-v4-pro-0813', 'deepseek-v4-pro', 'deepseek-v4-flash',
+  'gemini-3-5-flash', 'mistral-large-2512', 'devstral-2512']
+// Listed rows whose provider page states an end date for the current price.
+const GOOGLE_PRICING = 'https://ai.google.dev/gemini-api/docs/pricing'
+const geminiStep = 'Google lists $2.00 input / $10.00 output per 1M tokens through November 30, 2026, and $4.00 / $20.00 starting December 1, 2026.'
+const PRICE_NOTES = {
+  'gemini-4-carbon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gemini-4-argon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gpt-5-6-sol': { text: 'OpenAI states that GPT-5.6 Sol\u2019s promotional pricing is available until November 30, 2026; it does not list the price after that date.', url: 'https://developers.openai.com/api/docs/pricing', label: 'OpenAI pricing page' },
+}
+const NOTES_READ = '2026-11-22'
 const listed = models.filter((m) => !HELD_BACK.includes(m.slug))
 const listedProviders = [...new Set(listed.map((m) => m.provider))]
 const src = (url, label = 'source') => `<a href="${esc(url)}" rel="nofollow noopener">${esc(label)}</a>`
@@ -131,12 +141,16 @@ ${calcForm}
 ${costHead}
 ${costTable(base)}
 <h2>Per-model prices behind the calculator (USD per 1M tokens)</h2>
-<p class="muted">${listed.length} models across ${listedProviders.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it.</p>
-${pricingTable(base, listed)}
+<p class="muted">${listed.length} models across ${listedProviders.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a price end date announced by the provider; the calculator uses the price in effect on the checked date.</p>
+${pricingTable(base, listed, PRICE_NOTES)}
+<h3 id="price-notes">* Prices with an announced end date</h3>
+<ul>
+${listed.filter((m) => PRICE_NOTES[m.slug]).map((m) => `<li><strong>${esc(m.model)}</strong>: ${PRICE_NOTES[m.slug].text} ${src(PRICE_NOTES[m.slug].url, PRICE_NOTES[m.slug].label)}, read ${NOTES_READ}.</li>`).join('\n')}
+</ul>
 <h2>How the cost is calculated</h2>
 <p>Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price. Prices are standard pay-as-you-go list prices; batch, priority and long-context tiers are not included.</p>
 <p>Token counts from pasted text use the o200k_base encoding. They are exact only for the OpenAI models labeled "exact" and an estimate for every other model, because each provider uses its own tokenizer.</p>
-<p>${models.length - listed.length} models from the full database are left out of this page while their stored prices are being re-checked against the providers' own pricing pages.</p>
+<p>${models.length - listed.length} models from the full database are left out of this page because their stored prices differ from, or could not be confirmed on, the providers' own pricing pages.</p>
 <p><a href="${base}openrouter-alternatives/">Compare OpenRouter with direct APIs and other gateways</a> · <a href="${base}compare/cheapest-llm-api/">Models ranked by blended cost</a> · <a href="${base}price-changes/">Price-change log</a></p>`,
   { scripts: calcScriptsFor(listed) })
 
