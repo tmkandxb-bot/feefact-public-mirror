@@ -1,4 +1,4 @@
-import type { ProcessingFee } from "./fees";
+import { tiktokShopRefund, type ProcessingFee } from "./fees";
 
 type ProfitInput = {
   sale?: number;
@@ -26,6 +26,18 @@ export function calcProcessingFee(sale: number, fee: Pick<ProcessingFee, "rate" 
   }
   const processingFee = roundCents(sale * fee.rate + fee.fixed);
   return { processingFee, net: roundCents(sale - processingFee) };
+}
+
+export function calcRefundAdminFee(sale: number, referralRate: number, rule: { adminShareOfReferral: number; capPerSku: number } = tiktokShopRefund) {
+  if (![sale, referralRate].every(value => Number.isFinite(value) && value >= 0)) {
+    throw new RangeError("Sale and referral rate must be finite non-negative numbers.");
+  }
+  const uncapped = roundCents(sale * referralRate * rule.adminShareOfReferral);
+  return { fee: Math.min(uncapped, rule.capPerSku), atCap: uncapped >= rule.capPerSku, capped: uncapped > rule.capPerSku };
+}
+
+export function refundCapSalePrice(referralRate: number, rule: { adminShareOfReferral: number; capPerSku: number } = tiktokShopRefund) {
+  return roundCents(rule.capPerSku / (referralRate * rule.adminShareOfReferral));
 }
 
 export function parseSale(value: string | null) {

@@ -11,7 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return <html lang="en"><body className="antialiased">
     <header className="border-b bg-white"><nav aria-label="Main" className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
       <Link href="/" className="text-xl font-bold tracking-tight">Fee<span className="text-indigo-700">Fact</span></Link>
-      <Link href="/fees/stripe" className="text-sm font-medium text-slate-600">Stripe fees</Link>
+      <span className="flex gap-6 text-sm font-medium text-slate-600"><Link href="/fees/stripe">Stripe fees</Link><Link href="/tiktok-shop-refund-fee">TikTok Shop refund fee</Link></span>
     </nav></header>
     {children}
     <footer className="mx-auto max-w-5xl px-6 py-10 text-sm text-slate-500">Estimates for planning. Confirm current pricing with your payment provider.</footer>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calcNetProfit, calcProcessingFee, parseSale } from "./calc";
+import { calcNetProfit, calcProcessingFee, calcRefundAdminFee, parseSale, refundCapSalePrice } from "./calc";
 import { fees } from "./fees";
 import { calcNetProfit as legacy } from "../src/calculator.js";
 
@@ -40,5 +40,25 @@ describe("parseSale", () => {
   });
   it.each(["0", "25.50", "100"])("accepts %s", value => {
     expect(parseSale(value)).toBe(Number(value));
+  });
+});
+
+describe("calcRefundAdminFee", () => {
+  it("charges 20% of the referral fee: $0.42 on a $35 sale at 6%", () => {
+    expect(calcRefundAdminFee(35, 0.06)).toEqual({ fee: 0.42, atCap: false, capped: false });
+  });
+  it.each([[20, 0.03, 0.12], [35, 0.03, 0.21], [80, 0.05, 0.8], [200, 0.08, 3.2]])("sale %s at %s", (sale, rate, fee) => {
+    expect(calcRefundAdminFee(sale, rate).fee).toBe(fee);
+  });
+  it("caps at $5 per SKU", () => {
+    expect(calcRefundAdminFee(500, 0.05)).toEqual({ fee: 5, atCap: true, capped: false });
+    expect(calcRefundAdminFee(500, 0.06)).toEqual({ fee: 5, atCap: true, capped: true });
+    expect(calcRefundAdminFee(2000, 0.08).fee).toBe(5);
+  });
+  it("finds the sale price where the cap starts", () => {
+    expect([0.03, 0.05, 0.06, 0.08].map(rate => refundCapSalePrice(rate))).toEqual([833.33, 500, 416.67, 312.5]);
+  });
+  it("rejects invalid inputs", () => {
+    expect(() => calcRefundAdminFee(-1, 0.06)).toThrow(RangeError);
   });
 });
