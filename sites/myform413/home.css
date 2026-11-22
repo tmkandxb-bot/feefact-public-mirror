@@ -106,11 +106,11 @@
 .hp-foot{background:#071a33;color:#9fb6cf;border-top:0}
 
 /* images: hero photo (links to the wizard), feature photo, FAQ illustration */
-.hp-hero-media{position:relative;padding-bottom:120px}
+.hp-hero-media{position:relative;padding-bottom:150px}
 .hp-hero-img{display:block;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(2,12,28,.5);border:1px solid rgba(255,255,255,.18)}
 .hp-hero-img img{display:block;width:100%;height:auto;transition:transform .3s ease}
 .hp-hero-img:hover img{transform:scale(1.03)}
-.hp-hero .hp-hero-media .samplecard{position:absolute;left:-28px;bottom:0;width:330px;transform:scale(.62) rotate(-1.5deg);transform-origin:left bottom}
+.hp-hero .hp-hero-media .samplecard{position:absolute;left:-40px;bottom:0;width:330px;transform:scale(.56) rotate(-1.5deg);transform-origin:left bottom}
 .hp-split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
 .hp-split--faq{grid-template-columns:.8fr 1.2fr;align-items:start}
 .hp-fig{margin:0;border-radius:18px;overflow:hidden;box-shadow:0 18px 44px rgba(11,37,69,.18)}
