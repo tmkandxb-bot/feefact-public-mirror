@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenRouter Alternatives — direct APIs and gateways compared on the same workload | TokenPriceDB</title>
+<meta name="description" content="OpenRouter alternatives compared on one workload: what each option is, who it fits, and what 1M input + 1M output tokens of the same model costs with each published fee. Every price links to its source.">
+<link rel="canonical" href="https://tokenpricedb.com/openrouter-alternatives/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23111'/%3E%3Ctext x='8' y='12' font-size='11' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E$%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+<a class="brand" href="../">TokenPriceDB</a>
+<nav>
+<a href="../">Calculator</a>
+<a href="../compare/cheapest-llm-api/">Cheapest LLM API</a>
+<a href="../price-changes/">Price changes</a>
+</nav>
+</header>
+<main>
+<h1>OpenRouter alternatives</h1>
+<p class="lead">OpenRouter gives you one key for many models. The alternatives are the providers' own APIs, other hosted gateways, and a gateway you host yourself. This page shows what each one is, who it fits, and what the same workload costs on each, with a source link and checked date on every price.</p>
+<h2>Same model, same tokens: what each route costs</h2>
+<p class="muted">Example workload: 1,000,000 input + 1,000,000 output tokens of GPT-6.2 Sol. List price $2 input + $10 output per 1M tokens = $12.00 (<a href="../models/gpt-6-2-sol/">our price row</a>, <a href="https://openrouter.ai/openai/gpt-6.2-sol" rel="nofollow noopener">source</a>, checked 2026-11-21; <a href="https://openai.com/api/pricing/" rel="nofollow noopener">OpenAI pricing page</a>, checked 2026-11-22). Each total is that list price plus the fee the vendor publishes. It is arithmetic on published numbers, not a quote: confirm the model is offered and the fee applies to your plan on the linked page.</p>
+<div class="table-wrap"><table class="sortable">
+<thead><tr><th>Route</th><th>Type</th><th>Published fee</th><th>Arithmetic</th><th class="num">Total</th><th>Fee source</th><th>Checked</th></tr></thead>
+<tbody>
+<tr><td data-v="OpenAI API (direct)">OpenAI API (direct)</td><td data-v="Direct provider API">Direct provider API</td><td class="wrap" data-v="0">None: you pay the list price</td><td class="arith" data-v="12">$12.00</td><td class="num" data-v="12"><strong>$12.00</strong></td><td data-v="https://openai.com/api/pricing/"><a href="https://openai.com/api/pricing/" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td></tr>
+<tr><td data-v="OpenRouter (Standard)">OpenRouter (Standard)</td><td data-v="Hosted aggregator">Hosted aggregator</td><td class="wrap" data-v="0.055">5.5% platform fee, charged when you buy credits</td><td class="arith" data-v="12.66">$12.00 + 5.5% × $12.00</td><td class="num" data-v="12.66"><strong>$12.66</strong></td><td data-v="https://openrouter.ai/pricing"><a href="https://openrouter.ai/pricing" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td></tr>
+<tr><td data-v="OpenRouter (Business)">OpenRouter (Business)</td><td data-v="Hosted aggregator">Hosted aggregator</td><td class="wrap" data-v="0.08">8% platform fee, charged when you buy credits</td><td class="arith" data-v="12.96">$12.00 + 8% × $12.00</td><td class="num" data-v="12.96"><strong>$12.96</strong></td><td data-v="https://openrouter.ai/pricing"><a href="https://openrouter.ai/pricing" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td></tr>
+<tr><td data-v="Vercel AI Gateway">Vercel AI Gateway</td><td data-v="Hosted gateway">Hosted gateway</td><td class="wrap" data-v="0">No markup and no platform fee on tokens; payment processing fees may apply</td><td class="arith" data-v="12">$12.00</td><td class="num" data-v="12"><strong>$12.00</strong></td><td data-v="https://vercel.com/docs/ai-gateway/pricing"><a href="https://vercel.com/docs/ai-gateway/pricing" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td></tr>
+<tr><td data-v="Cloudflare AI Gateway (Unified Billing)">Cloudflare AI Gateway (Unified Billing)</td><td data-v="Hosted gateway">Hosted gateway</td><td class="wrap" data-v="0.05">5% fee on credits bought through Unified Billing</td><td class="arith" data-v="12.600000000000001">$12.00 + 5% × $12.00</td><td class="num" data-v="12.600000000000001"><strong>$12.60</strong></td><td data-v="https://developers.cloudflare.com/ai-gateway/reference/pricing/"><a href="https://developers.cloudflare.com/ai-gateway/reference/pricing/" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td></tr>
+<tr><td data-v="Requesty">Requesty</td><td data-v="Hosted aggregator">Hosted aggregator</td><td class="wrap" data-v="0.05">5% on model cost</td><td class="arith" data-v="12.600000000000001">$12.00 + 5% × $12.00</td><td class="num" data-v="12.600000000000001"><strong>$12.60</strong></td><td data-v="https://www.requesty.ai/pricing"><a href="https://www.requesty.ai/pricing" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td></tr>
+<tr><td data-v="LiteLLM (self-hosted)">LiteLLM (self-hosted)</td><td data-v="Open-source gateway">Open-source gateway</td><td class="wrap" data-v="0">No gateway fee in this example; you pay providers with your own keys and run the servers</td><td class="arith" data-v="12">$12.00 + your hosting</td><td class="num" data-v="12"><strong>$12.00</strong> + your hosting</td><td data-v="https://docs.litellm.ai/docs/"><a href="https://docs.litellm.ai/docs/" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td></tr>
+</tbody></table></div>
+<p class="muted">Fees can change the total more than the route does: a percentage fee grows with spend, and a self-hosted gateway adds server and engineering cost that is not in this table.</p>
+<p><a href="../token-calculator/?in=1000000&amp;out=1000000">Open this workload in the token calculator</a> to see 1M input + 1M output tokens priced on every model, or <a href="../llm-cost-calculator/">price your own prompt</a>.</p>
+<h2>What each alternative is and who it fits</h2>
+<div class="alts">
+<div class="card"><h3>Direct provider APIs</h3><p class="k">Direct provider API</p><p>The model maker's own API. Each provider (OpenAI, Anthropic, Google, xAI and others) has its own key, SDK and invoice.</p><p><strong>Fits:</strong> Teams that use one or two providers and want list prices, first-party rate limits and features without a middle layer.</p><p class="k"><a href="https://openai.com/api/pricing/" rel="nofollow noopener">Pricing source</a> · checked 2026-11-22</p></div>
+<div class="card"><h3>OpenRouter</h3><p class="k">Hosted aggregator</p><p>One API key and one credit balance for models from many providers. Inference is billed at the provider's list price; the fee is added when you buy credits.</p><p><strong>Fits:</strong> Prototypes and products that switch between many models and want one bill.</p><p class="k"><a href="https://openrouter.ai/pricing" rel="nofollow noopener">Pricing source</a> · checked 2026-11-22</p></div>
+<div class="card"><h3>Vercel AI Gateway</h3><p class="k">Hosted gateway</p><p>A gateway inside the Vercel platform, billed from prepaid AI Gateway Credits at provider list rates. Optional add-ons such as regional endpoints are charged separately.</p><p><strong>Fits:</strong> Teams already deploying on Vercel that want one balance for several providers.</p><p class="k"><a href="https://vercel.com/docs/ai-gateway/pricing" rel="nofollow noopener">Pricing source</a> · checked 2026-11-22</p></div>
+<div class="card"><h3>Cloudflare AI Gateway (Unified Billing)</h3><p class="k">Hosted gateway</p><p>A proxy in front of provider APIs with analytics, caching and rate limiting. Core features are free with your own provider keys; Unified Billing adds one Cloudflare bill.</p><p><strong>Fits:</strong> Teams already on Cloudflare that want caching and logs in front of their provider keys.</p><p class="k"><a href="https://developers.cloudflare.com/ai-gateway/reference/pricing/" rel="nofollow noopener">Pricing source</a> · checked 2026-11-22</p></div>
+<div class="card"><h3>Requesty</h3><p class="k">Hosted aggregator</p><p>A hosted router with pay-as-you-go billing: you pay what your application spends on models plus a percentage.</p><p><strong>Fits:</strong> Teams that want a hosted router with usage-based billing and no credit-purchase step.</p><p class="k"><a href="https://www.requesty.ai/pricing" rel="nofollow noopener">Pricing source</a> · checked 2026-11-22</p></div>
+<div class="card"><h3>LiteLLM (self-hosted)</h3><p class="k">Open-source gateway</p><p>An open-source library and self-hosted proxy that exposes 100+ LLMs in the OpenAI format, with virtual keys and cost tracking.</p><p><strong>Fits:</strong> Platform teams that want the gateway inside their own infrastructure and can operate it.</p><p class="k"><a href="https://docs.litellm.ai/docs/" rel="nofollow noopener">Pricing source</a> · checked 2026-11-22</p></div>
+</div>
+<h2>Going direct: provider list price next to the price listed on OpenRouter</h2>
+<p class="muted">Four models whose list price we read on the provider's own pricing page on 2026-11-22, next to the row in our database (sourced from the model's OpenRouter page). Cost is for 1M input + 1M output tokens, before any gateway fee.</p>
+<div class="table-wrap"><table class="sortable">
+<thead><tr><th>Provider</th><th>Model</th><th class="num">Direct input / 1M</th><th class="num">Direct output / 1M</th><th class="num">1M in + 1M out</th><th>Provider source</th><th>Checked</th><th class="num">Listed on OpenRouter (in / out)</th><th>Source</th><th>Checked</th></tr></thead>
+<tbody>
+<tr><td data-v="OpenAI">OpenAI</td><td data-v="GPT-6.2 Sol"><a href="../models/gpt-6-2-sol/">GPT-6.2 Sol</a></td><td class="num" data-v="2">$2</td><td class="num" data-v="10">$10</td><td class="num" data-v="12"><strong>$12.00</strong></td><td data-v="https://openai.com/api/pricing/"><a href="https://openai.com/api/pricing/" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td><td class="num" data-v="12">$2 / $10</td><td data-v="https://openrouter.ai/openai/gpt-6.2-sol"><a href="https://openrouter.ai/openai/gpt-6.2-sol" rel="nofollow noopener">source</a></td><td data-v="2026-11-21">2026-11-21</td></tr>
+<tr><td data-v="Anthropic">Anthropic</td><td data-v="Claude Sonnet 5.5"><a href="../models/claude-sonnet-5-5/">Claude Sonnet 5.5</a></td><td class="num" data-v="2">$2</td><td class="num" data-v="10">$10</td><td class="num" data-v="12"><strong>$12.00</strong></td><td data-v="https://docs.anthropic.com/en/docs/about-claude/pricing"><a href="https://docs.anthropic.com/en/docs/about-claude/pricing" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td><td class="num" data-v="12">$2 / $10</td><td data-v="https://openrouter.ai/anthropic/claude-sonnet-5.5"><a href="https://openrouter.ai/anthropic/claude-sonnet-5.5" rel="nofollow noopener">source</a></td><td data-v="2026-11-21">2026-11-21</td></tr>
+<tr><td data-v="Google">Google</td><td data-v="Gemini 4 Neon"><a href="../models/gemini-4-neon/">Gemini 4 Neon</a></td><td class="num" data-v="3">$3</td><td class="num" data-v="15">$15</td><td class="num" data-v="18"><strong>$18.00</strong></td><td data-v="https://ai.google.dev/gemini-api/docs/pricing"><a href="https://ai.google.dev/gemini-api/docs/pricing" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td><td class="num" data-v="18">$3 / $15</td><td data-v="https://openrouter.ai/google/gemini-4-neon"><a href="https://openrouter.ai/google/gemini-4-neon" rel="nofollow noopener">source</a></td><td data-v="2026-11-21">2026-11-21</td></tr>
+<tr><td data-v="xAI">xAI</td><td data-v="Grok 4.7"><a href="../models/grok-4-7/">Grok 4.7</a></td><td class="num" data-v="2">$2</td><td class="num" data-v="6">$6</td><td class="num" data-v="8"><strong>$8.00</strong></td><td data-v="https://docs.x.ai/docs/models"><a href="https://docs.x.ai/docs/models" rel="nofollow noopener">source</a></td><td data-v="2026-11-22">2026-11-22</td><td class="num" data-v="8">$2 / $6</td><td data-v="https://openrouter.ai/x-ai/grok-4.7"><a href="https://openrouter.ai/x-ai/grok-4.7" rel="nofollow noopener">source</a></td><td data-v="2026-11-21">2026-11-21</td></tr>
+</tbody></table></div>
+<h2>How to choose</h2>
+<p>Start from how many providers you call. With one or two, the direct APIs keep list prices and first-party limits. With many, a gateway trades a fee or an operations burden for one key and one bill. Check three things on the vendor's page before switching: where the fee is charged (credits, requests or usage), whether your own provider keys are supported, and whether the models you use are in the catalog.</p>
+<p><a href="../llm-cost-calculator/">LLM cost calculator</a> · <a href="../compare/cheapest-llm-api/">Models ranked by blended cost</a> · <a href="../price-changes/">Price-change log</a></p>
+</main>
+<footer class="site">
+<p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked 2026-11-21. Every row links to its source.
+Batch, priority and long-context tiers are not included. Always confirm on the provider's pricing page before budgeting.</p>
+</footer>
+<script src="../assets/app.js" defer></script>
+<script>
+// Opened from disk: directory links have no index.html resolution, so add it to the href.
+if (location.protocol === 'file:') (function () {
+  var fix = function (a) { if (a && a.protocol === 'file:' && a.pathname.slice(-1) === '/') a.href = a.href.split(/[?#]/)[0] + 'index.html'; };
+  var onEvent = function (e) { fix(e.target.closest && e.target.closest('a[href]')); };
+  document.addEventListener('DOMContentLoaded', function () { [].forEach.call(document.querySelectorAll('a[href]'), fix); });
+  document.addEventListener('mousedown', onEvent, true);
+  document.addEventListener('focusin', onEvent, true);
+})();
+</script>
+</body>
+</html>
