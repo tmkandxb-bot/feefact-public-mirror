@@ -7,4 +7,4 @@ export function calcNetProfit({ sale = 35, referralRate = 0.06, creatorRate = 0.
   const net = sale - totalFees - cogs - shipping;
   return { sale, referral, creator, ads, totalFees, net, margin: net / sale };
 }
-// Example: calcNetProfit({}) -> net 13.40, margin 0.383
+// Example: calcNetProfit({}) -> net 14.40, margin 0.411

@@ -16,7 +16,7 @@ CI / Deployment:
 - Perf gate: LCP < 2.5s, checked in CI with Lighthouse
 
 Real example in repo: src/calculator.js is the exact same logic as /lib/calc.ts on live site.
-$35 sale, referral 6% + creator 5% + ads 15% + COGS $8 + shipping $3.5 = net $13.40
+$35 sale, referral 6% + creator 5% + ads 15% + COGS $8 + shipping $3.5 = net $14.40
 
 Repo: https://github.com/tmkandxb-bot/feefact-public-mirror
 Live: https://feefact.com
