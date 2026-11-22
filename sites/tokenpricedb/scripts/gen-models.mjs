@@ -258,7 +258,8 @@ ${latest.map((c) => `<li><time datetime="${c.date}">${c.date}</time> <span class
 <link rel="stylesheet" href="${base}assets/home.css">`, bodyClass: 'home' })
 
 // ---------- /sitemap.xml ----------
-const urls = ['', 'token-calculator/', 'token-cost-calculator/']
+// Main pages only: the owner asked to leave the per-model pages out.
+const urls = ['', 'token-calculator/', 'token-cost-calculator/', 'compare/cheapest-llm-api/', 'price-changes/']
 const homeImages = Object.values(IMG).map((i) => `<image:image><image:loc>${SITE}/assets/img/${i.file}</image:loc></image:image>`).join('')
 writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
