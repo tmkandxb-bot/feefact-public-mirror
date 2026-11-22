@@ -16,7 +16,7 @@ const price = (n) => '$' + String(n) // per-1M prices are printed exactly as sto
 const num = (n) => n.toLocaleString('en-US')
 const checked = models.map((m) => m.checkedDate).sort().at(-1)
 
-function page(path, title, description, body, { scripts = '' } = {}) {
+function page(path, title, description, body, { scripts = '', head = '', bodyClass = '' } = {}) {
   const depth = path === '' ? 0 : path.split('/').length
   const base = depth ? '../'.repeat(depth) : './'
   const html = `<!doctype html>
@@ -28,9 +28,9 @@ function page(path, title, description, body, { scripts = '' } = {}) {
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${SITE}/${path ? path + '/' : ''}">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23111'/%3E%3Ctext x='8' y='12' font-size='11' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E$%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="${base}assets/style.css">
+<link rel="stylesheet" href="${base}assets/style.css">${head ? '\n' + head(base) : ''}
 </head>
-<body>
+<body${bodyClass ? ` class="${bodyClass}"` : ''}>
 <header class="site">
 <a class="brand" href="${base}">TokenPriceDB</a>
 <nav>
@@ -72,9 +72,7 @@ const pricingTable = (base) => `<div class="table-wrap"><table class="sortable" 
 ${models.map((m) => `<tr><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a></td><td class="num" data-v="${m.inputPer1M}">${price(m.inputPer1M)}</td><td class="num" data-v="${m.outputPer1M}">${price(m.outputPer1M)}</td><td class="num" data-v="${m.cachedInputPer1M}">${price(m.cachedInputPer1M)}</td><td class="num" data-v="${m.contextWindow}">${num(m.contextWindow)}</td><td data-v="${esc(m.sourceUrl)}"><a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></td><td data-v="${m.checkedDate}">${m.checkedDate}</td></tr>`).join('\n')}
 </tbody></table></div>`
 
-const calculator = (h1, lead) => (base) => `<h1>${esc(h1)}</h1>
-<p class="lead">${esc(lead)}</p>
-<section class="calc">
+const calcForm = `<section class="calc">
 <div>
 <label for="prompt">Prompt text</label>
 <textarea id="prompt" placeholder="Paste a prompt to count its tokens…"></textarea>
@@ -85,14 +83,22 @@ const calculator = (h1, lead) => (base) => `<h1>${esc(h1)}</h1>
 <div><label for="out-tokens">Output tokens</label><input type="number" id="out-tokens" min="0" step="1" value="500"></div>
 <p class="muted">Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price.</p>
 </div>
-</section>
-<h2>Cost for <span id="usage"></span></h2>
-<p class="muted">Cheapest first. Click a column header to sort. Token counts are exact only for OpenAI models that gpt-tokenizer maps to o200k_base; every other model is labeled "estimate".</p>
-<div class="table-wrap"><table class="sortable" id="cost-table" data-base="${base}">
+</section>`
+const costHead = `<h2>Cost for <span id="usage"></span></h2>
+<p class="muted">Cheapest first. Click a column header to sort. Token counts are exact only for OpenAI models that gpt-tokenizer maps to o200k_base; every other model is labeled "estimate".</p>`
+const costTable = (base) => `<div class="table-wrap"><table class="sortable" id="cost-table" data-base="${base}">
 <thead><tr><th>Provider</th><th>Model</th><th>Token count</th><th class="num">Input cost</th><th class="num">Output cost</th><th class="num">Total</th></tr></thead>
-<tbody></tbody></table></div>
-<h2>LLM API pricing table (USD per 1M tokens)</h2>
-<p class="muted">${models.length} models across ${[...new Set(models.map((m) => m.provider))].join(', ')}.</p>
+<tbody></tbody></table></div>`
+const providers = [...new Set(models.map((m) => m.provider))]
+const pricingHead = `<h2>LLM API pricing table (USD per 1M tokens)</h2>
+<p class="muted">${models.length} models across ${providers.join(', ')}.</p>`
+
+const calculator = (h1, lead) => (base) => `<h1>${esc(h1)}</h1>
+<p class="lead">${esc(lead)}</p>
+${calcForm}
+${costHead}
+${costTable(base)}
+${pricingHead}
 ${pricingTable(base)}`
 
 const calcScripts = (base) => `<script type="application/json" id="models-data">${JSON.stringify(models).replace(/</g, '\\u003c')}</script>
@@ -100,8 +106,6 @@ const calcScripts = (base) => `<script type="application/json" id="models-data">
 <script src="${base}assets/app.js" defer></script>`
 
 const calcPages = [
-  ['', 'TokenPriceDB — LLM API Token & Cost Calculator', 'LLM API token & cost calculator',
-    'Count the tokens in a prompt and compare what it costs on every major LLM API.'],
   ['token-calculator', 'Token Calculator — count tokens for GPT, Claude, Gemini | TokenPriceDB', 'Token calculator',
     'Paste text to count its tokens, then see the cost on every major LLM API.'],
   ['token-cost-calculator', 'Token Cost Calculator — LLM API cost per request | TokenPriceDB', 'Token cost calculator',
@@ -178,5 +182,78 @@ ${[...models].sort((a, b) => blended(a, p) - blended(b, p)).map((m, i) => `<tr><
 </tbody></table></div>`).join('\n')}
 <p><a href="${base}">← Calculate the cost of your own prompt</a></p>`,
   { scripts: (base) => `<script src="${base}assets/app.js" defer></script>` })
+
+// ---------- / (homepage) ----------
+// Same calculator markup and hooks as the landing pages; only the layout around it differs.
+const provClass = (p) => 'prov-' + p.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+const range = (xs) => { const lo = Math.min(...xs), hi = Math.max(...xs); return lo === hi ? price(lo) : `${price(lo)} – ${price(hi)}` }
+const HOME_LEAD = 'Count the tokens in a prompt and compare what it costs on every major LLM API.'
+const chat = PROFILES[0]
+const latest = [...changes].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3)
+page('', 'TokenPriceDB — LLM API Token & Cost Calculator', HOME_LEAD, (base) => `<section class="hero band-dark">
+<div class="hero-copy">
+<p class="eyebrow">LLM API pricing database</p>
+<h1>LLM API token &amp; cost calculator</h1>
+<p class="lead">${esc(HOME_LEAD)}</p>
+<p class="cta"><a class="btn btn-primary" href="#calculator">Open the calculator</a><a class="btn btn-ghost" href="#pricing">Browse all ${models.length} prices</a></p>
+</div>
+<dl class="stats">
+<div><dt>Models tracked</dt><dd>${models.length}</dd></div>
+<div><dt>Providers</dt><dd>${providers.length}</dd></div>
+<div><dt>Prices with a source link</dt><dd>${models.filter((m) => m.sourceUrl).length} / ${models.length}</dd></div>
+<div><dt>Price-change entries logged</dt><dd>${changes.length}</dd></div>
+<div><dt>Last checked</dt><dd>${checked}</dd></div>
+</dl>
+</section>
+<section class="band band-light" id="calculator">
+<h2 class="section-title">Token &amp; cost calculator</h2>
+<div class="panel">
+${calcForm}
+</div>
+${costHead}
+${costTable(base)}
+</section>
+<section class="band band-dark promo">
+<div class="promo-copy">
+<p class="eyebrow">Compare</p>
+<h2>Which LLM API is cheapest for your workload?</h2>
+<p>All ${models.length} models ranked by blended cost per 1M tokens for chat, RAG and coding-agent workloads, with the arithmetic shown.</p>
+<p class="cta"><a class="btn btn-primary" href="${base}compare/cheapest-llm-api/">See the full ranking</a></p>
+</div>
+<div class="promo-data">
+<ol class="rank">
+${[...models].sort((a, b) => blended(a, chat) - blended(b, chat)).slice(0, 3).map((m) => `<li><span class="prov ${provClass(m.provider)}">${esc(m.provider)}</span> <a href="${base}models/${m.slug}/">${esc(m.model)}</a> <span class="rank-v">${usd(blended(m, chat))} / 1M</span></li>`).join('\n')}
+</ol>
+<p class="muted">Cheapest three for the chat profile (${pct(chat.input)} input, ${pct(chat.output)} output), computed from the pricing table.</p>
+</div>
+</section>
+<section class="band band-soft" id="pricing">
+${pricingHead}
+<div class="families">
+${providers.map((p) => { const ms = models.filter((m) => m.provider === p); return `<div class="family ${provClass(p)}"><div class="family-head">${esc(p)}</div><div class="family-body"><div class="v">${ms.length} <span>models</span></div><div class="k">Input ${range(ms.map((m) => m.inputPer1M))} / 1M</div><div class="k">Output ${range(ms.map((m) => m.outputPer1M))} / 1M</div></div></div>` }).join('\n')}
+</div>
+${pricingTable(base)}
+</section>
+<section class="band band-light promo">
+<div class="promo-copy">
+<p class="eyebrow">Price changes</p>
+<h2>See when an LLM API price changes</h2>
+<p>A sourced log of launch prices and announced changes. Every entry links to the pricing page it was checked against.</p>
+<p class="cta"><a class="btn btn-dark" href="${base}price-changes/">Open the price-change log</a></p>
+</div>
+<div class="promo-data">
+<ul class="changes">
+${latest.map((c) => `<li><time datetime="${c.date}">${c.date}</time> <span class="prov ${provClass(c.provider)}">${esc(c.provider)}</span> ${models.some((m) => m.slug === c.slug) ? `<a href="${base}models/${c.slug}/">${esc(c.model)}</a>` : esc(c.model)}<span class="change">${esc(c.change)}</span></li>`).join('\n')}
+</ul>
+</div>
+</section>`, { scripts: calcScripts, head: (base) => `<link rel="stylesheet" href="${base}assets/home.css">`, bodyClass: 'home' })
+
+// ---------- /sitemap.xml ----------
+const urls = ['', 'token-calculator/', 'token-cost-calculator/', 'compare/cheapest-llm-api/', 'price-changes/', ...models.map((m) => `models/${m.slug}/`)]
+writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map((u) => `<url><loc>${SITE}/${u}</loc></url>`).join('\n')}
+</urlset>
+`)
 
 console.log(`Generated ${models.length} model pages + calculator, price-changes and compare pages.`)

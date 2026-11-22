@@ -8,8 +8,9 @@
 <link rel="canonical" href="https://tokenpricedb.com/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23111'/%3E%3Ctext x='8' y='12' font-size='11' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E$%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/style.css">
+<link rel="stylesheet" href="./assets/home.css">
 </head>
-<body>
+<body class="home">
 <header class="site">
 <a class="brand" href="./">TokenPriceDB</a>
 <nav>
@@ -19,8 +20,24 @@
 </nav>
 </header>
 <main>
+<section class="hero band-dark">
+<div class="hero-copy">
+<p class="eyebrow">LLM API pricing database</p>
 <h1>LLM API token &amp; cost calculator</h1>
 <p class="lead">Count the tokens in a prompt and compare what it costs on every major LLM API.</p>
+<p class="cta"><a class="btn btn-primary" href="#calculator">Open the calculator</a><a class="btn btn-ghost" href="#pricing">Browse all 43 prices</a></p>
+</div>
+<dl class="stats">
+<div><dt>Models tracked</dt><dd>43</dd></div>
+<div><dt>Providers</dt><dd>6</dd></div>
+<div><dt>Prices with a source link</dt><dd>43 / 43</dd></div>
+<div><dt>Price-change entries logged</dt><dd>3</dd></div>
+<div><dt>Last checked</dt><dd>2026-11-21</dd></div>
+</dl>
+</section>
+<section class="band band-light" id="calculator">
+<h2 class="section-title">Token &amp; cost calculator</h2>
+<div class="panel">
 <section class="calc">
 <div>
 <label for="prompt">Prompt text</label>
@@ -33,13 +50,40 @@
 <p class="muted">Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price.</p>
 </div>
 </section>
+</div>
 <h2>Cost for <span id="usage"></span></h2>
 <p class="muted">Cheapest first. Click a column header to sort. Token counts are exact only for OpenAI models that gpt-tokenizer maps to o200k_base; every other model is labeled "estimate".</p>
 <div class="table-wrap"><table class="sortable" id="cost-table" data-base="./">
 <thead><tr><th>Provider</th><th>Model</th><th>Token count</th><th class="num">Input cost</th><th class="num">Output cost</th><th class="num">Total</th></tr></thead>
 <tbody></tbody></table></div>
+</section>
+<section class="band band-dark promo">
+<div class="promo-copy">
+<p class="eyebrow">Compare</p>
+<h2>Which LLM API is cheapest for your workload?</h2>
+<p>All 43 models ranked by blended cost per 1M tokens for chat, RAG and coding-agent workloads, with the arithmetic shown.</p>
+<p class="cta"><a class="btn btn-primary" href="./compare/cheapest-llm-api/">See the full ranking</a></p>
+</div>
+<div class="promo-data">
+<ol class="rank">
+<li><span class="prov prov-deepseek">DeepSeek</span> <a href="./models/deepseek-v4-flash/">DeepSeek V4 Flash 0423</a> <span class="rank-v">$0.1125 / 1M</span></li>
+<li><span class="prov prov-openai">OpenAI</span> <a href="./models/gpt-6-luna/">GPT-6 Luna</a> <span class="rank-v">$0.2000 / 1M</span></li>
+<li><span class="prov prov-anthropic">Anthropic</span> <a href="./models/claude-haiku-5-5/">Claude Haiku 5.5</a> <span class="rank-v">$0.2000 / 1M</span></li>
+</ol>
+<p class="muted">Cheapest three for the chat profile (75% input, 25% output), computed from the pricing table.</p>
+</div>
+</section>
+<section class="band band-soft" id="pricing">
 <h2>LLM API pricing table (USD per 1M tokens)</h2>
 <p class="muted">43 models across OpenAI, Anthropic, Google, DeepSeek, xAI, Mistral.</p>
+<div class="families">
+<div class="family prov-openai"><div class="family-head">OpenAI</div><div class="family-body"><div class="v">14 <span>models</span></div><div class="k">Input $0.1 – $10 / 1M</div><div class="k">Output $0.5 – $50 / 1M</div></div></div>
+<div class="family prov-anthropic"><div class="family-head">Anthropic</div><div class="family-body"><div class="v">8 <span>models</span></div><div class="k">Input $0.1 – $10 / 1M</div><div class="k">Output $0.5 – $50 / 1M</div></div></div>
+<div class="family prov-google"><div class="family-head">Google</div><div class="family-body"><div class="v">8 <span>models</span></div><div class="k">Input $0.25 – $3 / 1M</div><div class="k">Output $1.5 – $15 / 1M</div></div></div>
+<div class="family prov-deepseek"><div class="family-head">DeepSeek</div><div class="family-body"><div class="v">4 <span>models</span></div><div class="k">Input $0.09 – $1.32 / 1M</div><div class="k">Output $0.18 – $3.96 / 1M</div></div></div>
+<div class="family prov-xai"><div class="family-head">xAI</div><div class="family-body"><div class="v">4 <span>models</span></div><div class="k">Input $1.25 – $2 / 1M</div><div class="k">Output $2.5 – $6 / 1M</div></div></div>
+<div class="family prov-mistral"><div class="family-head">Mistral</div><div class="family-body"><div class="v">5 <span>models</span></div><div class="k">Input $0.15 – $0.7 / 1M</div><div class="k">Output $0.6 – $2.1 / 1M</div></div></div>
+</div>
 <div class="table-wrap"><table class="sortable" id="pricing-table">
 <thead><tr><th>Provider</th><th>Model</th><th class="num">Input / 1M</th><th class="num">Output / 1M</th><th class="num">Cached input / 1M</th><th class="num">Context window</th><th>Source</th><th>Checked</th></tr></thead>
 <tbody>
@@ -87,6 +131,22 @@
 <tr><td data-v="Mistral">Mistral</td><td data-v="Mistral Large 3 2512"><a href="./models/mistral-large-2512/">Mistral Large 3 2512</a></td><td class="num" data-v="0.5">$0.5</td><td class="num" data-v="1.5">$1.5</td><td class="num" data-v="0.05">$0.05</td><td class="num" data-v="262144">262,144</td><td data-v="https://openrouter.ai/mistralai/mistral-large-2512"><a href="https://openrouter.ai/mistralai/mistral-large-2512" rel="nofollow noopener">source</a></td><td data-v="2026-11-21">2026-11-21</td></tr>
 <tr><td data-v="Mistral">Mistral</td><td data-v="Codestral 2508"><a href="./models/codestral-2508/">Codestral 2508</a></td><td class="num" data-v="0.3">$0.3</td><td class="num" data-v="0.9">$0.9</td><td class="num" data-v="0.03">$0.03</td><td class="num" data-v="256000">256,000</td><td data-v="https://openrouter.ai/mistralai/codestral-2508"><a href="https://openrouter.ai/mistralai/codestral-2508" rel="nofollow noopener">source</a></td><td data-v="2026-11-21">2026-11-21</td></tr>
 </tbody></table></div>
+</section>
+<section class="band band-light promo">
+<div class="promo-copy">
+<p class="eyebrow">Price changes</p>
+<h2>See when an LLM API price changes</h2>
+<p>A sourced log of launch prices and announced changes. Every entry links to the pricing page it was checked against.</p>
+<p class="cta"><a class="btn btn-dark" href="./price-changes/">Open the price-change log</a></p>
+</div>
+<div class="promo-data">
+<ul class="changes">
+<li><time datetime="2026-11-17">2026-11-17</time> <span class="prov prov-openai">OpenAI</span> <a href="./models/gpt-6-2-astra/">GPT-6.2 Astra</a><span class="change">Launch pricing: $8 input / $40 output per 1M tokens.</span></li>
+<li><time datetime="2026-11-17">2026-11-17</time> <span class="prov prov-openai">OpenAI</span> <a href="./models/gpt-6-2-sol/">GPT-6.2 Sol</a><span class="change">Launch pricing: $2 input / $10 output per 1M tokens.</span></li>
+<li><time datetime="2026-11-10">2026-11-10</time> <span class="prov prov-google">Google</span> <a href="./models/gemini-4-carbon/">Gemini 4 Carbon</a><span class="change">Launch pricing: $2 input / $10 output per 1M tokens. Announced increase: from Dec 1, 2026 (after Nov 30, 2026) input rises to $4 and output to $20 per 1M.</span></li>
+</ul>
+</div>
+</section>
 </main>
 <footer class="site">
 <p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked 2026-11-21. Every row links to its source.
