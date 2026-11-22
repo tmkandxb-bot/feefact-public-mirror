@@ -53,7 +53,7 @@ export default function RefundFeePage() {
       <p className="mt-4 leading-relaxed text-slate-600"><strong className="text-slate-900">Two refunds carry no administration fee:</strong></p>
       <ul className="mt-2 list-disc space-y-2 pl-5 leading-relaxed text-slate-600">
         <li>Refunds on {exemptA}.</li>
-        <li>Pre-shipment {exemptB}.</li>
+        <li>{exemptB.charAt(0).toUpperCase() + exemptB.slice(1)}.</li>
       </ul>
       <p className="mt-3 text-sm text-slate-500">Source: <a className="text-indigo-700 underline" href={refund.source} rel="noopener noreferrer" target="_blank">TikTok Shop Academy: Referral Fee Updates</a>, section &quot;Refunds and Returns&quot;.</p>
     </section>
