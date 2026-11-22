@@ -45,7 +45,7 @@ export default function RefundFeePage() {
     <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">TikTok Shop Refund Administration Fee</h1>
     <p className="mt-5 max-w-2xl text-lg text-slate-600">The fee almost nobody models — and the reason high-return categories quietly bleed money.</p>
     <p className="mt-3 text-sm text-slate-500">Rates last verified: {refund.verified} · US rule</p>
-    <p className="mt-8 max-w-3xl rounded-2xl border border-indigo-200 bg-indigo-50 p-6 leading-relaxed"><strong>The short answer:</strong> when a US order is refunded, you do not get the whole referral fee back — TikTok keeps a refund administration fee of {share} of the referral fee, capped at {cap} per SKU. Return shipping is a separate cost that this fee does not cover; see <a className="font-semibold text-indigo-700 underline" href="#return-shipping">who pays for return shipping</a>.</p>
+    <p className="mt-8 max-w-3xl rounded-2xl border border-indigo-200 bg-indigo-50 p-6 leading-relaxed"><strong>The short answer:</strong> when a US order is refunded, you do not get the whole referral fee back — TikTok keeps a refund administration fee of {share} of the referral fee, capped at {cap} per SKU. Two cases are exempt: {exemptA}, and {exemptB}. Return shipping is a separate cost that this fee does not cover; see <a className="font-semibold text-indigo-700 underline" href="#return-shipping">who pays for return shipping</a>.</p>
 
     <section className={card} aria-labelledby="rule-heading">
       <h2 id="rule-heading" className="text-2xl font-bold">The rule</h2>

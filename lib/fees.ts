@@ -21,8 +21,6 @@ export const fees: readonly ProcessingFee[] = [
 // TikTok Shop US Academy, Category Referral Rates (rates effective October 31, 2024).
 export const tiktokShopUsReferral = {
   source: "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682&lang=en",
-  standardRate: 0.06,
-  reducedRate: 0.05,
   reducedJewelry: ["Diamond", "Gold", "Jade", "Platinum/Carat Gold", "Ruby/Sapphire/Emerald"],
   // Pre-owned: 5% up to the threshold, 3% on the portion of a sale above it.
   preOwned: { rate: 0.05, threshold: 10000, rateAboveThreshold: 0.03 },
