@@ -2,7 +2,7 @@
 
 SBA Form 413 is the Personal Financial Statement that the U.S. Small Business Administration uses to get a picture of what you personally own and what you personally owe. This guide walks through the current version of the form (version 05-24, OMB No. 3245-0188, expires 08/31/2027) from the first box to the signature line. For each part you will find three things: what the form asks, what counts, and common mistakes to avoid.
 
-This guide is written for someone who has never seen the form. It explains how to complete it. It does not tell you whether you will be approved for anything, and nothing here is legal, tax, or accounting advice. Where a detail depends on the official instructions printed with the form, or on your lender, this guide says so instead of guessing.
+This guide is written for someone who has never seen the form. It explains how to complete it. It does not tell you whether you will be approved for anything, and nothing here is legal, tax, or accounting advice. Where a detail of the form is not confirmed, this guide marks it [VERIFY] or tells you to ask your lender instead of guessing.
 
 ## Before you start
 

@@ -108,7 +108,7 @@ A clean statement is mostly a matter of order and patience.
 
 - **Describing the business instead of yourself.** The form is personal. Business assets and business debts belong in the business's own financial statements.
 - **Using the wrong life insurance number.** The asset line asks for cash surrender value, not the policy's face amount.
-- **Leaving lines blank.** A blank can mean "zero" or "forgot." Ask your lender how they want lines that do not apply to be marked. [VERIFY: whether the form's instructions specify how to mark non-applicable lines]
+- **Leaving lines blank.** A blank can mean "zero" or "forgot." Ask your lender how they want lines that do not apply to be marked. [VERIFY: whether the form says how to mark non-applicable lines]
 - **Forgetting debts tied to assets.** A car listed under automobiles usually has a matching entry under the auto installment line if it is financed. A property in Section 4 with a mortgage needs the holder, balance, payment, and status filled in.
 - **Mixing dates.** A bank balance from one month and a brokerage balance from another make the statement harder to verify.
 - **Leaving out contingent liabilities.** If you have co-signed or guaranteed someone else's debt, it belongs in the contingent liabilities part of Section 1 even though you are not making the payments.
