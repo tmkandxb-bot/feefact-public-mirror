@@ -95,11 +95,14 @@ Batch, priority and long-context tiers are not included. Always confirm on the p
 <script src="./vendor/gpt-tokenizer-o200k_base.js" defer></script>
 <script src="./assets/app.js" defer></script>
 <script>
-// Opened from disk: directory links have no index.html resolution, so add it.
-if (location.protocol === 'file:') document.addEventListener('click', function (e) {
-  var a = e.target.closest && e.target.closest('a[href]');
-  if (a && a.protocol === 'file:' && a.pathname.slice(-1) === '/') { e.preventDefault(); location.href = a.href.split(/[?#]/)[0] + 'index.html'; }
-});
+// Opened from disk: directory links have no index.html resolution, so add it to the href.
+if (location.protocol === 'file:') (function () {
+  var fix = function (a) { if (a && a.protocol === 'file:' && a.pathname.slice(-1) === '/') a.href = a.href.split(/[?#]/)[0] + 'index.html'; };
+  var onEvent = function (e) { fix(e.target.closest && e.target.closest('a[href]')); };
+  document.addEventListener('DOMContentLoaded', function () { [].forEach.call(document.querySelectorAll('a[href]'), fix); });
+  document.addEventListener('mousedown', onEvent, true);
+  document.addEventListener('focusin', onEvent, true);
+})();
 </script>
 </body>
 </html>
