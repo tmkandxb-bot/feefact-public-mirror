@@ -68,10 +68,10 @@ if (location.protocol === 'file:') (function () {
 }
 
 // ---------- calculator pages (/, /token-calculator/, /token-cost-calculator/) ----------
-const pricingTable = (base) => `<div class="table-wrap"><table class="sortable" id="pricing-table">
+const pricingTable = (base, list = models, notes = {}) => `<div class="table-wrap"><table class="sortable" id="pricing-table">
 <thead><tr><th>Provider</th><th>Model</th><th class="num">Input / 1M</th><th class="num">Output / 1M</th><th class="num">Cached input / 1M</th><th class="num">Context window</th><th>Source</th><th>Checked</th></tr></thead>
 <tbody>
-${models.map((m) => `<tr><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a></td><td class="num" data-v="${m.inputPer1M}">${price(m.inputPer1M)}</td><td class="num" data-v="${m.outputPer1M}">${price(m.outputPer1M)}</td><td class="num" data-v="${m.cachedInputPer1M}">${price(m.cachedInputPer1M)}</td><td class="num" data-v="${m.contextWindow}">${num(m.contextWindow)}</td><td data-v="${esc(m.sourceUrl)}"><a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></td><td data-v="${m.checkedDate}">${m.checkedDate}</td></tr>`).join('\n')}
+${list.map((m) => `<tr><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a>${notes[m.slug] ? ' <a href="#price-notes" title="Price has an announced end date">*</a>' : ''}</td><td class="num" data-v="${m.inputPer1M}">${price(m.inputPer1M)}</td><td class="num" data-v="${m.outputPer1M}">${price(m.outputPer1M)}</td><td class="num" data-v="${m.cachedInputPer1M}">${price(m.cachedInputPer1M)}</td><td class="num" data-v="${m.contextWindow}">${num(m.contextWindow)}</td><td data-v="${esc(m.sourceUrl)}"><a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></td><td data-v="${m.checkedDate}">${m.checkedDate}</td></tr>`).join('\n')}
 </tbody></table></div>`
 
 const calcForm = `<section class="calc">
@@ -103,9 +103,10 @@ ${costTable(base)}
 ${pricingHead}
 ${pricingTable(base)}`
 
-const calcScripts = (base) => `<script type="application/json" id="models-data">${JSON.stringify(models).replace(/</g, '\\u003c')}</script>
+const calcScriptsFor = (list) => (base) => `<script type="application/json" id="models-data">${JSON.stringify(list).replace(/</g, '\\u003c')}</script>
 <script src="${base}vendor/gpt-tokenizer-o200k_base.js" defer></script>
 <script src="${base}assets/app.js" defer></script>`
+const calcScripts = calcScriptsFor(models)
 
 const calcPages = [
   ['token-calculator', 'Token Calculator — count tokens for GPT, Claude, Gemini | TokenPriceDB', 'Token calculator',
@@ -114,6 +115,112 @@ const calcPages = [
     'Enter input and output tokens to get the cost per request on every major LLM API.'],
 ]
 for (const [path, title, h1, lead] of calcPages) page(path, title, lead, calculator(h1, lead), { scripts: calcScripts })
+
+// ---------- /llm-cost-calculator/ and /openrouter-alternatives/ ----------
+// Rows whose stored price is disputed against, or can no longer be confirmed on, the provider's own
+// page stay off these two pages until data/models.json is corrected through the normal price-update path.
+const HELD_BACK = ['gemini-3-8-flash', 'claude-haiku-5-5', 'deepseek-v4-1-flash-1017', 'deepseek-v4-pro-0813', 'deepseek-v4-pro', 'deepseek-v4-flash',
+  'gemini-3-5-flash', 'mistral-large-2512', 'devstral-2512']
+// Listed rows whose provider page states an end date for the current price.
+const GOOGLE_PRICING = 'https://ai.google.dev/gemini-api/docs/pricing'
+const geminiStep = 'Google lists $2.00 input / $10.00 output per 1M tokens through November 30, 2026, and $4.00 / $20.00 starting December 1, 2026.'
+const PRICE_NOTES = {
+  'gemini-4-carbon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gemini-4-argon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gpt-5-6-sol': { text: 'OpenAI states that GPT-5.6 Sol\u2019s promotional pricing is available until November 30, 2026; it does not list the price after that date.', url: 'https://developers.openai.com/api/docs/pricing', label: 'OpenAI pricing page' },
+}
+const NOTES_READ = '2026-11-22'
+const listed = models.filter((m) => !HELD_BACK.includes(m.slug))
+const listedProviders = [...new Set(listed.map((m) => m.provider))]
+const src = (url, label = 'source') => `<a href="${esc(url)}" rel="nofollow noopener">${esc(label)}</a>`
+
+page('llm-cost-calculator', 'LLM Cost Calculator — price a prompt on every major LLM API | TokenPriceDB',
+  'LLM cost calculator: paste a prompt or enter token counts to see the cost per request on each model. Every price row shows its source link and the date it was checked.',
+  (base) => `<h1>LLM cost calculator</h1>
+<p class="lead">Paste a prompt or enter token counts to see what one request costs on ${listed.length} LLM API models. Every price row links to its source and shows the date it was last checked.</p>
+<h2>Price a prompt</h2>
+${calcForm}
+${costHead}
+${costTable(base)}
+<h2>Per-model prices behind the calculator (USD per 1M tokens)</h2>
+<p class="muted">${listed.length} models across ${listedProviders.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a price end date announced by the provider; the calculator uses the price in effect on the checked date.</p>
+${pricingTable(base, listed, PRICE_NOTES)}
+<h3 id="price-notes">* Prices with an announced end date</h3>
+<ul>
+${listed.filter((m) => PRICE_NOTES[m.slug]).map((m) => `<li><strong>${esc(m.model)}</strong>: ${PRICE_NOTES[m.slug].text} ${src(PRICE_NOTES[m.slug].url, PRICE_NOTES[m.slug].label)}, read ${NOTES_READ}.</li>`).join('\n')}
+</ul>
+<h2>How the cost is calculated</h2>
+<p>Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price. Prices are standard pay-as-you-go list prices; batch, priority and long-context tiers are not included.</p>
+<p>Token counts from pasted text use the o200k_base encoding. They are exact only for the OpenAI models labeled "exact" and an estimate for every other model, because each provider uses its own tokenizer.</p>
+<p>${models.length - listed.length} models from the full database are left out of this page because their stored prices differ from, or could not be confirmed on, the providers' own pricing pages.</p>
+<p><a href="${base}openrouter-alternatives/">Compare OpenRouter with direct APIs and other gateways</a> · <a href="${base}compare/cheapest-llm-api/">Models ranked by blended cost</a> · <a href="${base}price-changes/">Price-change log</a></p>`,
+  { scripts: calcScriptsFor(listed) })
+
+// Fees and direct list prices below were read on each vendor's own page on FEES_CHECKED.
+const FEES_CHECKED = '2026-11-22'
+const EX = models.find((m) => m.slug === 'gpt-6-2-sol') // example model for the same-workload comparison
+const exList = EX.inputPer1M + EX.outputPer1M // 1M input + 1M output tokens at list price
+const OPENAI_PRICING = 'https://openai.com/api/pricing/'
+const ROUTES = [
+  { name: 'OpenAI API (direct)', kind: 'Direct provider API', fee: 0, feeText: 'None: you pay the list price', feeUrl: OPENAI_PRICING,
+    what: 'The model maker\'s own API. Each provider (OpenAI, Anthropic, Google, xAI and others) has its own key, SDK and invoice.',
+    fits: 'Teams that use one or two providers and want list prices, first-party rate limits and features without a middle layer.' },
+  { name: 'OpenRouter (Standard)', kind: 'Hosted aggregator', fee: 0.055, feeText: '5.5% platform fee, charged when you buy credits', feeUrl: 'https://openrouter.ai/pricing',
+    what: 'One API key and one credit balance for models from many providers. Inference is billed at the provider\'s list price; the fee is added when you buy credits.',
+    fits: 'Prototypes and products that switch between many models and want one bill.' },
+  { name: 'OpenRouter (Business)', kind: 'Hosted aggregator', fee: 0.08, feeText: '8% platform fee, charged when you buy credits', feeUrl: 'https://openrouter.ai/pricing',
+    what: 'The same catalog and token prices as Standard, with in-region routing and more workspaces. The only billing difference is the fee on credit purchases.',
+    fits: 'Teams that need the Business features and accept the higher fee on credits.' },
+  { name: 'Vercel AI Gateway', kind: 'Hosted gateway', fee: 0, feeText: 'No markup and no platform fee on tokens; payment processing fees may apply', feeUrl: 'https://vercel.com/docs/ai-gateway/pricing',
+    what: 'A gateway inside the Vercel platform, billed from prepaid AI Gateway Credits at provider list rates. Optional add-ons such as regional endpoints are charged separately.',
+    fits: 'Teams already deploying on Vercel that want one balance for several providers.' },
+  { name: 'Cloudflare AI Gateway (Unified Billing)', kind: 'Hosted gateway', fee: 0.05, feeText: '5% fee on credits bought through Unified Billing', feeUrl: 'https://developers.cloudflare.com/ai-gateway/reference/pricing/',
+    what: 'A proxy in front of provider APIs with analytics, caching and rate limiting. Core features are free with your own provider keys; Unified Billing adds one Cloudflare bill.',
+    fits: 'Teams already on Cloudflare that want caching and logs in front of their provider keys.' },
+  { name: 'Requesty', kind: 'Hosted aggregator', fee: 0.05, feeText: '5% on model cost', feeUrl: 'https://www.requesty.ai/pricing',
+    what: 'A hosted router with pay-as-you-go billing: you pay what your application spends on models plus a percentage.',
+    fits: 'Teams that want a hosted router with usage-based billing and no credit-purchase step.' },
+  { name: 'LiteLLM (self-hosted)', kind: 'Open-source gateway', fee: 0, feeText: 'No gateway fee in this example; you pay providers with your own keys and run the servers', feeUrl: 'https://docs.litellm.ai/docs/', extra: ' + your hosting',
+    what: 'An open-source library and self-hosted proxy that exposes 100+ LLMs in the OpenAI format, with virtual keys and cost tracking.',
+    fits: 'Platform teams that want the gateway inside their own infrastructure and can operate it.' },
+]
+const routeTotal = (r) => exList * (1 + r.fee)
+// Direct list prices read on each provider's own pricing page; `slug` ties each one to our stored row.
+const DIRECT = [
+  { slug: 'gpt-6-2-sol', input: 2, output: 10, url: OPENAI_PRICING },
+  { slug: 'claude-sonnet-5-5', input: 2, output: 10, url: 'https://docs.anthropic.com/en/docs/about-claude/pricing' },
+  { slug: 'gemini-4-neon', input: 3, output: 15, url: 'https://ai.google.dev/gemini-api/docs/pricing' },
+  { slug: 'grok-4-7', input: 2, output: 6, url: 'https://docs.x.ai/docs/models' },
+].map((d) => ({ ...d, m: models.find((m) => m.slug === d.slug) }))
+
+page('openrouter-alternatives', 'OpenRouter Alternatives — direct APIs and gateways compared on the same workload | TokenPriceDB',
+  'OpenRouter alternatives compared on one workload: what each option is, who it fits, and what 1M input + 1M output tokens of the same model costs with each published fee. Every price links to its source.',
+  (base) => `<h1>OpenRouter alternatives</h1>
+<p class="lead">OpenRouter gives you one key for many models. The alternatives are the providers' own APIs, other hosted gateways, and a gateway you host yourself. This page shows what each one is, who it fits, and what the same workload costs on each, with a source link and checked date on every price.</p>
+<h2>Same model, same tokens: what each route costs</h2>
+<p class="muted">Example workload: 1,000,000 input + 1,000,000 output tokens of ${esc(EX.model)}. List price ${price(EX.inputPer1M)} input + ${price(EX.outputPer1M)} output per 1M tokens = ${usd(exList)} (<a href="${base}models/${EX.slug}/">our price row</a>, ${src(EX.sourceUrl)}, checked ${EX.checkedDate}; ${src(OPENAI_PRICING, 'OpenAI pricing page')}, checked ${FEES_CHECKED}). Each total is that list price plus the fee the vendor publishes. It is arithmetic on published numbers, not a quote: confirm the model is offered and the fee applies to your plan on the linked page.</p>
+<div class="table-wrap"><table class="sortable">
+<thead><tr><th>Route</th><th>Type</th><th>Published fee</th><th>Arithmetic</th><th class="num">Total</th><th>Fee source</th><th>Checked</th></tr></thead>
+<tbody>
+${ROUTES.map((r) => `<tr><td data-v="${esc(r.name)}">${esc(r.name)}</td><td data-v="${esc(r.kind)}">${esc(r.kind)}</td><td class="wrap" data-v="${r.fee}">${esc(r.feeText)}</td><td class="arith" data-v="${routeTotal(r)}">${usd(exList)}${r.fee ? ` + ${+(r.fee * 100).toFixed(1)}% × ${usd(exList)}` : ''}${r.extra || ''}</td><td class="num" data-v="${routeTotal(r)}"><strong>${usd(routeTotal(r))}</strong>${r.extra || ''}</td><td data-v="${esc(r.feeUrl)}">${src(r.feeUrl)}</td><td data-v="${FEES_CHECKED}">${FEES_CHECKED}</td></tr>`).join('\n')}
+</tbody></table></div>
+<p class="muted">Fees can change the total more than the route does: a percentage fee grows with spend, and a self-hosted gateway adds server and engineering cost that is not in this table.</p>
+<p><a href="${base}token-calculator/?in=1000000&amp;out=1000000">Open this workload in the token calculator</a> to see 1M input + 1M output tokens priced on every model, or <a href="${base}llm-cost-calculator/">price your own prompt</a>.</p>
+<h2>What each alternative is and who it fits</h2>
+<div class="alts">
+${ROUTES.filter((r) => r.name !== 'OpenRouter (Business)').map((r) => `<div class="card"><h3>${esc(r.name.replace(' (Standard)', '').replace('OpenAI API (direct)', 'Direct provider APIs'))}</h3><p class="k">${esc(r.kind)}</p><p>${esc(r.what)}</p><p><strong>Fits:</strong> ${esc(r.fits)}</p><p class="k">${src(r.feeUrl, 'Pricing source')} · checked ${FEES_CHECKED}</p></div>`).join('\n')}
+</div>
+<h2>Going direct: provider list price next to the price listed on OpenRouter</h2>
+<p class="muted">Four models whose list price we read on the provider's own pricing page on ${FEES_CHECKED}, next to the row in our database (sourced from the model's OpenRouter page). Cost is for 1M input + 1M output tokens, before any gateway fee.</p>
+<div class="table-wrap"><table class="sortable">
+<thead><tr><th>Provider</th><th>Model</th><th class="num">Direct input / 1M</th><th class="num">Direct output / 1M</th><th class="num">1M in + 1M out</th><th>Provider source</th><th>Checked</th><th class="num">Listed on OpenRouter (in / out)</th><th>Source</th><th>Checked</th></tr></thead>
+<tbody>
+${DIRECT.map((d) => `<tr><td data-v="${esc(d.m.provider)}">${esc(d.m.provider)}</td><td data-v="${esc(d.m.model)}"><a href="${base}models/${d.slug}/">${esc(d.m.model)}</a></td><td class="num" data-v="${d.input}">${price(d.input)}</td><td class="num" data-v="${d.output}">${price(d.output)}</td><td class="num" data-v="${d.input + d.output}"><strong>${usd(d.input + d.output)}</strong></td><td data-v="${esc(d.url)}">${src(d.url)}</td><td data-v="${FEES_CHECKED}">${FEES_CHECKED}</td><td class="num" data-v="${d.m.inputPer1M + d.m.outputPer1M}">${price(d.m.inputPer1M)} / ${price(d.m.outputPer1M)}</td><td data-v="${esc(d.m.sourceUrl)}">${src(d.m.sourceUrl)}</td><td data-v="${d.m.checkedDate}">${d.m.checkedDate}</td></tr>`).join('\n')}
+</tbody></table></div>
+<h2>How to choose</h2>
+<p>Start from how many providers you call. With one or two, the direct APIs keep list prices and first-party limits. With many, a gateway trades a fee or an operations burden for one key and one bill. Check three things on the vendor's page before switching: where the fee is charged (credits, requests or usage), whether your own provider keys are supported, and whether the models you use are in the catalog.</p>
+<p><a href="${base}llm-cost-calculator/">LLM cost calculator</a> · <a href="${base}compare/cheapest-llm-api/">Models ranked by blended cost</a> · <a href="${base}price-changes/">Price-change log</a></p>`,
+  { scripts: (base) => `<script src="${base}assets/app.js" defer></script>` })
 
 // ---------- /models/<slug>/ ----------
 const TASKS = [
@@ -269,7 +376,7 @@ ${latest.map((c) => `<li><time datetime="${c.date}">${c.date}</time> <span class
 
 // ---------- /sitemap.xml ----------
 // Main pages only: the owner asked to leave the per-model pages out.
-const urls = ['', 'token-calculator/', 'token-cost-calculator/', 'compare/cheapest-llm-api/', 'price-changes/']
+const urls = ['', 'token-calculator/', 'token-cost-calculator/', 'llm-cost-calculator/', 'openrouter-alternatives/', 'compare/cheapest-llm-api/', 'price-changes/']
 const homeImages = Object.values(IMG).map((i) => `<image:image><image:loc>${SITE}/assets/img/${i.file}</image:loc></image:image>`).join('')
 writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">

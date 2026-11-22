@@ -74,5 +74,11 @@
   });
   inTok.addEventListener('input', function () { fromText = false; $('count-note').textContent = ''; render(); });
   outTok.addEventListener('input', render);
+  // Optional preload: ?in=<input tokens>&out=<output tokens>
+  var qs = new URLSearchParams(location.search);
+  [['in', inTok], ['out', outTok]].forEach(function (p) {
+    var raw = qs.get(p[0]), v = Number(raw);
+    if (raw !== null && raw !== '' && isFinite(v) && v >= 0) p[1].value = Math.floor(v);
+  });
   render();
 })();
