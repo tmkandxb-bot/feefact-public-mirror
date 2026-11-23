@@ -84,17 +84,23 @@
   document.addEventListener('input', function (e) {
     if (e.target.classList && e.target.classList.contains('nw-money')) { mark(e.target); refresh(); }
   });
-  /* maxlength would cut a long paste down to a shorter, valid-looking amount.
-     Insert the pasted text whole so an over-long entry is flagged instead. */
+  /* maxlength would cut a long paste down to a shorter, valid-looking amount,
+     and a field drops line breaks, joining separate copied balances into one.
+     Insert such a paste whole (line breaks as spaces) so it is flagged instead. */
   document.addEventListener('paste', function (e) {
     var el = e.target;
     if (!el.classList || !el.classList.contains('nw-money') || !e.clipboardData) return;
-    var raw = e.clipboardData.getData('text'), t = raw.trim();
-    var a = el.selectionStart, b = el.selectionEnd;
-    if (a == null || el.value.length - (b - a) + raw.length <= el.maxLength) return;
+    var raw = e.clipboardData.getData('text'), t = raw.trim().replace(/\s*[\r\n]+\s*/g, ' ');
+    var a = el.selectionStart, b = el.selectionEnd, max = el.maxLength;
+    if (a == null) return;
+    if (t.indexOf(' ') < 0 && el.value.length - (b - a) + raw.length <= max) return;
     e.preventDefault();
-    el.value = el.value.slice(0, a) + t + el.value.slice(b);
-    mark(el); refresh();
+    /* insertText keeps the browser's undo history; lift the limit for it */
+    var done = false;
+    el.removeAttribute('maxlength');
+    try { done = document.execCommand('insertText', false, t); } catch (err) {}
+    if (max > 0) el.maxLength = max;
+    if (!done) { el.value = el.value.slice(0, a) + t + el.value.slice(b); mark(el); refresh(); }
   });
   document.addEventListener('focusout', function (e) {
     var el = e.target;
@@ -113,11 +119,12 @@
   byId('nwPrint').addEventListener('click', function () { window.print(); });
 
   byId('nwContinue').addEventListener('click', function () {
-    var data = {assets: {}, liabilities: {}};
+    var data = {assets: {}, liabilities: {}}, any = false;
     inputs.forEach(function (el) {
       var n = parseMoney(el.value);
-      if (n) data[el.dataset.g][el.dataset.k] = String(n);
+      if (n) { data[el.dataset.g][el.dataset.k] = String(n); any = true; }
     });
+    if (!any) return; /* nothing entered: open the wizard as it is */
     try { sessionStorage.setItem(HANDOFF_KEY, JSON.stringify(data)); } catch (err) {}
     /* the link's own href (/#start) then navigates */
   });
