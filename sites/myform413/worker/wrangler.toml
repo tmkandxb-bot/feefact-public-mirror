@@ -4,10 +4,11 @@ name = "myform413-pay"
 main = "src/index.js"
 compatibility_date = "2026-01-01"
 
+# Trailing * is required for a route to match URLs with a query string.
 routes = [
-  { pattern = "myform413.com/api/checkout", zone_name = "myform413.com" },
-  { pattern = "myform413.com/api/waffo-webhook", zone_name = "myform413.com" },
-  { pattern = "myform413.com/api/order-status", zone_name = "myform413.com" },
+  { pattern = "myform413.com/api/checkout*", zone_name = "myform413.com" },
+  { pattern = "myform413.com/api/waffo-webhook*", zone_name = "myform413.com" },
+  { pattern = "myform413.com/api/order-status*", zone_name = "myform413.com" },
 ]
 
 [vars]
