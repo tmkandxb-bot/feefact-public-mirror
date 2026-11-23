@@ -1,3 +1,4 @@
+// Run with `npm test` in this folder (node:test). Named so the root vitest run does not pick it up.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
