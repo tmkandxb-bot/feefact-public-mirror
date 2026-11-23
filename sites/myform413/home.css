@@ -92,6 +92,9 @@
 .hp-sec .pricebox{border-radius:14px;padding:26px 24px;border-top:5px solid var(--hp-teal);box-shadow:0 14px 34px rgba(2,12,28,.35)}
 .hp-sec .price-amt{font-size:46px;color:var(--hp-navy);letter-spacing:-.02em}
 .hp-sec .pricebox .btn{display:block}
+.hp-sec .pricecard .price-incl-h{margin:16px 0 4px;color:#fff}
+.hp-sec .pricecard .price-incl{margin:0 0 14px;padding-left:20px;color:#d7e7f8;font-size:15.5px;line-height:1.6}
+.hp-sec .price-first{margin-bottom:14px}
 @media(max-width:720px){.hp-sec .pricecard{padding:28px 22px}}
 
 /* FAQ */
