@@ -43,6 +43,10 @@ const PRICE_NOTES = {
   'deepseek-v4-pro-0813': { text: deepseekPeak('$1.32 input / $3.96 output', '$0.66 / $1.98'), url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
 }
 const NOTES_READ = '2026-11-23'
+// Per-request tiers the single stored price cannot express; the calculator switches to them above `over` input tokens.
+const LONG_PROMPT = {
+  'claude-haiku-5-5': { over: 100000, inputPer1M: 0.5, outputPer1M: 2.5 },
+}
 const listed = models.filter((m) => !HELD_BACK[m.slug])
 const src = (url, label = 'source') => `<a href="${esc(url)}" rel="nofollow noopener">${esc(label)}</a>`
 const noteLine = (n) => `${n.text} ${src(n.url, n.label)}, read ${NOTES_READ}.`
@@ -137,7 +141,7 @@ ${pricingHead}
 ${pricingTable(base)}
 ${priceNotes()}`
 
-const calcScriptsFor = (list) => (base) => `<script type="application/json" id="models-data">${JSON.stringify(list).replace(/</g, '\\u003c')}</script>
+const calcScriptsFor = (list) => (base) => `<script type="application/json" id="models-data">${JSON.stringify(list.map((m) => (LONG_PROMPT[m.slug] ? { ...m, longPrompt: LONG_PROMPT[m.slug] } : m))).replace(/</g, '\\u003c')}</script>
 <script src="${base}vendor/gpt-tokenizer-o200k_base.js" defer></script>
 <script src="${base}assets/app.js" defer></script>`
 const calcScripts = calcScriptsFor(listed)
