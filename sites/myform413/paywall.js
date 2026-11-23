@@ -3,12 +3,20 @@
    answers stay in this browser (kept in sessionStorage across the checkout redirect). */
 (function () {
   'use strict';
-  var ORDER_KEY = 'mf413.order';       // localStorage: {orderId, token, paid}
+  var ORDER_KEY = 'mf413.orders';      // localStorage: [{orderId, token, paid}], newest first
   var DRAFT_KEY = 'mf413.draft';       // sessionStorage: form answers during checkout
   var btn, panel, unlocked = false;
 
-  function loadOrder() { try { return JSON.parse(localStorage.getItem(ORDER_KEY)) || null; } catch (e) { return null; } }
-  function saveOrder(o) { try { localStorage.setItem(ORDER_KEY, JSON.stringify({orderId: o.orderId, token: o.token, paid: !!o.paid})); } catch (e) {} }
+  function loadOrders() {
+    try { var o = JSON.parse(localStorage.getItem(ORDER_KEY)); return Array.isArray(o) ? o : []; } catch (e) { return []; }
+  }
+  // Every checkout this browser started is kept (two tabs, an abandoned retry), so a
+  // payment on an earlier one still unlocks.
+  function saveOrder(o) {
+    var list = loadOrders().filter(function (x) { return x.orderId !== o.orderId; });
+    list.unshift({orderId: o.orderId, token: o.token, paid: !!o.paid});
+    try { localStorage.setItem(ORDER_KEY, JSON.stringify(list.slice(0, 10))); } catch (e) {}
+  }
   function newToken() {
     var b = new Uint8Array(32); crypto.getRandomValues(b);
     return Array.prototype.map.call(b, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
@@ -30,7 +38,6 @@
         var row = (state[el.dataset.arr] || [])[+el.dataset.idx]; if (row && row[el.dataset.k] != null) el.value = row[el.dataset.k];
       });
       refreshTotals();
-      sessionStorage.removeItem(DRAFT_KEY);
       return true;
     } catch (e) { return false; }
   }
@@ -80,19 +87,27 @@
   function unlock() {
     unlocked = true;
     if (panel) panel.hidden = true;
+    // The saved answers are only needed until the download is released.
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {}
+  }
+
+  function anyPaid(orders) {
+    return Promise.all(orders.map(function (o) {
+      return checkPaid(o).then(function (paid) { if (paid) { o.paid = true; saveOrder(o); } return paid; });
+    })).then(function (r) { return r.indexOf(true) !== -1; });
   }
 
   // After checkout the webhook can land a few seconds after the buyer returns.
-  function waitForPayment(order, tries) {
-    checkPaid(order).then(function (paid) {
+  function waitForPayment(orders, tries, returning) {
+    anyPaid(orders).then(function (paid) {
       if (paid) {
-        order.paid = true; saveOrder(order); unlock();
-        btn.textContent = 'Payment received — download your Form 413 (PDF)';
+        unlock();
+        if (returning) btn.textContent = 'Payment received — download your Form 413 (PDF)';
       } else if (tries > 0) {
-        setTimeout(function () { waitForPayment(order, tries - 1); }, 2000);
-      } else if (order.returning) {
+        setTimeout(function () { waitForPayment(orders, tries - 1, returning); }, 2000);
+      } else if (returning) {
         panel.hidden = false; panel.querySelector('.pw-pay').disabled = false;
-        setMsg('We have not received your payment confirmation yet. If you paid, reload this page in a minute.', true);
+        setMsg('We have not received your payment confirmation yet. If you paid, reload this page in a minute — your answers are kept in this tab.', true);
       }
     });
   }
@@ -108,15 +123,14 @@
       panel.hidden = false; panel.querySelector('.pw-email').focus();
     }, true);
 
-    var order = loadOrder();
-    var restored = restoreDraft();
-    if (restored) showStep(6);
-    if (order && order.orderId && order.token) {
-      // Returning from checkout: wait for the webhook. Otherwise check once, silently.
-      order.returning = restored;
-      if (restored) { panel.hidden = false; setMsg('Checking your payment…'); panel.querySelector('.pw-pay').disabled = true; }
-      waitForPayment(order, restored ? 30 : 0);
+    var orders = loadOrders();
+    // A draft exists only between starting checkout and the download being released.
+    var returning = restoreDraft();
+    if (returning) {
+      showStep(6);
+      if (orders.length) { panel.hidden = false; setMsg('Checking your payment…'); panel.querySelector('.pw-pay').disabled = true; }
     }
+    if (orders.length) waitForPayment(orders, returning ? 30 : 0, returning);
     if (/[?&]paid=/.test(location.search) && history.replaceState) {
       history.replaceState(null, '', location.pathname + location.hash);
     }
