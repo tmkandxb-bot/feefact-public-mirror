@@ -8,12 +8,32 @@
   var inputs = Array.prototype.slice.call(document.querySelectorAll('input.nw-money'));
   var byId = function (id) { return document.getElementById(id); };
 
-  function parseMoney(v) {
-    /* Accepts "1234", "1,234.56", "$1,234". Anything else (letters, a minus
-       sign, accounting parentheses) counts as 0 rather than being guessed. */
-    var s = String(v || '').replace(/[$,\s]/g, '');
-    if (!/^(\d+\.?\d*|\.\d+)$/.test(s)) return 0;
-    return Math.round(parseFloat(s));
+  /* Accepts "1234", "1,234.56", "$1,234". Returns null for anything else
+     (letters, a minus sign, parentheses, "1e5", "12k", "1.000,50", "12,34")
+     so an amount is never guessed. */
+  function parseEntry(v) {
+    var s = String(v || '').trim().replace(/^\$\s*/, '');
+    if (s === '') return 0;
+    /* plain digits or US thousands groups ("1,234,567"), optional decimals */
+    if (!/^((\d+|\d{1,3}(,\d{3})+)(\.\d*)?|\.\d+)$/.test(s)) return null;
+    var n = Math.round(parseFloat(s.replace(/,/g, '')));
+    return isFinite(n) ? n : null;
+  }
+  function parseMoney(v) { return parseEntry(v) || 0; }
+  function mark(el) {
+    var bad = parseEntry(el.value) === null;
+    var msg = el.parentNode.querySelector('.nw-err');
+    el.classList.toggle('nw-bad', bad);
+    if (bad) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+    if (bad && !msg) {
+      msg = document.createElement('span');
+      msg.className = 'nw-err';
+      msg.setAttribute('role', 'alert');
+      msg.textContent = 'Enter a positive number. This line is not counted.';
+      el.parentNode.appendChild(msg);
+    } else if (!bad && msg) {
+      msg.parentNode.removeChild(msg);
+    }
   }
   function fmtUSD(n) {
     var s = Math.abs(n).toLocaleString('en-US', {maximumFractionDigits: 0});
@@ -60,17 +80,18 @@
   }
 
   document.addEventListener('input', function (e) {
-    if (e.target.classList && e.target.classList.contains('nw-money')) refresh();
+    if (e.target.classList && e.target.classList.contains('nw-money')) { mark(e.target); refresh(); }
   });
   document.addEventListener('focusout', function (e) {
     var el = e.target;
     if (!el.classList || !el.classList.contains('nw-money')) return;
-    var n = parseMoney(el.value);
+    var n = parseEntry(el.value);
+    if (n === null) return; /* keep what the visitor typed, flagged */
     el.value = n ? n.toLocaleString('en-US', {maximumFractionDigits: 0}) : '';
   });
 
   byId('nwReset').addEventListener('click', function () {
-    inputs.forEach(function (el) { el.value = ''; });
+    inputs.forEach(function (el) { el.value = ''; mark(el); });
     try { sessionStorage.removeItem(HANDOFF_KEY); } catch (err) {}
     refresh();
     inputs[0].focus();

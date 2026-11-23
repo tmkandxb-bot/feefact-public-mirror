@@ -16,6 +16,8 @@
 .nw-card>p.small{margin:0 0 6px}
 .nw-card label{font-size:14px}
 .nw-card input.nw-money{min-height:44px;font-variant-numeric:tabular-nums}
+.nw-card input.nw-money.nw-bad{border-color:var(--nw-red);background:#fff5f4}
+.nw-err{display:block;color:var(--nw-red);font-size:13px;font-weight:600;margin-top:4px}
 .nw-card input.nw-money:focus{outline:2px solid var(--nw-teal);outline-offset:1px;border-color:var(--nw-teal)}
 .nw-subtotal{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:2px solid var(--nw-line);font-size:17px;font-weight:700;color:var(--nw-navy)}
 .nw-subtotal b{font-variant-numeric:tabular-nums}
