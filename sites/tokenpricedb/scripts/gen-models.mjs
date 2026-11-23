@@ -18,6 +18,39 @@ const checked = models.map((m) => m.checkedDate).sort().at(-1)
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const prettyDate = (iso) => { const [y, m, d] = iso.split('-'); return `${+d} ${MONTHS[+m - 1]} ${y}` }
 
+// Rows the provider has deprecated or retired and whose stored price can no longer be confirmed on the
+// provider's own pages. They stay out of every table, calculator and ranking; only their model page remains.
+const GOOGLE_PRICING = 'https://ai.google.dev/gemini-api/docs/pricing'
+const DEEPSEEK_PRICING = 'https://api-docs.deepseek.com/quick_start/pricing'
+const MISTRAL_MODELS = 'https://docs.mistral.ai/models'
+const HELD_BACK = {
+  'gemini-3-5-flash': { text: 'Google lists gemini-3.5-flash as deprecated: it has no price on Google\u2019s pricing page, and API requests to it are automatically routed to gemini-3.6-flash.', url: 'https://ai.google.dev/gemini-api/docs/deprecations', label: 'Google deprecations page' },
+  'mistral-large-2512': { text: 'Mistral lists mistral-large-2512 as deprecated on 10/31/2026 and retiring on 4/30/2027, with Mistral Large 4 as the alternative. Mistral\u2019s pricing page gives no price for it.', url: MISTRAL_MODELS, label: 'Mistral models page' },
+  'devstral-2512': { text: 'Mistral lists devstral-2512 as deprecated on 5/22/2026 and retired on 7/31/2026, with Mistral Medium 3.5 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page' },
+  'deepseek-v4-pro': { text: 'DeepSeek\u2019s pricing page lists DeepSeek-V4-Pro-0813 as the version behind the deepseek-v4-pro model name and gives no price for the 0423 version.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+  'deepseek-v4-flash': { text: 'DeepSeek states that the legacy deepseek-v4-flash model has been retired: requests under that name are served by DeepSeek-V4.1-Flash-1017 and billed at the Flash price.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+}
+// Listed rows whose provider page states an end date, a second rate or a long-context tier for the price.
+const geminiStep = 'Google lists $2.00 input / $10.00 output per 1M tokens through November 30, 2026, and $4.00 / $20.00 starting December 1, 2026.'
+const deepseekPeak = (peak, offPeak) => `DeepSeek bills two rates. This row is the peak rate (${peak} per 1M tokens), charged 01:00\u201304:00 and 06:00\u201310:00 UTC, Monday through Friday, excluding Chinese public holidays. The off-peak rate for all other hours is half: ${offPeak}.`
+const PRICE_NOTES = {
+  'gemini-4-carbon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gemini-4-argon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gemini-3-8-flash': { text: 'Google lists $0.75 input / $3.75 output per 1M tokens through December 31, 2026, and $1.50 / $7.50 starting January 1, 2027.', url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gpt-5-6-sol': { text: 'OpenAI states that GPT-5.6 Sol\u2019s promotional pricing is available until November 30, 2026; it does not list the price after that date.', url: 'https://developers.openai.com/api/docs/pricing', label: 'OpenAI pricing page' },
+  'claude-haiku-5-5': { text: 'Anthropic prices Claude Haiku 5.5 by prompt length. This row is the price for prompts up to 100,000 tokens ($0.10 input / $0.50 output per 1M tokens); prompts over 100,000 tokens cost $0.50 / $2.50.', url: 'https://platform.claude.com/docs/en/about-claude/pricing', label: 'Anthropic pricing page' },
+  'deepseek-v4-1-flash-1017': { text: deepseekPeak('$0.3 input / $1.2 output', '$0.15 / $0.6'), url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+  'deepseek-v4-pro-0813': { text: deepseekPeak('$1.32 input / $3.96 output', '$0.66 / $1.98'), url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+}
+const NOTES_READ = '2026-11-23'
+const listed = models.filter((m) => !HELD_BACK[m.slug])
+const src = (url, label = 'source') => `<a href="${esc(url)}" rel="nofollow noopener">${esc(label)}</a>`
+const noteLine = (n) => `${n.text} ${src(n.url, n.label)}, read ${NOTES_READ}.`
+const priceNotes = (list = listed) => `<h3 id="price-notes">* Price notes</h3>
+<ul>
+${list.filter((m) => PRICE_NOTES[m.slug]).map((m) => `<li><strong>${esc(m.model)}</strong>: ${noteLine(PRICE_NOTES[m.slug])}</li>`).join('\n')}
+</ul>`
+
 function page(path, title, description, body, { scripts = '', head = '', bodyClass = '', footer = '' } = {}) {
   const depth = path === '' ? 0 : path.split('/').length
   const base = depth ? '../'.repeat(depth) : './'
@@ -68,10 +101,10 @@ if (location.protocol === 'file:') (function () {
 }
 
 // ---------- calculator pages (/, /token-calculator/, /token-cost-calculator/) ----------
-const pricingTable = (base, list = models, notes = {}) => `<div class="table-wrap"><table class="sortable" id="pricing-table">
+const pricingTable = (base, list = listed, notes = PRICE_NOTES) => `<div class="table-wrap"><table class="sortable" id="pricing-table">
 <thead><tr><th>Provider</th><th>Model</th><th class="num">Input / 1M</th><th class="num">Output / 1M</th><th class="num">Cached input / 1M</th><th class="num">Context window</th><th>Source</th><th>Checked</th></tr></thead>
 <tbody>
-${list.map((m) => `<tr><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a>${notes[m.slug] ? ' <a href="#price-notes" title="Price has an announced end date">*</a>' : ''}</td><td class="num" data-v="${m.inputPer1M}">${price(m.inputPer1M)}</td><td class="num" data-v="${m.outputPer1M}">${price(m.outputPer1M)}</td><td class="num" data-v="${m.cachedInputPer1M}">${price(m.cachedInputPer1M)}</td><td class="num" data-v="${m.contextWindow}">${num(m.contextWindow)}</td><td data-v="${esc(m.sourceUrl)}"><a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></td><td data-v="${m.checkedDate}">${m.checkedDate}</td></tr>`).join('\n')}
+${list.map((m) => `<tr><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a>${notes[m.slug] ? ' <a href="#price-notes" title="See the note on this price">*</a>' : ''}</td><td class="num" data-v="${m.inputPer1M}">${price(m.inputPer1M)}</td><td class="num" data-v="${m.outputPer1M}">${price(m.outputPer1M)}</td><td class="num" data-v="${m.cachedInputPer1M}">${price(m.cachedInputPer1M)}</td><td class="num" data-v="${m.contextWindow}">${num(m.contextWindow)}</td><td data-v="${esc(m.sourceUrl)}"><a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></td><td data-v="${m.checkedDate}">${m.checkedDate}</td></tr>`).join('\n')}
 </tbody></table></div>`
 
 const calcForm = `<section class="calc">
@@ -91,9 +124,9 @@ const costHead = `<h2>Cost for <span id="usage"></span></h2>
 const costTable = (base) => `<div class="table-wrap"><table class="sortable" id="cost-table" data-base="${base}">
 <thead><tr><th>Provider</th><th>Model</th><th>Token count</th><th class="num">Input cost</th><th class="num">Output cost</th><th class="num">Total</th></tr></thead>
 <tbody></tbody></table></div>`
-const providers = [...new Set(models.map((m) => m.provider))]
+const providers = [...new Set(listed.map((m) => m.provider))]
 const pricingHead = `<h2>LLM API pricing table (USD per 1M tokens)</h2>
-<p class="muted">${models.length} models across ${providers.join(', ')}.</p>`
+<p class="muted">${listed.length} models across ${providers.join(', ')}. Rows marked * have a note under the table.</p>`
 
 const calculator = (h1, lead) => (base) => `<h1>${esc(h1)}</h1>
 <p class="lead">${esc(lead)}</p>
@@ -101,12 +134,13 @@ ${calcForm}
 ${costHead}
 ${costTable(base)}
 ${pricingHead}
-${pricingTable(base)}`
+${pricingTable(base)}
+${priceNotes()}`
 
 const calcScriptsFor = (list) => (base) => `<script type="application/json" id="models-data">${JSON.stringify(list).replace(/</g, '\\u003c')}</script>
 <script src="${base}vendor/gpt-tokenizer-o200k_base.js" defer></script>
 <script src="${base}assets/app.js" defer></script>`
-const calcScripts = calcScriptsFor(models)
+const calcScripts = calcScriptsFor(listed)
 
 const calcPages = [
   ['token-calculator', 'Token Calculator — count tokens for GPT, Claude, Gemini | TokenPriceDB', 'Token calculator',
@@ -117,23 +151,6 @@ const calcPages = [
 for (const [path, title, h1, lead] of calcPages) page(path, title, lead, calculator(h1, lead), { scripts: calcScripts })
 
 // ---------- /llm-cost-calculator/ and /openrouter-alternatives/ ----------
-// Rows whose stored price is disputed against, or can no longer be confirmed on, the provider's own
-// page stay off these two pages until data/models.json is corrected through the normal price-update path.
-const HELD_BACK = ['gemini-3-8-flash', 'claude-haiku-5-5', 'deepseek-v4-1-flash-1017', 'deepseek-v4-pro-0813', 'deepseek-v4-pro', 'deepseek-v4-flash',
-  'gemini-3-5-flash', 'mistral-large-2512', 'devstral-2512']
-// Listed rows whose provider page states an end date for the current price.
-const GOOGLE_PRICING = 'https://ai.google.dev/gemini-api/docs/pricing'
-const geminiStep = 'Google lists $2.00 input / $10.00 output per 1M tokens through November 30, 2026, and $4.00 / $20.00 starting December 1, 2026.'
-const PRICE_NOTES = {
-  'gemini-4-carbon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
-  'gemini-4-argon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
-  'gpt-5-6-sol': { text: 'OpenAI states that GPT-5.6 Sol\u2019s promotional pricing is available until November 30, 2026; it does not list the price after that date.', url: 'https://developers.openai.com/api/docs/pricing', label: 'OpenAI pricing page' },
-}
-const NOTES_READ = '2026-11-22'
-const listed = models.filter((m) => !HELD_BACK.includes(m.slug))
-const listedProviders = [...new Set(listed.map((m) => m.provider))]
-const src = (url, label = 'source') => `<a href="${esc(url)}" rel="nofollow noopener">${esc(label)}</a>`
-
 page('llm-cost-calculator', 'LLM Cost Calculator — price a prompt on every major LLM API | TokenPriceDB',
   'LLM cost calculator: paste a prompt or enter token counts to see the cost per request on each model. Every price row shows its source link and the date it was checked.',
   (base) => `<h1>LLM cost calculator</h1>
@@ -143,18 +160,15 @@ ${calcForm}
 ${costHead}
 ${costTable(base)}
 <h2>Per-model prices behind the calculator (USD per 1M tokens)</h2>
-<p class="muted">${listed.length} models across ${listedProviders.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a price end date announced by the provider; the calculator uses the price in effect on the checked date.</p>
-${pricingTable(base, listed, PRICE_NOTES)}
-<h3 id="price-notes">* Prices with an announced end date</h3>
-<ul>
-${listed.filter((m) => PRICE_NOTES[m.slug]).map((m) => `<li><strong>${esc(m.model)}</strong>: ${PRICE_NOTES[m.slug].text} ${src(PRICE_NOTES[m.slug].url, PRICE_NOTES[m.slug].label)}, read ${NOTES_READ}.</li>`).join('\n')}
-</ul>
+<p class="muted">${listed.length} models across ${providers.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a note under the table (an announced end date, a peak and off-peak rate, or a long-context tier); the calculator uses the price shown in the row.</p>
+${pricingTable(base)}
+${priceNotes()}
 <h2>How the cost is calculated</h2>
 <p>Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price. Prices are standard pay-as-you-go list prices; batch, priority and long-context tiers are not included.</p>
 <p>Token counts from pasted text use the o200k_base encoding. They are exact only for the OpenAI models labeled "exact" and an estimate for every other model, because each provider uses its own tokenizer.</p>
-<p>${models.length - listed.length} models from the full database are left out of this page because their stored prices differ from, or could not be confirmed on, the providers' own pricing pages.</p>
+<p>${models.length - listed.length} models from the full database are left out of the tables because their providers have deprecated or retired them and their stored prices could not be confirmed on the providers' own pages.</p>
 <p><a href="${base}openrouter-alternatives/">Compare OpenRouter with direct APIs and other gateways</a> · <a href="${base}compare/cheapest-llm-api/">Models ranked by blended cost</a> · <a href="${base}price-changes/">Price-change log</a></p>`,
-  { scripts: calcScriptsFor(listed) })
+  { scripts: calcScripts })
 
 // Fees and direct list prices below were read on each vendor's own page on FEES_CHECKED.
 const FEES_CHECKED = '2026-11-22'
@@ -240,7 +254,7 @@ for (const m of models) {
   page(`models/${m.slug}`, `${m.model} API pricing — cost per 1M tokens | TokenPriceDB`,
     `${m.provider} ${m.model} API pricing: ${price(m.inputPer1M)} input / ${price(m.outputPer1M)} output per 1M tokens, with worked cost examples.`,
     (base) => `<h1>${esc(m.model)} API pricing</h1>
-<p class="lead">${esc(m.provider)} · checked ${m.checkedDate} · <a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></p>
+<p class="lead">${esc(m.provider)} · checked ${m.checkedDate} · <a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></p>${HELD_BACK[m.slug] ? `\n<p><strong>Not in the pricing tables.</strong> ${noteLine(HELD_BACK[m.slug])} The price below was last seen on the linked source on ${m.checkedDate} and is not confirmed on ${esc(m.provider)}\u2019s own pages.</p>` : ''}${PRICE_NOTES[m.slug] ? `\n<p><strong>Price note.</strong> ${noteLine(PRICE_NOTES[m.slug])}</p>` : ''}
 <div class="cards">
 <div class="card"><div class="k">Input / 1M tokens</div><div class="v">${price(m.inputPer1M)}</div></div>
 <div class="card"><div class="k">Output / 1M tokens</div><div class="v">${price(m.outputPer1M)}</div></div>
@@ -281,13 +295,13 @@ const pct = (x) => Math.round(x * 100) + '%'
 page('compare/cheapest-llm-api', 'Cheapest LLM API — models ranked by blended cost | TokenPriceDB',
   'LLM APIs ranked by blended cost per 1M tokens for chat, RAG and coding-agent workloads.',
   (base) => `<h1>Cheapest LLM API</h1>
-<p class="lead">${models.length} models ranked by blended cost per 1M tokens for three workload profiles. Every number is computed from the pricing table.</p>
+<p class="lead">${listed.length} models ranked by blended cost per 1M tokens for three workload profiles. Every number is computed from the pricing table.</p>
 ${PROFILES.map((p) => `<h2 id="${p.id}">${p.name}: ${pct(p.input)} input${p.cached ? `, ${pct(p.cached)} cached input` : ''}, ${pct(p.output)} output</h2>
 <p class="muted">Blended cost = ${p.input} × input price${p.cached ? ` + ${p.cached} × cached input price` : ''} + ${p.output} × output price. The token mix is an assumption for this profile.</p>
 <div class="table-wrap"><table class="sortable">
 <thead><tr><th class="num">Rank</th><th>Provider</th><th>Model</th><th class="num">Blended / 1M</th><th>Arithmetic</th></tr></thead>
 <tbody>
-${[...models].sort((a, b) => blended(a, p) - blended(b, p)).map((m, i) => `<tr><td class="num" data-v="${i + 1}">${i + 1}</td><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a></td><td class="num" data-v="${blended(m, p)}"><strong>${usd(blended(m, p))}</strong></td><td class="arith" data-v="${blended(m, p)}">${p.input} × ${price(m.inputPer1M)}${p.cached ? ` + ${p.cached} × ${price(m.cachedInputPer1M)}` : ''} + ${p.output} × ${price(m.outputPer1M)}</td></tr>`).join('\n')}
+${[...listed].sort((a, b) => blended(a, p) - blended(b, p)).map((m, i) => `<tr><td class="num" data-v="${i + 1}">${i + 1}</td><td data-v="${esc(m.provider)}">${esc(m.provider)}</td><td data-v="${esc(m.model)}"><a href="${base}models/${m.slug}/">${esc(m.model)}</a></td><td class="num" data-v="${blended(m, p)}"><strong>${usd(blended(m, p))}</strong></td><td class="arith" data-v="${blended(m, p)}">${p.input} × ${price(m.inputPer1M)}${p.cached ? ` + ${p.cached} × ${price(m.cachedInputPer1M)}` : ''} + ${p.output} × ${price(m.outputPer1M)}</td></tr>`).join('\n')}
 </tbody></table></div>`).join('\n')}
 <p><a href="${base}">← Calculate the cost of your own prompt</a></p>`,
   { scripts: (base) => `<script src="${base}assets/app.js" defer></script>` })
@@ -310,13 +324,13 @@ page('', 'TokenPriceDB — LLM API Token & Cost Calculator', HOME_LEAD, (base) =
 <p class="eyebrow">LLM API pricing database</p>
 <h1>LLM API token &amp; cost calculator</h1>
 <p class="lead">${esc(HOME_LEAD)}</p>
-<p class="cta"><a class="btn btn-primary" href="#calculator">Open the calculator</a><a class="btn btn-ghost" href="#pricing">Browse all ${models.length} prices</a></p>
+<p class="cta"><a class="btn btn-primary" href="#calculator">Open the calculator</a><a class="btn btn-ghost" href="#pricing">Browse all ${listed.length} prices</a></p>
 </div>
 <a class="hero-art" href="#calculator"><img src="${base}assets/img/${IMG.hero.file}" alt="${IMG.hero.alt}" width="${IMG.hero.w}" height="${IMG.hero.h}" fetchpriority="high"></a>
 <dl class="stats">
-<div><dt>Models tracked</dt><dd>${models.length}</dd></div>
+<div><dt>Models tracked</dt><dd>${listed.length}</dd></div>
 <div><dt>Providers</dt><dd>${providers.length}</dd></div>
-<div><dt>Source-linked prices</dt><dd>${models.filter((m) => m.sourceUrl).length} / ${models.length}</dd></div>
+<div><dt>Source-linked prices</dt><dd>${listed.filter((m) => m.sourceUrl).length} / ${listed.length}</dd></div>
 <div><dt>Changes logged</dt><dd>${changes.length}</dd></div>
 <div><dt>Last checked</dt><dd><time datetime="${checked}">${prettyDate(checked)}</time></dd></div>
 </dl>
@@ -334,13 +348,13 @@ ${costTable(base)}
 <div class="promo-copy">
 <p class="eyebrow">Compare</p>
 <h2>Which LLM API is cheapest for your workload?</h2>
-<p>All ${models.length} models ranked by blended cost per 1M tokens for chat, RAG and coding-agent workloads, with the arithmetic shown.</p>
+<p>All ${listed.length} models ranked by blended cost per 1M tokens for chat, RAG and coding-agent workloads, with the arithmetic shown.</p>
 <p class="cta"><a class="btn btn-primary" href="${base}compare/cheapest-llm-api/">See the full ranking</a></p>
 </div>
 <div class="promo-data">
 <img class="promo-art" src="${base}assets/img/${IMG.compare.file}" alt="${IMG.compare.alt}" width="${IMG.compare.w}" height="${IMG.compare.h}" loading="lazy">
 <ol class="rank">
-${[...models].sort((a, b) => blended(a, chat) - blended(b, chat)).slice(0, 3).map((m) => `<li><span class="prov ${provClass(m.provider)}">${esc(m.provider)}</span> <a href="${base}models/${m.slug}/">${esc(m.model)}</a> <span class="rank-v">${usd(blended(m, chat))} / 1M</span></li>`).join('\n')}
+${[...listed].sort((a, b) => blended(a, chat) - blended(b, chat)).slice(0, 3).map((m) => `<li><span class="prov ${provClass(m.provider)}">${esc(m.provider)}</span> <a href="${base}models/${m.slug}/">${esc(m.model)}</a> <span class="rank-v">${usd(blended(m, chat))} / 1M</span></li>`).join('\n')}
 </ol>
 <p class="muted">Cheapest three for the chat profile (${pct(chat.input)} input, ${pct(chat.output)} output), computed from the pricing table.</p>
 </div>
@@ -348,9 +362,10 @@ ${[...models].sort((a, b) => blended(a, chat) - blended(b, chat)).slice(0, 3).ma
 <section class="band band-soft" id="pricing">
 ${pricingHead}
 <div class="families">
-${providers.map((p) => { const ms = models.filter((m) => m.provider === p); return `<div class="family ${provClass(p)}"><div class="family-head">${esc(p)}</div><div class="family-body"><div class="v">${ms.length} <span>models</span></div><div class="k"><span>Input</span> ${familyRange(ms.map((m) => m.inputPer1M))}</div><div class="k"><span>Output</span> ${familyRange(ms.map((m) => m.outputPer1M))}</div></div></div>` }).join('\n')}
+${providers.map((p) => { const ms = listed.filter((m) => m.provider === p); return `<div class="family ${provClass(p)}"><div class="family-head">${esc(p)}</div><div class="family-body"><div class="v">${ms.length} <span>models</span></div><div class="k"><span>Input</span> ${familyRange(ms.map((m) => m.inputPer1M))}</div><div class="k"><span>Output</span> ${familyRange(ms.map((m) => m.outputPer1M))}</div></div></div>` }).join('\n')}
 </div>
 ${pricingTable(base)}
+${priceNotes()}
 </section>
 <section class="band band-light promo">
 <div class="promo-copy">
