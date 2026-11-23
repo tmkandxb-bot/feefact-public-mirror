@@ -9,11 +9,11 @@
   var byId = function (id) { return document.getElementById(id); };
 
   function parseMoney(v) {
-    var s = String(v || '').trim();
-    /* Unicode minus and accounting parentheses mean negative, same as "-" */
-    if (/^[\u2212\u2013(]/.test(s.replace(/^[$\s]+/, ''))) return 0;
-    var n = parseFloat(s.replace(/[^0-9.\-]/g, ''));
-    return isFinite(n) && n > 0 ? Math.round(n) : 0;
+    /* Accepts "1234", "1,234.56", "$1,234". Anything else (letters, a minus
+       sign, accounting parentheses) counts as 0 rather than being guessed. */
+    var s = String(v || '').replace(/[$,\s]/g, '');
+    if (!/^(\d+\.?\d*|\.\d+)$/.test(s)) return 0;
+    return Math.round(parseFloat(s));
   }
   function fmtUSD(n) {
     var s = Math.abs(n).toLocaleString('en-US', {maximumFractionDigits: 0});
