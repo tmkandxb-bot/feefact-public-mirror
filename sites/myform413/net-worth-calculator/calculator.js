@@ -9,7 +9,10 @@
   var byId = function (id) { return document.getElementById(id); };
 
   function parseMoney(v) {
-    var n = parseFloat(String(v || '').replace(/[^0-9.\-]/g, ''));
+    var s = String(v || '').trim();
+    /* Unicode minus and accounting parentheses mean negative, same as "-" */
+    if (/^[\u2212\u2013(]/.test(s.replace(/^[$\s]+/, ''))) return 0;
+    var n = parseFloat(s.replace(/[^0-9.\-]/g, ''));
     return isFinite(n) && n > 0 ? Math.round(n) : 0;
   }
   function fmtUSD(n) {
