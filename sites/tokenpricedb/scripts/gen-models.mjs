@@ -83,7 +83,7 @@ ${body(base)}
 </main>
 <footer class="site">${footer ? '\n' + footer(base) : ''}
 <p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked ${checked}. Every row links to its source.
-Batch, priority and long-context tiers are not included. Always confirm on the provider's pricing page before budgeting.</p>
+Batch, priority and long-context tiers are not included, except that the calculator prices Claude Haiku 5.5 at Anthropic\u2019s published rate for prompts over 100,000 tokens when the input is above that size. Always confirm on the provider's pricing page before budgeting.</p>
 </footer>
 ${scripts ? scripts(base) : ''}
 <script>
@@ -164,11 +164,11 @@ ${calcForm}
 ${costHead}
 ${costTable(base)}
 <h2>Per-model prices behind the calculator (USD per 1M tokens)</h2>
-<p class="muted">${listed.length} models across ${providers.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a note under the table (an announced end date, a peak and off-peak rate, or a long-context tier); the calculator uses the price shown in the row.</p>
+<p class="muted">${listed.length} models across ${providers.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a note under the table (an announced end date, a peak and off-peak rate, or a long-context tier); the calculator uses the price shown in the row, except for Claude Haiku 5.5 above 100,000 input tokens.</p>
 ${pricingTable(base)}
 ${priceNotes()}
 <h2>How the cost is calculated</h2>
-<p>Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price. Prices are standard pay-as-you-go list prices; batch, priority and long-context tiers are not included.</p>
+<p>Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price. Prices are standard pay-as-you-go list prices; batch, priority and long-context tiers are not included. The one exception is Claude Haiku 5.5: above 100,000 input tokens the calculator uses Anthropic\u2019s published price for prompts over 100,000 tokens.</p>
 <p>Token counts from pasted text use the o200k_base encoding. They are exact only for the OpenAI models labeled "exact" and an estimate for every other model, because each provider uses its own tokenizer.</p>
 <p>${models.length - listed.length} models from the full database are left out of the tables because their providers have deprecated or retired them and their stored prices could not be confirmed on the providers' own pages.</p>
 <p><a href="${base}openrouter-alternatives/">Compare OpenRouter with direct APIs and other gateways</a> · <a href="${base}compare/cheapest-llm-api/">Models ranked by blended cost</a> · <a href="${base}price-changes/">Price-change log</a></p>`,
