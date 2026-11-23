@@ -21,7 +21,7 @@ const prettyDate = (iso) => { const [y, m, d] = iso.split('-'); return `${+d} ${
 // Rows the provider has deprecated or retired and whose stored price can no longer be confirmed on the
 // provider's own pages. They stay out of every table, calculator and ranking; only their model page remains.
 const GOOGLE_PRICING = 'https://ai.google.dev/gemini-api/docs/pricing'
-const DEEPSEEK_PRICING = 'https://api-docs.deepseek.com/quick_start/pricing'
+const DEEPSEEK_PRICING = 'https://api-docs.deepseek.com/quick_start/pricing/'
 const MISTRAL_MODELS = 'https://docs.mistral.ai/models'
 const MISTRAL_PRICING = { url: 'https://docs.mistral.ai/inference/pricing', label: 'Mistral pricing page' }
 const HELD_BACK = {
@@ -29,7 +29,7 @@ const HELD_BACK = {
   'mistral-large-2512': { text: 'Mistral lists mistral-large-2512 as deprecated on 10/31/2026 and retiring on 4/30/2027, with Mistral Large 4 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page', also: { text: 'Mistral\u2019s pricing page lists Mistral Large 4 and no price for mistral-large-2512.', ...MISTRAL_PRICING } },
   'devstral-2512': { text: 'Mistral lists devstral-2512 as deprecated on 5/22/2026 and retired on 7/31/2026, with Mistral Medium 3.5 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page', also: { text: 'Mistral\u2019s pricing page lists no price for devstral-2512.', ...MISTRAL_PRICING } },
   'deepseek-v4-pro': { text: 'DeepSeek\u2019s pricing page lists DeepSeek-V4-Pro-0813 as the version behind the deepseek-v4-pro model name and gives no price for the 0423 version.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
-  'deepseek-v4-flash': { text: 'DeepSeek states that the legacy deepseek-v4-flash model has been retired: requests under that name are served by DeepSeek-V4.1-Flash-1017 and billed at the Flash price.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+  'deepseek-v4-flash': { text: 'DeepSeek states that the legacy deepseek-v4-flash model has been retired: requests under that name are served by DeepSeek-V4.1-Flash-1017 and billed at the Flash price.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page', desc: 'DeepSeek has retired DeepSeek V4 Flash 0423: requests under the deepseek-v4-flash name are served by DeepSeek-V4.1-Flash-1017, so TokenPriceDB lists no separate price for it.' },
 }
 // Listed rows whose provider page states an end date, a second rate or a long-context tier for the price.
 const geminiStep = 'Google lists $2.00 input / $10.00 output per 1M tokens through November 30, 2026, and $4.00 / $20.00 starting December 1, 2026.'
@@ -258,7 +258,7 @@ rmSync(join(root, 'models'), { recursive: true, force: true })
 for (const m of models) {
   const held = HELD_BACK[m.slug]
   page(`models/${m.slug}`, held ? `${m.model} API pricing — no confirmed price | TokenPriceDB` : `${m.model} API pricing — cost per 1M tokens | TokenPriceDB`,
-    held ? `${m.provider} ${m.model} has no price on ${m.provider}\u2019s own pages, so TokenPriceDB does not list one.`
+    held ? held.desc || `${m.provider} ${m.model} has no price on ${m.provider}\u2019s own pages, so TokenPriceDB does not list one.`
       : `${m.provider} ${m.model} API pricing: ${price(m.inputPer1M)} input / ${price(m.outputPer1M)} output per 1M tokens, with worked cost examples.`,
     (base) => held ? `<h1>${esc(m.model)} API pricing</h1>
 <p class="lead">${esc(m.provider)} · no confirmed price</p>

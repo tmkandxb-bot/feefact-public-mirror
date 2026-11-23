@@ -368,7 +368,7 @@
     "cachedInputPer1M": 0.006,
     "contextWindow": 1048576,
     "tokenizer": null,
-    "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing",
+    "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing/",
     "checkedDate": "2026-11-23"
   },
   {
@@ -380,7 +380,7 @@
     "cachedInputPer1M": 0.044,
     "contextWindow": 1048576,
     "tokenizer": null,
-    "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing",
+    "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing/",
     "checkedDate": "2026-11-23"
   },
   {
