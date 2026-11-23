@@ -5,6 +5,7 @@
   'use strict';
   var ORDER_KEY = 'mf413.orders';      // localStorage: [{orderId, token, paid}], newest first
   var DRAFT_KEY = 'mf413.draft';       // sessionStorage: form answers during checkout
+  var WAIT_KEY = 'mf413.waiting';      // sessionStorage: set when leaving for checkout, cleared on the first load back
   var btn, panel, unlocked = false;
 
   function loadOrders() {
@@ -79,6 +80,7 @@
         if (!res.ok || !res.j.checkoutUrl) throw new Error(res.j && res.j.error || 'Could not start checkout.');
         saveOrder({orderId: res.j.orderId, token: token, paid: false});
         saveDraft();
+        try { sessionStorage.setItem(WAIT_KEY, '1'); } catch (e) {}
         window.location.href = res.j.checkoutUrl;
       })
       .catch(function (e) { pay.disabled = false; setMsg(e.message || 'Could not start checkout. Please try again.', true); });
@@ -124,12 +126,14 @@
     }, true);
 
     var orders = loadOrders();
-    // A draft exists only between starting checkout and the download being released.
-    var returning = restoreDraft();
-    if (returning) {
-      showStep(6);
-      if (orders.length) { panel.hidden = false; setMsg('Checking your payment…'); panel.querySelector('.pw-pay').disabled = true; }
-    }
+    // A draft exists from starting checkout until the download is released, so it also
+    // survives an abandoned checkout. Only the first load back waits for the webhook;
+    // later reloads restore the answers, check once and leave the pay button usable.
+    var hadDraft = restoreDraft();
+    var returning = false;
+    try { returning = hadDraft && sessionStorage.getItem(WAIT_KEY) === '1'; sessionStorage.removeItem(WAIT_KEY); } catch (e) {}
+    if (hadDraft) showStep(6);
+    if (returning && orders.length) { panel.hidden = false; setMsg('Checking your payment…'); panel.querySelector('.pw-pay').disabled = true; }
     if (orders.length) waitForPayment(orders, returning ? 30 : 0, returning);
     if (/[?&]paid=/.test(location.search) && history.replaceState) {
       history.replaceState(null, '', location.pathname + location.hash);
