@@ -1,0 +1,73 @@
+/* MyForm413 /net-worth-calculator/ layer. Loaded after /style.css; every rule
+   is scoped to an .nw-* class so shared styles and the homepage are untouched. */
+.nw-page{--nw-navy:#0b2545;--nw-teal:#12b5a5;--nw-teal-d:#0a6f66;--nw-tint:#eaf1f8;--nw-line:#d3deea;--nw-mut:#55667e;--nw-red:#b3261e}
+.nw-hero{background:radial-gradient(900px 420px at 85% 0%,rgba(18,181,165,.26),transparent 60%),linear-gradient(135deg,#071a33 0%,#0b2545 45%,#134b82 100%);color:#fff}
+.nw-hero-in{max-width:1080px;margin:0 auto;padding:46px 20px 40px}
+.nw-eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#7fe6da;margin:0 0 10px}
+.nw-hero h1{font-size:40px;line-height:1.12;letter-spacing:-.02em;margin:0 0 14px;color:#fff}
+.nw-hero p.nw-sub{font-size:17.5px;color:#d7e7f8;max-width:720px;margin:0}
+.nw-chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none}
+.nw-chips li{font-size:13px;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#e6f1fc}
+.nw-in{max-width:1080px;margin:0 auto;padding:0 20px}
+.nw-tool{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:26px;align-items:start;padding-top:28px;padding-bottom:12px}
+.nw-col{display:grid;gap:20px;min-width:0}
+.nw-card{background:#fff;border:1px solid var(--nw-line);border-radius:14px;padding:22px 24px;box-shadow:0 6px 20px rgba(11,37,69,.06)}
+.nw-card h2{margin:0 0 4px;font-size:21px;color:var(--nw-navy)}
+.nw-card>p.small{margin:0 0 6px}
+.nw-card label{font-size:14px}
+.nw-card input.nw-money{min-height:44px;font-variant-numeric:tabular-nums}
+.nw-card input.nw-money:focus{outline:2px solid var(--nw-teal);outline-offset:1px;border-color:var(--nw-teal)}
+.nw-subtotal{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:2px solid var(--nw-line);font-size:17px;font-weight:700;color:var(--nw-navy)}
+.nw-subtotal b{font-variant-numeric:tabular-nums}
+.nw-result{position:sticky;top:16px;background:var(--nw-navy);color:#fff;border-radius:14px;padding:24px;box-shadow:0 18px 44px rgba(2,12,28,.28)}
+.nw-result h2{margin:0;font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:#7fe6da}
+.nw-net{font-size:40px;font-weight:800;line-height:1.1;letter-spacing:-.02em;margin:8px 0 2px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.nw-net.nw-neg{color:#ffb4ab}
+.nw-status{font-size:14px;color:#c4d6ea;margin:0 0 16px;min-height:21px}
+.nw-line{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:8px 0;border-top:1px solid rgba(255,255,255,.16)}
+.nw-line b{font-variant-numeric:tabular-nums}
+.nw-bar{height:12px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;margin:14px 0 6px}
+.nw-bar span{display:block;height:100%;width:0;background:var(--nw-teal);transition:width .2s ease}
+.nw-bar.nw-over span{background:#ff8a80}
+.nw-barnote{font-size:12.5px;color:#a9c0da;margin:0 0 16px}
+.nw-actions{display:grid;gap:10px}
+.nw-btn{display:block;width:100%;text-align:center;background:var(--nw-teal);color:#04222b;font-weight:700;border:0;border-radius:10px;padding:13px 16px;font-size:15.5px;cursor:pointer;text-decoration:none;font-family:inherit}
+.nw-btn:hover{background:#2fd0c0}
+.nw-btn-line{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);font-weight:600}
+.nw-btn-line:hover{background:rgba(255,255,255,.12)}
+.nw-fine{font-size:12.5px;color:#a9c0da;margin:12px 0 0;line-height:1.5}
+.nw-sec{padding:44px 0}
+.nw-sec--tint{background:var(--nw-tint)}
+.nw-sec--white{background:#fff}
+.nw-prose{max-width:820px}
+.nw-prose h2{font-size:27px;line-height:1.2;color:var(--nw-navy);margin:0 0 12px;letter-spacing:-.01em}
+.nw-prose h3{font-size:18.5px;color:var(--nw-navy);margin:24px 0 6px}
+.nw-prose p,.nw-prose li{font-size:16.5px}
+.nw-formula{background:var(--nw-navy);color:#fff;border-radius:12px;padding:18px 22px;font-size:20px;font-weight:700;text-align:center;margin:18px 0}
+.nw-formula span{color:var(--nw-teal)}
+.nw-tablewrap{overflow-x:auto;margin:14px 0}
+table.nw-table{width:100%;border-collapse:collapse;background:#fff;font-size:15px;min-width:520px}
+table.nw-table th,table.nw-table td{border:1px solid var(--nw-line);padding:10px 12px;text-align:left;vertical-align:top}
+table.nw-table th{background:#dfe9f4;color:var(--nw-navy)}
+table.nw-table td.nw-num,table.nw-table th.nw-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.nw-table tr.nw-tot td{font-weight:700;background:#f3f7fb}
+.nw-cta{background:linear-gradient(120deg,#071a33,#0b2545 55%,#0e3157);color:#fff;border-radius:14px;padding:26px 28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin:26px 0 0}
+.nw-cta h2{color:#fff;margin:0 0 6px;font-size:22px}
+.nw-cta p{margin:0;color:#c4d6ea;font-size:15.5px}
+.nw-cta .nw-btn{width:auto;padding:14px 24px;white-space:nowrap}
+.nw-foot nav{margin-bottom:8px}
+.nw-foot nav a{margin:0 9px;color:var(--nw-teal-d)}
+@media(max-width:900px){
+  .nw-tool{grid-template-columns:1fr}
+  .nw-result{position:static;order:-1}
+  .nw-hero h1{font-size:31px}
+  .nw-net{font-size:34px}
+  .nw-cta{grid-template-columns:1fr}
+  .nw-cta .nw-btn{width:100%;white-space:normal}
+}
+@media print{
+  header.site,.nw-hero .nw-chips,.nw-actions,.nw-sec,.nw-foot,.nw-fine{display:none}
+  .nw-result{position:static;background:#fff;color:#000;box-shadow:none;border:1px solid #000}
+  .nw-result h2,.nw-status,.nw-barnote{color:#000}
+  .nw-hero{background:#fff;color:#000}.nw-hero h1,.nw-hero p.nw-sub,.nw-eyebrow{color:#000}
+}

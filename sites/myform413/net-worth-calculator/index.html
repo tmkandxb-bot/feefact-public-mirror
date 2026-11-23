@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Net Worth Calculator — Free, Private, Nothing to Sign Up For | MyForm413</title>
+<meta name="description" content="Free net worth calculator: enter what you own and what you owe and see your net worth instantly. Runs in your browser — your numbers are never uploaded.">
+<link rel="canonical" href="https://myform413.com/net-worth-calculator/">
+<meta property="og:title" content="Net Worth Calculator — Free and Private">
+<meta property="og:description" content="Enter what you own and what you owe and see your net worth instantly. Your numbers never leave your browser.">
+<meta property="og:url" content="https://myform413.com/net-worth-calculator/">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/net-worth-calculator/calculator.css">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "MyForm413 Net Worth Calculator", "url": "https://myform413.com/net-worth-calculator/", "applicationCategory": "FinanceApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Free net worth calculator that totals assets and liabilities in your browser, using the same lines as SBA Form 413."}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do you calculate net worth?", "acceptedAnswer": {"@type": "Answer", "text": "Add up the current value of everything you own (your assets), add up everything you owe (your liabilities), and subtract the second total from the first. Net worth = total assets − total liabilities. The calculator on this page does the addition and subtraction as you type."}}, {"@type": "Question", "name": "What counts as an asset?", "acceptedAnswer": {"@type": "Answer", "text": "Anything you own that has a money value today: cash and bank balances, retirement accounts, investments, real estate at its present market value, vehicles, the cash surrender value of life insurance, money owed to you, and other personal property."}}, {"@type": "Question", "name": "What counts as a liability?", "acceptedAnswer": {"@type": "Answer", "text": "Any amount you owe: credit card and other unpaid bills, personal and student loans, car loans, mortgages and home equity loans, loans against life insurance, and unpaid taxes. Use the remaining balance, not the monthly payment."}}, {"@type": "Question", "name": "Can net worth be negative?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. If you owe more than you own, the result is a negative number. The calculator shows it with a minus sign. It is arithmetic, not a judgment."}}, {"@type": "Question", "name": "Is the equity in my home part of my net worth?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Enter the home's present market value under Real estate and the remaining mortgage balance under Mortgages on real estate. The difference between the two is your home equity, and it flows into the result automatically."}}, {"@type": "Question", "name": "Does this net worth calculator save or upload my numbers?", "acceptedAnswer": {"@type": "Answer", "text": "No. The calculator runs entirely in your browser and makes no network requests with your numbers. Nothing is stored unless you click Continue in the Form 413 wizard, which keeps your entries in this browser tab only so the wizard can pre-fill them."}}, {"@type": "Question", "name": "Is this the same net worth that goes on SBA Form 413?", "acceptedAnswer": {"@type": "Answer", "text": "The lines match Section 1 of the current SBA Form 413 (version 05-24): ten asset lines, eight liability lines, and net worth as the difference. The form also asks you to omit cents and to divide jointly owned assets and liabilities with your spouse or others as appropriate."}}]}]}
+</script>
+</head>
+<body class="nw-page">
+<header class="site">
+  <a class="logo" href="/">MyForm413</a>
+  <nav>
+    <a href="/net-worth-calculator/" aria-current="page">Net Worth Calculator</a>
+    <a href="/sba-form-413/">Form 413 Guide</a>
+    <a href="/personal-financial-statement-template/">PFS Template</a>
+  </nav>
+</header>
+
+<section class="nw-hero">
+  <div class="nw-hero-in">
+    <p class="nw-eyebrow">Free tool · no sign-up</p>
+    <h1>Net Worth Calculator</h1>
+    <p class="nw-sub">Enter what you own and what you owe. Your net worth updates as you type — total assets minus total liabilities — and nothing you enter leaves your browser.</p>
+    <ul class="nw-chips">
+      <li>Instant result</li>
+      <li>No account, no email</li>
+      <li>Your numbers are never uploaded</li>
+      <li>Same lines as SBA Form 413</li>
+    </ul>
+  </div>
+</section>
+
+<main>
+<div class="nw-in nw-tool" id="calculator">
+  <div class="nw-col">
+    <section class="nw-card" aria-labelledby="nwAssetsH">
+      <h2 id="nwAssetsH">What you own (assets)</h2>
+      <p class="small">Enter whole-dollar amounts as of today. Leave a line blank if it does not apply.</p>
+      <div class="grid2">
+          <div><label>Cash on hand &amp; in banks <span class="hint">Checking accounts and physical cash</span><input type="text" class="nw-money" data-g="assets" data-k="cash" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Savings accounts <span class="hint">Savings, money market and CDs</span><input type="text" class="nw-money" data-g="assets" data-k="savings" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>IRA or other retirement account <span class="hint">IRA, 401(k) and similar account balances</span><input type="text" class="nw-money" data-g="assets" data-k="ira" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Accounts &amp; notes receivable <span class="hint">Money other people owe you personally</span><input type="text" class="nw-money" data-g="assets" data-k="receivables" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Life insurance — cash surrender value only <span class="hint">What the policy would pay if you cashed it in today, not the death benefit</span><input type="text" class="nw-money" data-g="assets" data-k="lifeInsurance" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Stocks &amp; bonds <span class="hint">Current market value of taxable investment accounts</span><input type="text" class="nw-money" data-g="assets" data-k="stocksBonds" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Real estate <span class="hint">Present market value of every property you own, before subtracting the mortgage</span><input type="text" class="nw-money" data-g="assets" data-k="realEstate" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Automobiles <span class="hint">What your vehicles would sell for today</span><input type="text" class="nw-money" data-g="assets" data-k="automobiles" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Other personal property <span class="hint">Jewelry, equipment, collectibles and similar items at resale value</span><input type="text" class="nw-money" data-g="assets" data-k="otherProperty" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Other assets <span class="hint">Anything of value that does not fit a line above</span><input type="text" class="nw-money" data-g="assets" data-k="otherAssets" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+      </div>
+      <div class="nw-subtotal"><span>Total assets</span><b id="nwAssetsSub">$0</b></div>
+    </section>
+    <section class="nw-card" aria-labelledby="nwLiabH">
+      <h2 id="nwLiabH">What you owe (liabilities)</h2>
+      <p class="small">Enter the balance you still owe on each debt, not the monthly payment.</p>
+      <div class="grid2">
+          <div><label>Accounts payable <span class="hint">Bills you owe now, including credit card balances</span><input type="text" class="nw-money" data-g="liabilities" data-k="accountsPayable" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Notes payable to banks &amp; others <span class="hint">Personal loans, lines of credit and student loans</span><input type="text" class="nw-money" data-g="liabilities" data-k="notesPayable" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Installment account — auto <span class="hint">Remaining balance on car loans</span><input type="text" class="nw-money" data-g="liabilities" data-k="installmentAuto" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Installment accounts — other <span class="hint">Remaining balance on other installment debt</span><input type="text" class="nw-money" data-g="liabilities" data-k="installmentOther" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Loans against life insurance <span class="hint">Amounts borrowed against a policy</span><input type="text" class="nw-money" data-g="liabilities" data-k="lifeLoans" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Mortgages on real estate <span class="hint">Remaining balance on every mortgage and home equity loan</span><input type="text" class="nw-money" data-g="liabilities" data-k="mortgages" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Unpaid taxes <span class="hint">Taxes you owe that are not yet paid</span><input type="text" class="nw-money" data-g="liabilities" data-k="unpaidTaxes" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+          <div><label>Other liabilities <span class="hint">Any other debt that does not fit a line above</span><input type="text" class="nw-money" data-g="liabilities" data-k="otherLiabilities" inputmode="decimal" autocomplete="off" placeholder="0"></label></div>
+      </div>
+      <div class="nw-subtotal"><span>Total liabilities</span><b id="nwLiabSub">$0</b></div>
+    </section>
+  </div>
+
+  <aside class="nw-result" aria-labelledby="nwResultH">
+    <h2 id="nwResultH">Your net worth</h2>
+    <div class="nw-net" id="nwNet" role="status" aria-live="polite">$0</div>
+    <p class="nw-status" id="nwStatus">Enter your numbers to see your net worth.</p>
+    <div class="nw-line"><span>Total assets</span><b id="nwAssets">$0</b></div>
+    <div class="nw-line"><span>Total liabilities</span><b id="nwLiab">$0</b></div>
+    <div class="nw-bar" id="nwBar" aria-hidden="true"><span></span></div>
+    <p class="nw-barnote" id="nwBarNote">Liabilities as a share of assets: —</p>
+    <div class="nw-actions">
+      <a class="nw-btn" id="nwContinue" href="/#start">Continue in the Form 413 wizard →</a>
+      <button type="button" class="nw-btn nw-btn-line" id="nwPrint">Print or save this summary</button>
+      <button type="button" class="nw-btn nw-btn-line" id="nwReset">Clear all numbers</button>
+    </div>
+    <p class="nw-fine">🔒 Calculated in your browser. Nothing is uploaded. Continuing to the wizard carries these numbers over inside this browser tab only, so you do not retype them.</p>
+  </aside>
+</div>
+
+<section class="nw-sec nw-sec--white">
+  <div class="nw-in"><div class="nw-prose">
+    <h2>How to calculate your net worth</h2>
+    <p>Net worth is one subtraction. Add up the value of everything you own, add up everything you owe, and take the second number away from the first:</p>
+    <div class="nw-formula">Net worth = <span>total assets</span> − <span>total liabilities</span></div>
+    <p>The result is a snapshot as of one date. It changes whenever a balance changes, so pick a date — usually today — and use the figures for that date on every line.</p>
+    <ol>
+      <li><b>List your assets at today's value.</b> Use the current balance for accounts and a realistic present market value for property — what it would sell for now, not what you paid.</li>
+      <li><b>List your liabilities at today's balance.</b> Use the amount still owed on each debt. Monthly payments do not go into a net worth calculation.</li>
+      <li><b>Subtract.</b> Total assets minus total liabilities is your net worth. The calculator above does both totals and the subtraction for you.</li>
+    </ol>
+
+    <h3>A worked example</h3>
+    <p>The numbers below are made up to show the arithmetic. They are not a benchmark or a target.</p>
+    <div class="nw-tablewrap"><table class="nw-table">
+      <tr><th>Assets</th><th class="nw-num">Amount</th><th>Liabilities</th><th class="nw-num">Amount</th></tr>
+      <tr><td>Cash &amp; savings</td><td class="nw-num">$18,000</td><td>Credit card balances</td><td class="nw-num">$4,000</td></tr>
+      <tr><td>Retirement accounts</td><td class="nw-num">$90,000</td><td>Car loan</td><td class="nw-num">$11,000</td></tr>
+      <tr><td>Home (market value)</td><td class="nw-num">$350,000</td><td>Mortgage</td><td class="nw-num">$240,000</td></tr>
+      <tr><td>Car</td><td class="nw-num">$17,000</td><td>Student loan</td><td class="nw-num">$20,000</td></tr>
+      <tr class="nw-tot"><td>Total assets</td><td class="nw-num">$475,000</td><td>Total liabilities</td><td class="nw-num">$275,000</td></tr>
+    </table></div>
+    <p>$475,000 − $275,000 = <b>$200,000 net worth</b>. Notice that the home appears twice: its full market value on the asset side and the mortgage on the liability side. The $110,000 difference between them is the home equity, and it is already inside the $200,000.</p>
+  </div></div>
+</section>
+
+<section class="nw-sec nw-sec--tint">
+  <div class="nw-in"><div class="nw-prose">
+    <h2>What counts as an asset</h2>
+    <p>An asset is anything you own that has a money value today. The calculator uses ten lines:</p>
+    <ul>
+      <li><b>Cash on hand and in banks</b> and <b>savings accounts</b> — current balances.</li>
+      <li><b>IRA or other retirement account</b> — the current account balance.</li>
+      <li><b>Accounts and notes receivable</b> — money owed to you personally.</li>
+      <li><b>Life insurance</b> — the cash surrender value only. A policy's death benefit is not an asset you hold today.</li>
+      <li><b>Stocks and bonds</b> — current market value.</li>
+      <li><b>Real estate</b> — present market value of each property, with the mortgage entered separately as a liability.</li>
+      <li><b>Automobiles</b> — what the vehicle would sell for now.</li>
+      <li><b>Other personal property</b> and <b>other assets</b> — anything else of value.</li>
+    </ul>
+
+    <h2 style="margin-top:34px">What counts as a liability</h2>
+    <p>A liability is any amount you owe. The calculator uses eight lines:</p>
+    <ul>
+      <li><b>Accounts payable</b> — bills you owe now, such as credit card balances.</li>
+      <li><b>Notes payable to banks and others</b> — personal loans, lines of credit, student loans.</li>
+      <li><b>Installment accounts</b> (auto and other) — the remaining balance.</li>
+      <li><b>Loans against life insurance</b>.</li>
+      <li><b>Mortgages on real estate</b> — the remaining balance on every property loan.</li>
+      <li><b>Unpaid taxes</b> and <b>other liabilities</b>.</li>
+    </ul>
+
+    <h3>Common mistakes that distort the result</h3>
+    <ul>
+      <li><b>Entering a home's equity instead of its value.</b> If you enter equity as the asset and also enter the mortgage, the mortgage is subtracted twice.</li>
+      <li><b>Using purchase price.</b> Net worth uses what something is worth today.</li>
+      <li><b>Counting a life insurance death benefit.</b> Only the cash surrender value belongs here.</li>
+      <li><b>Entering monthly payments as debts.</b> Enter the full balance still owed.</li>
+      <li><b>Mixing dates.</b> A bank balance from last month and a loan balance from today describe two different moments.</li>
+      <li><b>Leaving out small debts.</b> Credit card balances and unpaid taxes are liabilities too.</li>
+    </ul>
+
+    <h3>What if the number is negative?</h3>
+    <p>A negative net worth means your liabilities are larger than your assets. The calculator shows it with a minus sign and still works normally. Net worth is a measurement at one point in time; it says nothing about income or about what the number will be next year.</p>
+  </div></div>
+</section>
+
+<section class="nw-sec nw-sec--white">
+  <div class="nw-in"><div class="nw-prose">
+    <h2>Net worth on SBA Form 413</h2>
+    <p>If you are applying for an SBA loan, your net worth is not just a number for yourself — it is a line on <a href="/sba-form-413/">SBA Form 413</a>, the Personal Financial Statement. That is why this calculator uses exactly the asset and liability lines in Section 1 of the current form (version 05-24, OMB No. 3245-0188, expires 08/31/2027). What the form itself says:</p>
+    <ul>
+      <li>For 7(a) loans, 504 loans and surety bonds, the form is completed for each proprietor, general partner, managing member of an LLC, each owner of 20% or more of the applicant's equity, and any person providing a guaranty on the loan.</li>
+      <li>Amounts are entered in whole dollars ("Omit Cents").</li>
+      <li>The form asks for personal information, not business information, and tells you to divide jointly owned assets and liabilities, as appropriate, with your spouse or others.</li>
+      <li>The statement date must be within 90 days of submission for Disaster loans, or within 120 days for 7(a), 504, surety bond, 8(a) BD and WOSB.</li>
+      <li>Several Section 1 lines are backed by detail schedules later in the form — notes payable (Section 2), stocks and bonds (Section 3), real estate (Section 4) — and the summary should agree with them.</li>
+    </ul>
+    <p>One caution: for the 8(a) Business Development and WOSB programs, the form describes a separate "personal net worth" test that leaves out certain items, such as equity in a personal residence. This calculator does not compute that adjusted figure; it computes the plain assets-minus-liabilities net worth shown in Section 1.</p>
+    <p class="small">Source: SBA Form 413 (05-24), published by the U.S. Small Business Administration at <a href="https://www.sba.gov/document/sba-form-413-personal-financial-statement" rel="noopener">sba.gov</a>.</p>
+
+    <div class="nw-cta">
+      <div>
+        <h2>Need the full statement, not just the number?</h2>
+        <p>The MyForm413 wizard turns these same lines into the official Form 413 PDF, checks that it balances, and cross-checks the schedules. Use the Continue button in the calculator to bring your numbers with you.</p>
+      </div>
+      <a class="nw-btn" href="#calculator">Back to the calculator ↑</a>
+    </div>
+  </div></div>
+</section>
+
+<section class="nw-sec nw-sec--tint">
+  <div class="nw-in"><div class="nw-prose">
+    <h2>Net worth calculator FAQ</h2>
+    <div class="faq">
+      <details><summary>How do you calculate net worth?</summary><p>Add up the current value of everything you own (your assets), add up everything you owe (your liabilities), and subtract the second total from the first. Net worth = total assets − total liabilities. The calculator on this page does the addition and subtraction as you type.</p></details>
+      <details><summary>What counts as an asset?</summary><p>Anything you own that has a money value today: cash and bank balances, retirement accounts, investments, real estate at its present market value, vehicles, the cash surrender value of life insurance, money owed to you, and other personal property.</p></details>
+      <details><summary>What counts as a liability?</summary><p>Any amount you owe: credit card and other unpaid bills, personal and student loans, car loans, mortgages and home equity loans, loans against life insurance, and unpaid taxes. Use the remaining balance, not the monthly payment.</p></details>
+      <details><summary>Can net worth be negative?</summary><p>Yes. If you owe more than you own, the result is a negative number. The calculator shows it with a minus sign. It is arithmetic, not a judgment.</p></details>
+      <details><summary>Is the equity in my home part of my net worth?</summary><p>Yes. Enter the home's present market value under Real estate and the remaining mortgage balance under Mortgages on real estate. The difference between the two is your home equity, and it flows into the result automatically.</p></details>
+      <details><summary>Does this net worth calculator save or upload my numbers?</summary><p>No. The calculator runs entirely in your browser and makes no network requests with your numbers. Nothing is stored unless you click Continue in the Form 413 wizard, which keeps your entries in this browser tab only so the wizard can pre-fill them.</p></details>
+      <details><summary>Is this the same net worth that goes on SBA Form 413?</summary><p>The lines match Section 1 of the current SBA Form 413 (version 05-24): ten asset lines, eight liability lines, and net worth as the difference. The form also asks you to omit cents and to divide jointly owned assets and liabilities with your spouse or others as appropriate.</p></details>
+    </div>
+    <p class="small disclaimer">Disclaimer: this calculator is a convenience tool that adds and subtracts the numbers you enter. It is not legal, tax or financial advice, and MyForm413 is not affiliated with, endorsed by, or approved by the U.S. Small Business Administration or any lender. You are responsible for the accuracy of the figures you use.</p>
+  </div></div>
+</section>
+</main>
+
+<footer class="site nw-foot">
+  <nav aria-label="Footer">
+    <a href="/">Form 413 wizard</a>
+    <a href="/sba-form-413/">Form 413 Guide</a>
+    <a href="/personal-financial-statement-template/">PFS Template</a>
+    <a href="/sitemap.xml">Sitemap</a>
+  </nav>
+  MyForm413 — Fill SBA Form 413 online, privately. Not affiliated with the U.S. Small Business Administration.
+</footer>
+<script src="/net-worth-calculator/calculator.js"></script>
+</body>
+</html>
