@@ -59,7 +59,7 @@
     panel.id = 'paywall'; panel.hidden = true;
     panel.style.cssText = 'margin-top:18px;padding:16px;border:1px solid #9fb3c9;border-radius:10px;background:#f3f7fb';
     panel.innerHTML =
-      '<p style="margin:0 0 10px"><b>Filling was free.</b> Downloading your completed Form 413 is $29 — $19 for your first download.</p>' +
+      '<p style="margin:0 0 10px"><b>Filling was free.</b> Downloading your completed Form 413 is $29 — $19 for your first statement.</p>' +
       '<label>Email for your payment <input type="email" class="pw-email" autocomplete="email" placeholder="you@example.com"></label>' +
       '<div class="btnrow" style="margin-top:12px;padding-top:0;border-top:0"><button class="btn pw-pay" type="button">Continue to secure checkout</button></div>' +
       '<p class="small pw-msg" role="status" style="margin:10px 0 0"></p>';
