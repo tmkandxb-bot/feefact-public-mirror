@@ -72,9 +72,12 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setMsg('Enter a valid email address.', true); return; }
     var pay = panel.querySelector('.pw-pay'); pay.disabled = true; setMsg('Opening checkout…');
     var token = newToken();
-    fetch('/api/checkout', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email: email, token: token})
+    paidSinceLoad().then(function (paid) {
+      if (paid) { btn.textContent = 'Payment received — download your Form 413 (PDF)'; throw {alreadyPaid: true}; }
+      return fetch('/api/checkout', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email, token: token})
+      });
     }).then(function (r) { return r.json().then(function (j) { return {ok: r.ok, j: j}; }); })
       .then(function (res) {
         if (!res.ok || !res.j.checkoutUrl) throw new Error(res.j && res.j.error || 'Could not start checkout.');
@@ -83,7 +86,7 @@
         try { sessionStorage.setItem(WAIT_KEY, '1'); } catch (e) {}
         window.location.href = res.j.checkoutUrl;
       })
-      .catch(function (e) { pay.disabled = false; setMsg(e.message || 'Could not start checkout. Please try again.', true); });
+      .catch(function (e) { pay.disabled = false; if (e && e.alreadyPaid) return; setMsg(e.message || 'Could not start checkout. Please try again.', true); });
   }
 
   function unlock() {
@@ -97,6 +100,12 @@
     return Promise.all(orders.map(function (o) {
       return checkPaid(o).then(function (paid) { if (paid) { o.paid = true; saveOrder(o); } return paid; });
     })).then(function (r) { return r.indexOf(true) !== -1; });
+  }
+
+  function paidSinceLoad() {
+    var orders = loadOrders();
+    if (!orders.length) return Promise.resolve(false);
+    return anyPaid(orders).then(function (paid) { if (paid) unlock(); return paid; });
   }
 
   // After checkout the webhook can land a few seconds after the buyer returns.
@@ -122,7 +131,11 @@
     btn.addEventListener('click', function (e) {
       if (unlocked) return;
       e.stopImmediatePropagation(); e.preventDefault();
-      panel.hidden = false; panel.querySelector('.pw-email').focus();
+      // A payment may have been confirmed since the page loaded: ask again before offering checkout.
+      paidSinceLoad().then(function (paid) {
+        if (paid) { btn.click(); return; }
+        panel.hidden = false; panel.querySelector('.pw-email').focus();
+      });
     }, true);
 
     var orders = loadOrders();
