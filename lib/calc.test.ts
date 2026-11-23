@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calcNetProfit, calcPreOwnedReferralFee, calcProcessingFee, calcRefundAdminFee, parseSale, refundCapSalePrice } from "./calc";
-import { fees } from "./fees";
+import { fees, tiktokShopRefundOfficial } from "./fees";
 import { calcNetProfit as legacy } from "../src/calculator.js";
 
 describe("calcNetProfit", () => {
@@ -71,5 +71,19 @@ describe("calcPreOwnedReferralFee", () => {
   });
   it("rejects invalid sales", () => {
     expect(() => calcPreOwnedReferralFee(-1)).toThrow(RangeError);
+  });
+});
+
+describe("TikTok Shop's official refund administration fee illustrations", () => {
+  const total = (skus: readonly number[]) => skus.reduce((sum, sku) => sum + calcRefundAdminFee(sku, 0.06).fee, 0);
+  it("matches scenarios A to D, fee applied per SKU", () => {
+    expect(tiktokShopRefundOfficial.scenarios.map(({ skus }) => total(skus))).toEqual([0.12, 5, 0.24, 5.12]);
+  });
+  it("matches the partially and fully refunded sample order", () => {
+    const { customerPayment, platformDiscount, tax, rate, refundedShare } = tiktokShopRefundOfficial.partial;
+    const base = customerPayment + platformDiscount - tax;
+    expect(base * rate).toBeCloseTo(6.3);
+    expect(calcRefundAdminFee(base * refundedShare, rate).fee).toBe(0.63);
+    expect(calcRefundAdminFee(base, rate).fee).toBe(1.26);
   });
 });

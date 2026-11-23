@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { calcPreOwnedReferralFee, calcRefundAdminFee, refundCapSalePrice } from "../../lib/calc";
-import { formatMoney, tiktokShopRefund as refund, tiktokShopReturnProtection as protection, tiktokShopUsReferral as referral } from "../../lib/fees";
+import { formatMoney, tiktokShopRefund as refund, tiktokShopRefundDeadlines as deadlines, tiktokShopRefundOfficial as official, tiktokShopReturnProtection as protection, tiktokShopUsReferral as referral } from "../../lib/fees";
 import { returnShippingChecked, returnShippingFaqs, returnShippingRows, returnShippingSources as sources, type PolicySource } from "../../lib/returnShipping";
 
 const percent = (rate: number) => `${Number((rate * 100).toFixed(2))}%`;
@@ -11,11 +11,12 @@ const standard = refund.standardReferralRate;
 const adminFee = (sale: number, rate: number = standard) => calcRefundAdminFee(sale, rate).fee;
 const money = (amount: number) => formatMoney(amount, refund.currency);
 const whole = (amount: number) => money(amount).replace(".00", "");
+const skuFees = (skus: readonly number[]) => skus.map(sku => calcRefundAdminFee(sku, standard));
 const perOrder = (sale: number, returnRate: number) => `$${Number((adminFee(sale) * returnRate).toFixed(3))}`;
 
 export const metadata: Metadata = {
   title: `TikTok Shop Refund Administration Fee Explained (${share}, ${cap} Cap) | FeeFact`,
-  description: `TikTok Shop keeps a refund administration fee of ${share} of the referral fee, capped at ${cap} per SKU, on refunded orders. How it works, worked examples, and who pays for return shipping.`,
+  description: `TikTok Shop keeps a refund administration fee of ${share} of the referral fee, capped at ${cap} per SKU, on refunded orders. The full refund cost stack, TikTok Shop's own multi-SKU and partial-refund examples, and who pays for return shipping.`,
 };
 
 function Source({ source }: { source: PolicySource }) {
@@ -30,11 +31,22 @@ export default function RefundFeePage() {
   const [promo, jewelry, , reported] = refund.referralRates;
   const [exemptA, exemptB] = refund.exemptions;
   const { preOwned, reducedJewelry } = referral;
+  const { customerPayment, platformDiscount, tax, rate: partialRate, refundedShare } = official.partial;
+  const partialBase = customerPayment + platformDiscount - tax;
+  const partialReferral = partialBase * partialRate;
+  const partialFee = adminFee(partialBase * refundedShare, partialRate);
+  const fullFee = adminFee(partialBase, partialRate);
+  const officialSource = <a className="text-indigo-700 underline" href={refund.source} rel="noopener noreferrer" target="_blank">TikTok Shop Academy: {official.title}</a>;
   const faqs = [
     { question: "Is the admin fee charged on every refund?", answer: `No. It is charged on most refunded US orders, deducted automatically from the referral fee being returned, but TikTok Shop's policy lists two cases with no refund administration fee: ${exemptA}, and ${exemptB}. On every other refund the fee applies and there is nothing to opt out of.` },
     { question: `Does the ${cap} cap apply per order or per SKU?`, answer: `Per SKU. A refunded order with two different SKUs can incur up to ${cap} on each one — the cap does not pool across the order.` },
     { question: `Do new sellers on the ${percent(promo.rate)} promo pay the admin fee too?`, answer: `Yes, but ${share} of a smaller referral fee. A refunded ${whole(35)} order costs ${money(adminFee(35, promo.rate))} in admin fees at ${percent(promo.rate)}, against ${money(adminFee(35))} at ${percent(standard)} — the promo quietly cuts your refund cost as well as your referral fee.` },
     { question: "Can I avoid the admin fee?", answer: "Only in the two exempt cases above; otherwise it is charged automatically on refunds. The lever is the return rate itself: accurate sizing charts, honest photos and clear descriptions. Every point of return rate you cut is admin fees you never pay, before you count the return shipping you also save." },
+    { question: "How is the admin fee calculated on a partial refund?", answer: `In proportion to what is refunded. In TikTok Shop's own sample order, the referral fee is ${money(partialReferral)}; when half of the order is refunded the refund administration fee is ${money(partialFee)}, and when all of it is refunded the fee is ${money(fullFee)}.` },
+    { question: "Is the admin fee charged when an order is cancelled?", answer: `It can be. TikTok Shop's policy applies the fee when "a refund, return, or cancellation occurs after the customer successfully places an order". The exception is a refund the buyer starts before the order ships that meets TikTok Shop's auto-canceling criteria, which carries no refund administration fee.` },
+    { question: `When did the ${cap} cap start?`, answer: `On ${official.capEffective}. TikTok Shop's policy says that from that date the maximum refund administration fee for each SKU type in a refund is ${cap}.` },
+    { question: "What amount is the referral fee, and so the admin fee, based on?", answer: `TikTok Shop calculates the referral fee on ${official.feeBase}. The refund administration fee is ${share} of that referral fee, so a platform-funded discount raises the base and sales tax does not count.` },
+    { question: "How long does a customer have to ask for a return?", answer: `The return window shown at checkout, or by default ${deadlines.defaultReturnWindowDays} calendar days from the date the package is marked as delivered. Once a request is in, sellers have ${deadlines.returnReviewBusinessDays} business days to review a return and refund request; if they take no action, TikTok Shop may approve it automatically.` },
     ...returnShippingFaqs,
   ];
   const schema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(faq => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
@@ -58,6 +70,21 @@ export default function RefundFeePage() {
       <p className="mt-3 text-sm text-slate-500">Source: <a className="text-indigo-700 underline" href={refund.source} rel="noopener noreferrer" target="_blank">TikTok Shop Academy: Referral Fee Updates</a>, section &quot;Refunds and Returns&quot;.</p>
     </section>
 
+    <section className={card} aria-labelledby="stack-heading">
+      <h2 id="stack-heading" className="text-2xl font-bold">The refund cost stack at a glance</h2>
+      <p className="mt-4 leading-relaxed text-slate-600">A refund touches more than one line of your settlement. This table lists every refund-related cost TikTok Shop publishes a rule for; each row is explained in a section below.</p>
+      <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[40rem] text-left text-sm">
+        <thead><tr className="border-b text-slate-500"><th scope="col" className={th}>Line</th><th scope="col" className={th}>What happens on a refund</th><th scope="col" className={th}>When it applies</th></tr></thead>
+        <tbody className="align-top">
+          <tr className="border-b"><th scope="row" className={th}>Referral fee</th><td className={td}>Refunded to you, minus the refund administration fee</td><td className={td}>Refund, return or cancellation after the order is placed</td></tr>
+          <tr className="border-b"><th scope="row" className={th}>Refund administration fee</th><td className={td}>{share} of the referral fee, capped at {cap} per SKU</td><td className={td}>Every refund except the two exempt cases</td></tr>
+          <tr className="border-b"><th scope="row" className={th}>Return shipping</th><td className={td}>Seller&apos;s cost when the customer uses TikTok Shop&apos;s drop-off return; customer&apos;s cost when they arrange their own shipping</td><td className={td}>Returns where the item is sent back</td></tr>
+          <tr><th scope="row" className={th}>Return Shipping Protection Program</th><td className={td}>{percent(protection.feeShareOfTcov)} of Total Covered Order Value on each covered order; covers eligible return shipping fees</td><td className={td}>Only if you opt in</td></tr>
+        </tbody>
+      </table></div>
+      <p className="mt-3 text-sm text-slate-500">Sources: {officialSource}; <Source source={sources.policy} />; <Source source={sources.protectionGuide} />. TikTok Shop does not publish a dollar amount for return shipping, so none is shown here; the amount charged per return is on your settlement lines.</p>
+    </section>
+
     <section className={card} aria-labelledby="examples-heading">
       <h2 id="examples-heading" className="text-2xl font-bold">Worked examples</h2>
       <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[32rem] text-left text-sm">
@@ -68,6 +95,34 @@ export default function RefundFeePage() {
         })}</tr>)}</tbody>
       </table></div>
       <p className="mt-4 text-sm leading-relaxed text-slate-600">Read it as: admin fee = {share} × referral fee. The {percent(jewelry.rate)} column applies only to the five jewelry sub-categories TikTok Shop lists at {percent(jewelry.rate)} ({reducedJewelry.join(", ")}) and to pre-owned categories; other jewelry, such as silver and pearl, is {percent(standard)}. On pre-owned sales above {whole(preOwned.threshold)}, the portion over {whole(preOwned.threshold)} is charged {percent(preOwned.rateAboveThreshold)} instead of {percent(preOwned.rate)}, so a {whole(12000)} pre-owned sale carries a {whole(calcPreOwnedReferralFee(12000))} referral fee (<a className="text-indigo-700 underline" href={referral.source} rel="noopener noreferrer" target="_blank">Category Referral Rates</a>). The {percent(reported.rate)} column is the widely reported effective rate; the fee scales with whatever rate your account actually pays, so check your settlement lines.</p>
+    </section>
+
+    <section className={card} aria-labelledby="sku-heading">
+      <h2 id="sku-heading" className="text-2xl font-bold">Orders with more than one SKU</h2>
+      <p className="mt-4 leading-relaxed text-slate-600">The fee and the {cap} cap are both applied <strong className="text-slate-900">per SKU, not per order</strong>. These are the four scenarios TikTok Shop uses to illustrate the rule, all at the {percent(standard)} rate.</p>
+      <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[36rem] text-left text-sm">
+        <thead><tr className="border-b text-slate-500"><th scope="col" className={th}>Scenario</th><th scope="col" className={th}>Refunded order</th><th scope="col" className={th}>Fee per SKU</th><th scope="col" className={th}>Refund administration fee</th></tr></thead>
+        <tbody>{official.scenarios.map(({ id, order, skus }) => {
+          const results = skuFees(skus);
+          return <tr key={id} className="border-b last:border-0"><th scope="row" className={th}>{id}</th><td className={td}>{order}</td><td className={td}>{results.map(result => `${money(result.fee)}${result.capped ? " (capped)" : ""}`).join(" + ")}</td><td className={`${td} font-semibold`}>{money(results.reduce((sum, result) => sum + result.fee, 0))}</td></tr>;
+        })}</tbody>
+      </table></div>
+      <p className="mt-4 text-sm leading-relaxed text-slate-600">Scenario D is the one to remember: the {whole(500)} SKU would be {money(500 * standard * refund.adminShareOfReferral)} at {share} of the referral fee, is reduced to {cap} by the cap, and the {whole(10)} SKU still adds its own {money(adminFee(10))}. The cap never pools across the order.</p>
+      <p className="mt-3 text-sm text-slate-500">Source: {officialSource}, scenarios A to D under &quot;Refunds and Returns&quot;.</p>
+    </section>
+
+    <section className={card} aria-labelledby="partial-heading">
+      <h2 id="partial-heading" className="text-2xl font-bold">Partial refunds and the fee base</h2>
+      <p className="mt-4 leading-relaxed text-slate-600">The referral fee is charged on <strong className="text-slate-900">{official.feeBase}</strong>, and the refund administration fee follows the share of the order that is refunded. TikTok Shop&apos;s sample order: the customer pays {whole(customerPayment)}, a platform discount adds {whole(platformDiscount)}, and {whole(tax)} of the payment is sales tax and retail delivery fee, so the fee base is {whole(partialBase)}.</p>
+      <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[36rem] text-left text-sm">
+        <thead><tr className="border-b text-slate-500"><th scope="col" className={th}>Line</th><th scope="col" className={th}>No refund</th><th scope="col" className={th}>{percent(refundedShare)} refunded</th><th scope="col" className={th}>Fully refunded</th></tr></thead>
+        <tbody>
+          <tr className="border-b"><th scope="row" className={th}>Referral fee at {percent(partialRate)}</th><td className={td}>{money(partialReferral)}</td><td className={td}>{money(partialReferral * (1 - refundedShare))}</td><td className={td}>{money(0)}</td></tr>
+          <tr><th scope="row" className={th}>Refund administration fee</th><td className={td}>None</td><td className={td}>{money(partialFee)}</td><td className={td}>{money(fullFee)}</td></tr>
+        </tbody>
+      </table></div>
+      <p className="mt-4 text-sm leading-relaxed text-slate-600">Read it as: on the half refund, the referral fee on the refunded half ({money(partialReferral * refundedShare)}) comes back to you less {share} of it, {money(partialFee)}. On the full refund, the whole {money(partialReferral)} comes back less {money(fullFee)}.</p>
+      <p className="mt-3 text-sm text-slate-500">Source: {officialSource}, &quot;Sample computation - Referral Fee&quot;.</p>
     </section>
 
     <section className={card} aria-labelledby="why-heading">
@@ -128,6 +183,31 @@ export default function RefundFeePage() {
       <h3 className="mt-6 text-lg font-semibold">What to do with this</h3>
       <p className="mt-2 leading-relaxed text-slate-600">Budget for return shipping on every return that comes back through TikTok Shop&apos;s drop-off option, whatever the reason, on top of the refund administration fee above. The actual amount charged per return shows on your settlement lines.</p>
       <p className="mt-4 text-sm text-slate-500">Return shipping rules checked against TikTok Shop Academy on {returnShippingChecked}. TikTok Shop determines who is responsible for each return and can change these rules; confirm on the linked pages.</p>
+    </section>
+
+    <section className={card} aria-labelledby="deadlines-heading">
+      <h2 id="deadlines-heading" className="text-2xl font-bold">Refund deadlines that decide whether you get a say</h2>
+      <p className="mt-4 leading-relaxed text-slate-600">A refund you did not review is still a refund you pay the administration fee on. TikTok Shop&apos;s US policy sets these clocks:</p>
+      <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[36rem] text-left text-sm">
+        <thead><tr className="border-b text-slate-500"><th scope="col" className={th}>Request</th><th scope="col" className={th}>Time limit</th><th scope="col" className={th}>If it passes</th></tr></thead>
+        <tbody className="align-top">
+          <tr className="border-b"><th scope="row" className={th}>Customer asks for a return and refund</th><td className={td}>The window shown at checkout, or by default {deadlines.defaultReturnWindowDays} calendar days from &quot;Delivered&quot;</td><td className={td}>The standard return window has closed</td></tr>
+          <tr className="border-b"><th scope="row" className={th}>Seller reviews a return and refund request</th><td className={td}>{deadlines.returnReviewBusinessDays} business days</td><td className={td}>TikTok Shop may approve it automatically</td></tr>
+          <tr className="border-b"><th scope="row" className={th}>Seller reviews a refund-only request</th><td className={td}>{deadlines.refundOnlyReviewBusinessDays} business days for items {whole(deadlines.refundOnlyPriceLimit)} or less; {deadlines.returnReviewBusinessDays} business days above {whole(deadlines.refundOnlyPriceLimit)}</td><td className={td}>TikTok Shop may approve the refund automatically</td></tr>
+          <tr><th scope="row" className={th}>Seller acts on a cancellation or refund request before shipping</th><td className={td}>{deadlines.cancellationReviewHours} hours</td><td className={td}>TikTok Shop may approve it automatically and refund the customer</td></tr>
+        </tbody>
+      </table></div>
+      <p className="mt-3 text-sm text-slate-500">Source: <Source source={sources.policy} /> (updated {sources.policy.updated}). TikTok Shop can extend return windows for holiday periods.</p>
+    </section>
+
+    <section className={card} aria-labelledby="sources-heading">
+      <h2 id="sources-heading" className="text-2xl font-bold">Sources</h2>
+      <p className="mt-4 leading-relaxed text-slate-600">Every rule and number on this page comes from these TikTok Shop Academy pages. Where TikTok Shop publishes no figure, this page gives none.</p>
+      <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-600">
+        <li>{officialSource} (updated {official.updated}): the {share} fee, the {cap} cap from {official.capEffective}, the exemptions, scenarios A to D and the partial-refund sample. Checked {official.checked}.</li>
+        <li><a className="text-indigo-700 underline" href={referral.source} rel="noopener noreferrer" target="_blank">TikTok Shop Academy: Category Referral Rates</a>: the category referral rates the fee is a share of.</li>
+        {Object.values(sources).map(source => <li key={source.url}><Source source={source} /> (updated {source.updated}).</li>)}
+      </ul>
     </section>
 
     <section className="mt-14 max-w-3xl" aria-labelledby="faq-heading"><h2 id="faq-heading" className="text-2xl font-bold">Frequently asked questions</h2>{faqs.map(faq => <div key={faq.question} className="mt-6"><h3 className="font-semibold">{faq.question}</h3><p className="mt-2 leading-relaxed text-slate-600">{faq.answer}</p></div>)}</section>
