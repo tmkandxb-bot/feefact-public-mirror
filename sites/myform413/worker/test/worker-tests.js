@@ -137,3 +137,16 @@ test('webhook: wrong amount, wrong mode or non-payment events do not unlock', as
   await handleWebhook(signedWebhook({ ...completed(orderId, '19.00'), eventType: 'refund.succeeded', eventId: 'R1' }), env);
   assert.equal((await status(env, orderId)).paid, false);
 });
+
+test('webhook: a redelivery after a failed order update still marks the order paid', async () => {
+  const env = makeEnv();
+  const { orderId } = (await checkout(env, 'a@example.com')).body;
+  const ev = completed(orderId, '19.00');
+  const db = env.DB;
+  env.DB = { prepare(sql) { if (/^UPDATE orders/.test(sql.trim())) throw new Error('db down'); return db.prepare(sql); } };
+  await assert.rejects(handleWebhook(signedWebhook(ev), env));
+  assert.equal((await status({ ...env, DB: db }, orderId)).paid, false);
+  env.DB = db;
+  assert.equal((await handleWebhook(signedWebhook(ev), env)).status, 200);
+  assert.equal((await status(env, orderId)).paid, true);
+});

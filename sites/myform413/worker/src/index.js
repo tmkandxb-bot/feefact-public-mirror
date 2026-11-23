@@ -95,17 +95,20 @@ export async function handleWebhook(request, env, deps = {}) {
 
   const eventKey = `${event.eventType}:${event.eventId || event.id}`;
   const orderRef = typeof data.orderMerchantExternalId === 'string' ? data.orderMerchantExternalId : null;
+  // Audit log only. A redelivery is processed again: the order update below is idempotent,
+  // so a retry after a failed update still marks the order paid.
   const ins = await env.DB.prepare(
     `INSERT OR IGNORE INTO webhook_events (event_key, event_type, mode, order_ref, payload, received_at)
      VALUES (?1, ?2, ?3, ?4, ?5, ?6)`
   ).bind(eventKey, String(event.eventType), event.mode, orderRef, raw, new Date().toISOString()).run();
-  if (!ins.meta || ins.meta.changes === 0) return json({ received: true, duplicate: true });
+  const duplicate = !ins.meta || ins.meta.changes === 0;
 
   if (event.eventType !== 'order.completed' || data.paymentStatus !== 'succeeded' || !orderRef) {
-    return json({ received: true });
+    return json({ received: true, duplicate });
   }
   const order = await env.DB.prepare('SELECT * FROM orders WHERE id = ?1 AND mode = ?2').bind(orderRef, mode(env)).first();
   if (!order) return json({ received: true, ignored: 'unknown order' });
+  if (order.status === 'paid') return json({ received: true, duplicate });
 
   // Pre-tax list price must be exactly what this order was quoted ($29 or $19).
   const subtotal = data.listPrice && data.listPrice.subtotal;
@@ -123,7 +126,7 @@ export async function handleWebhook(request, env, deps = {}) {
     typeof subtotal === 'string' ? subtotal : null, check, amountOk ? 1 : 0, new Date().toISOString()
   ).run();
   if (!amountOk) console.error(`order ${order.id}: amount check ${check}, not unlocked`);
-  return json({ received: true });
+  return json({ received: true, duplicate });
 }
 
 export async function handleOrderStatus(request, env) {
