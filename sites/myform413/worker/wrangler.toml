@@ -1,0 +1,28 @@
+# MyForm413 payment Worker. Serves only /api/* on the site's domain; the static
+# site keeps being served as it is today.
+name = "myform413-pay"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+routes = [
+  { pattern = "myform413.com/api/checkout", zone_name = "myform413.com" },
+  { pattern = "myform413.com/api/waffo-webhook", zone_name = "myform413.com" },
+  { pattern = "myform413.com/api/order-status", zone_name = "myform413.com" },
+]
+
+[vars]
+WAFFO_ENVIRONMENT = "test"            # Test Mode only. Switching to "prod" is the owner's step.
+SITE_ORIGIN = "https://myform413.com"
+# Test Mode one-time products (PROD_xxx): $29.00 USD and $19.00 USD. Not secret.
+WAFFO_PRODUCT_ID_STANDARD = ""
+WAFFO_PRODUCT_ID_FIRST = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "myform413"
+database_id = ""                      # from `wrangler d1 create myform413`
+
+# Secrets (set with `wrangler secret put`, never committed):
+#   WAFFO_MERCHANT_ID         merchant ID (MER_xxx)
+#   WAFFO_PRIVATE_KEY         Test Mode API private key (PEM)
+#   WAFFO_WEBHOOK_PUBLIC_KEY  Test Mode webhook public key (PEM)
