@@ -16,7 +16,9 @@
     if (s === '') return 0;
     /* plain digits or US thousands groups ("1,234,567"), optional decimals */
     if (!/^((\d+|\d{1,3}(,\d{3})+)(\.\d*)?|\.\d+)$/.test(s)) return null;
-    var n = Math.round(parseFloat(s.replace(/,/g, '')));
+    s = s.replace(/,/g, '');
+    if (s.split('.')[0].length > 15) return null; /* beyond exact whole dollars */
+    var n = Math.round(parseFloat(s));
     return isFinite(n) ? n : null;
   }
   function parseMoney(v) { return parseEntry(v) || 0; }
@@ -81,6 +83,18 @@
 
   document.addEventListener('input', function (e) {
     if (e.target.classList && e.target.classList.contains('nw-money')) { mark(e.target); refresh(); }
+  });
+  /* maxlength would cut a long paste down to a shorter, valid-looking amount.
+     Insert the pasted text whole so an over-long entry is flagged instead. */
+  document.addEventListener('paste', function (e) {
+    var el = e.target;
+    if (!el.classList || !el.classList.contains('nw-money') || !e.clipboardData) return;
+    var raw = e.clipboardData.getData('text'), t = raw.trim();
+    var a = el.selectionStart, b = el.selectionEnd;
+    if (a == null || el.value.length - (b - a) + raw.length <= el.maxLength) return;
+    e.preventDefault();
+    el.value = el.value.slice(0, a) + t + el.value.slice(b);
+    mark(el); refresh();
   });
   document.addEventListener('focusout', function (e) {
     var el = e.target;
