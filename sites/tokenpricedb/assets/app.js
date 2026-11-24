@@ -43,12 +43,14 @@
   function render() {
     var i = int(inTok), o = int(outTok);
     var html = models.map(function (m) {
-      var ic = i / 1e6 * m.inputPer1M, oc = o / 1e6 * m.outputPer1M;
+      var t = m.longPrompt && i > m.longPrompt.over ? m.longPrompt : m;
+      var ic = i / 1e6 * t.inputPer1M, oc = o / 1e6 * t.outputPer1M;
       var basis = !fromText ? '<span class="tag">as entered</span>'
         : m.tokenizer ? '<span class="tag exact">exact (' + m.tokenizer + ')</span>'
         : '<span class="tag">estimate</span>';
       return '<tr><td data-v="' + m.provider + '">' + m.provider + '</td>' +
-        '<td data-v="' + m.model + '"><a href="' + costTable.dataset.base + 'models/' + m.slug + '/">' + m.model + '</a></td>' +
+        '<td data-v="' + m.model + '"><a href="' + costTable.dataset.base + 'models/' + m.slug + '/">' + m.model + '</a>' +
+        (t === m ? '' : ' <span class="tag">over ' + m.longPrompt.over.toLocaleString('en-US') + ' input tokens</span>') + '</td>' +
         '<td data-v="' + (fromText ? (m.tokenizer ? 0 : 1) : 2) + '">' + basis + '</td>' +
         '<td class="num" data-v="' + ic + '">' + usd(ic) + '</td>' +
         '<td class="num" data-v="' + oc + '">' + usd(oc) + '</td>' +
