@@ -21,26 +21,27 @@ const prettyDate = (iso) => { const [y, m, d] = iso.split('-'); return `${+d} ${
 // Rows the provider has deprecated or retired and whose stored price can no longer be confirmed on the
 // provider's own pages. They stay out of every table, calculator and ranking; only their model page remains.
 const GOOGLE_PRICING = 'https://ai.google.dev/gemini-api/docs/pricing'
-const DEEPSEEK_PRICING = 'https://api-docs.deepseek.com/quick_start/pricing'
+const DEEPSEEK_PRICING = 'https://api-docs.deepseek.com/quick_start/pricing/'
 const MISTRAL_MODELS = 'https://docs.mistral.ai/models'
+const MISTRAL_PRICING = { url: 'https://docs.mistral.ai/inference/pricing', label: 'Mistral pricing page' }
 const HELD_BACK = {
-  'gemini-3-5-flash': { text: 'Google lists gemini-3.5-flash as deprecated: it has no price on Google\u2019s pricing page, and API requests to it are automatically routed to gemini-3.6-flash.', url: 'https://ai.google.dev/gemini-api/docs/deprecations', label: 'Google deprecations page' },
-  'mistral-large-2512': { text: 'Mistral lists mistral-large-2512 as deprecated on 10/31/2026 and retiring on 4/30/2027, with Mistral Large 4 as the alternative. Mistral\u2019s pricing page gives no price for it.', url: MISTRAL_MODELS, label: 'Mistral models page' },
-  'devstral-2512': { text: 'Mistral lists devstral-2512 as deprecated on 5/22/2026 and retired on 7/31/2026, with Mistral Medium 3.5 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page' },
+  'gemini-3-5-flash': { text: 'Google\u2019s deprecations page says gemini-3.5-flash \u201cis no longer available in Google AI Studio; the endpoint is not shutting down and automatically routes API requests to gemini-3.6-flash\u201d. Google\u2019s pricing page lists no price for gemini-3.5-flash.', url: 'https://ai.google.dev/gemini-api/docs/deprecations', label: 'Google deprecations page' },
+  'mistral-large-2512': { text: 'Mistral lists mistral-large-2512 as deprecated on 10/31/2026 and retiring on 4/30/2027, with Mistral Large 4 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page', also: { text: 'Mistral\u2019s pricing page lists Mistral Large 4 and no price for mistral-large-2512.', ...MISTRAL_PRICING } },
+  'devstral-2512': { text: 'Mistral lists devstral-2512 as deprecated on 5/22/2026 and retired on 7/31/2026, with Mistral Medium 3.5 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page', also: { text: 'Mistral\u2019s pricing page lists no price for devstral-2512.', ...MISTRAL_PRICING } },
   'deepseek-v4-pro': { text: 'DeepSeek\u2019s pricing page lists DeepSeek-V4-Pro-0813 as the version behind the deepseek-v4-pro model name and gives no price for the 0423 version.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
-  'deepseek-v4-flash': { text: 'DeepSeek states that the legacy deepseek-v4-flash model has been retired: requests under that name are served by DeepSeek-V4.1-Flash-1017 and billed at the Flash price.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+  'deepseek-v4-flash': { text: 'DeepSeek states that the legacy deepseek-v4-flash model has been retired: requests under that name are served by DeepSeek-V4.1-Flash-1017 and billed at the Flash price.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page', desc: 'DeepSeek has retired DeepSeek V4 Flash 0423: requests under the deepseek-v4-flash name are served by DeepSeek-V4.1-Flash-1017, so TokenPriceDB lists no separate price for it.' },
 }
 // Listed rows whose provider page states an end date, a second rate or a long-context tier for the price.
 const geminiStep = 'Google lists $2.00 input / $10.00 output per 1M tokens through November 30, 2026, and $4.00 / $20.00 starting December 1, 2026.'
-const deepseekPeak = (peak, offPeak) => `DeepSeek bills two rates. This row is the peak rate (${peak} per 1M tokens), charged 01:00\u201304:00 and 06:00\u201310:00 UTC, Monday through Friday, excluding Chinese public holidays. The off-peak rate for all other hours is half: ${offPeak}.`
+const deepseekPeak = (peak, offPeak, cache) => `DeepSeek bills two rates. This row is the peak rate (${peak} per 1M tokens), charged 01:00\u201304:00 and 06:00\u201310:00 UTC, Monday through Friday, excluding Chinese public holidays. The off-peak rate for all other hours is half: ${offPeak}. Cache-hit input is ${cache}.`
 const PRICE_NOTES = {
   'gemini-4-carbon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
   'gemini-4-argon': { text: geminiStep, url: GOOGLE_PRICING, label: 'Google pricing page' },
-  'gemini-3-8-flash': { text: 'Google lists $0.75 input / $3.75 output per 1M tokens through December 31, 2026, and $1.50 / $7.50 starting January 1, 2027.', url: GOOGLE_PRICING, label: 'Google pricing page' },
+  'gemini-3-8-flash': { text: 'Google lists $0.75 input / $3.75 output per 1M tokens through December 31, 2026, and $1.50 / $7.50 starting January 1, 2027. Cached input is $0.075 through December 31, 2026, and $0.15 starting January 1, 2027.', url: GOOGLE_PRICING, label: 'Google pricing page' },
   'gpt-5-6-sol': { text: 'OpenAI states that GPT-5.6 Sol\u2019s promotional pricing is available until November 30, 2026; it does not list the price after that date.', url: 'https://developers.openai.com/api/docs/pricing', label: 'OpenAI pricing page' },
-  'claude-haiku-5-5': { text: 'Anthropic prices Claude Haiku 5.5 by prompt length. This row is the price for prompts up to 100,000 tokens ($0.10 input / $0.50 output per 1M tokens); prompts over 100,000 tokens cost $0.50 / $2.50.', url: 'https://platform.claude.com/docs/en/about-claude/pricing', label: 'Anthropic pricing page' },
-  'deepseek-v4-1-flash-1017': { text: deepseekPeak('$0.3 input / $1.2 output', '$0.15 / $0.6'), url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
-  'deepseek-v4-pro-0813': { text: deepseekPeak('$1.32 input / $3.96 output', '$0.66 / $1.98'), url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+  'claude-haiku-5-5': { text: 'Anthropic prices Claude Haiku 5.5 by prompt length. This row is the price for prompts up to 100,000 tokens ($0.10 input / $0.50 output per 1M tokens); prompts over 100,000 tokens cost $0.50 / $2.50. Cache hits cost $0.01 per 1M tokens up to 100,000 tokens and $0.05 over.', url: 'https://platform.claude.com/docs/en/about-claude/pricing', label: 'Anthropic pricing page' },
+  'deepseek-v4-1-flash-1017': { text: deepseekPeak('$0.3 input / $1.2 output', '$0.15 / $0.6', '$0.006 peak and $0.003 off-peak'), url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
+  'deepseek-v4-pro-0813': { text: deepseekPeak('$1.32 input / $3.96 output', '$0.66 / $1.98', '$0.044 peak and $0.022 off-peak'), url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
 }
 const NOTES_READ = '2026-11-23'
 // Per-request tiers the single stored price cannot express; the calculator switches to them above `over` input tokens.
@@ -49,7 +50,7 @@ const LONG_PROMPT = {
 }
 const listed = models.filter((m) => !HELD_BACK[m.slug])
 const src = (url, label = 'source') => `<a href="${esc(url)}" rel="nofollow noopener">${esc(label)}</a>`
-const noteLine = (n) => `${n.text} ${src(n.url, n.label)}, read ${NOTES_READ}.`
+const noteLine = (n) => `${n.text} ${src(n.url, n.label)}, read ${NOTES_READ}.${n.also ? ` ${noteLine(n.also)}` : ''}`
 const priceNotes = (list = listed) => `<h3 id="price-notes">* Price notes</h3>
 <ul>
 ${list.filter((m) => PRICE_NOTES[m.slug]).map((m) => `<li><strong>${esc(m.model)}</strong>: ${noteLine(PRICE_NOTES[m.slug])}</li>`).join('\n')}
@@ -83,7 +84,7 @@ ${body(base)}
 </main>
 <footer class="site">${footer ? '\n' + footer(base) : ''}
 <p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked ${checked}. Every row links to its source.
-Batch, priority and long-context tiers are not included, except that the calculator prices Claude Haiku 5.5 at Anthropic\u2019s published rate for prompts over 100,000 tokens when the input is above that size. Always confirm on the provider's pricing page before budgeting.</p>
+Batch, priority and long-context tiers are not included, except that the calculator prices Claude Haiku 5.5 at Anthropic\u2019s published rate for prompts over 100,000 tokens when the input is above that size. The input token count is treated as one request\u2019s prompt, not a monthly total. Always confirm on the provider's pricing page before budgeting.</p>
 </footer>
 ${scripts ? scripts(base) : ''}
 <script>
@@ -164,11 +165,11 @@ ${calcForm}
 ${costHead}
 ${costTable(base)}
 <h2>Per-model prices behind the calculator (USD per 1M tokens)</h2>
-<p class="muted">${listed.length} models across ${providers.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a note under the table (an announced end date, a peak and off-peak rate, or a long-context tier); the calculator uses the price shown in the row, except for Claude Haiku 5.5 above 100,000 input tokens.</p>
+<p class="muted">${listed.length} models across ${providers.join(', ')}. The Checked column is the date each row was last compared with its source; open the source link to confirm a price before you budget on it. Rows marked * have a note under the table (an announced end date, a peak and off-peak rate, or a long-context tier); the calculator uses the price shown in the row, except for Claude Haiku 5.5 above 100,000 input tokens in one request.</p>
 ${pricingTable(base)}
 ${priceNotes()}
 <h2>How the cost is calculated</h2>
-<p>Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price. Prices are standard pay-as-you-go list prices; batch, priority and long-context tiers are not included. The one exception is Claude Haiku 5.5: above 100,000 input tokens the calculator uses Anthropic\u2019s published price for prompts over 100,000 tokens.</p>
+<p>Cost = input tokens ÷ 1,000,000 × input price + output tokens ÷ 1,000,000 × output price. Prices are standard pay-as-you-go list prices; batch, priority and long-context tiers are not included. The one exception is Claude Haiku 5.5: above 100,000 input tokens the calculator uses Anthropic\u2019s published price for prompts over 100,000 tokens. Anthropic applies that price per request, so enter the tokens of one request, not a monthly total.</p>
 <p>Token counts from pasted text use the o200k_base encoding. They are exact only for the OpenAI models labeled "exact" and an estimate for every other model, because each provider uses its own tokenizer.</p>
 <p>${models.length - listed.length} models from the full database are left out of the tables because their providers have deprecated or retired them and their stored prices could not be confirmed on the providers' own pages.</p>
 <p><a href="${base}openrouter-alternatives/">Compare OpenRouter with direct APIs and other gateways</a> · <a href="${base}compare/cheapest-llm-api/">Models ranked by blended cost</a> · <a href="${base}price-changes/">Price-change log</a></p>`,
@@ -255,10 +256,22 @@ const taskArith = (m, t) => [
 
 rmSync(join(root, 'models'), { recursive: true, force: true })
 for (const m of models) {
-  page(`models/${m.slug}`, `${m.model} API pricing — cost per 1M tokens | TokenPriceDB`,
-    `${m.provider} ${m.model} API pricing: ${price(m.inputPer1M)} input / ${price(m.outputPer1M)} output per 1M tokens, with worked cost examples.`,
-    (base) => `<h1>${esc(m.model)} API pricing</h1>
-<p class="lead">${esc(m.provider)} · checked ${m.checkedDate} · <a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></p>${HELD_BACK[m.slug] ? `\n<p><strong>Not in the pricing tables.</strong> ${noteLine(HELD_BACK[m.slug])} The price below was last seen on the linked source on ${m.checkedDate} and is not confirmed on ${esc(m.provider)}\u2019s own pages.</p>` : ''}${PRICE_NOTES[m.slug] ? `\n<p><strong>Price note.</strong> ${noteLine(PRICE_NOTES[m.slug])}</p>` : ''}
+  const held = HELD_BACK[m.slug]
+  page(`models/${m.slug}`, held ? `${m.model} API pricing — no confirmed price | TokenPriceDB` : `${m.model} API pricing — cost per 1M tokens | TokenPriceDB`,
+    held ? held.desc || `${m.provider} ${m.model} has no price on ${m.provider}\u2019s own pages, so TokenPriceDB does not list one.`
+      : `${m.provider} ${m.model} API pricing: ${price(m.inputPer1M)} input / ${price(m.outputPer1M)} output per 1M tokens, with worked cost examples.`,
+    (base) => held ? `<h1>${esc(m.model)} API pricing</h1>
+<p class="lead">${esc(m.provider)} · no confirmed price</p>
+<p><strong>No price shown.</strong> ${noteLine(held)} TokenPriceDB shows a price only when it is confirmed on the provider\u2019s own pages, so this page lists none.</p>
+<div class="cards">
+<div class="card"><div class="k">Input / 1M tokens</div><div class="v">Not confirmed</div></div>
+<div class="card"><div class="k">Output / 1M tokens</div><div class="v">Not confirmed</div></div>
+<div class="card"><div class="k">Cached input / 1M tokens</div><div class="v">Not confirmed</div></div>
+<div class="card"><div class="k">Context window</div><div class="v">${num(m.contextWindow)}</div></div>
+<div class="card"><div class="k">Provider</div><div class="v">${esc(m.provider)}</div></div>
+</div>
+<p><a href="${base}">← Calculate the cost of your own prompt</a> · <a href="${base}compare/cheapest-llm-api/">Compare with the cheapest LLM APIs</a></p>` : `<h1>${esc(m.model)} API pricing</h1>
+<p class="lead">${esc(m.provider)} · checked ${m.checkedDate} · <a href="${esc(m.sourceUrl)}" rel="nofollow noopener">source</a></p>${PRICE_NOTES[m.slug] ? `\n<p><strong>Price note.</strong> ${noteLine(PRICE_NOTES[m.slug])}</p>` : ''}
 <div class="cards">
 <div class="card"><div class="k">Input / 1M tokens</div><div class="v">${price(m.inputPer1M)}</div></div>
 <div class="card"><div class="k">Output / 1M tokens</div><div class="v">${price(m.outputPer1M)}</div></div>
