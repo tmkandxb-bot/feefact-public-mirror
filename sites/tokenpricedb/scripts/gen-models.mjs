@@ -22,14 +22,15 @@ const prettyDate = (iso) => { const [y, m, d] = iso.split('-'); return `${+d} ${
 // provider's own pages. They stay out of every table, calculator and ranking; only their model page remains.
 const GOOGLE_PRICING = 'https://ai.google.dev/gemini-api/docs/pricing'
 const DEEPSEEK_PRICING = 'https://api-docs.deepseek.com/quick_start/pricing/'
+const DEEPSEEK_UPDATES = 'https://api-docs.deepseek.com/updates/'
 const MISTRAL_MODELS = 'https://docs.mistral.ai/models'
 const MISTRAL_PRICING = { url: 'https://docs.mistral.ai/inference/pricing', label: 'Mistral pricing page' }
 const HELD_BACK = {
   'gemini-3-5-flash': { text: 'Google\u2019s deprecations page says gemini-3.5-flash \u201cis no longer available in Google AI Studio; the endpoint is not shutting down and automatically routes API requests to gemini-3.6-flash\u201d. Google\u2019s pricing page lists no price for gemini-3.5-flash.', url: 'https://ai.google.dev/gemini-api/docs/deprecations', label: 'Google deprecations page' },
   'mistral-large-2512': { text: 'Mistral lists mistral-large-2512 as deprecated on 10/31/2026 and retiring on 4/30/2027, with Mistral Large 4 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page', also: { text: 'Mistral\u2019s pricing page lists Mistral Large 4 and no price for mistral-large-2512.', ...MISTRAL_PRICING } },
   'devstral-2512': { text: 'Mistral lists devstral-2512 as deprecated on 5/22/2026 and retired on 7/31/2026, with Mistral Medium 3.5 as the alternative.', url: MISTRAL_MODELS, label: 'Mistral models page', also: { text: 'Mistral\u2019s pricing page lists no price for devstral-2512.', ...MISTRAL_PRICING } },
-  'deepseek-v4-pro': { text: 'DeepSeek\u2019s pricing page lists DeepSeek-V4-Pro-0813 as the version behind the deepseek-v4-pro model name and gives no price for the 0423 version.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page' },
-  'deepseek-v4-flash': { text: 'DeepSeek states that the legacy deepseek-v4-flash model has been retired: requests under that name are served by DeepSeek-V4.1-Flash-1017 and billed at the Flash price.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page', desc: 'DeepSeek has retired DeepSeek V4 Flash 0423: requests under the deepseek-v4-flash name are served by DeepSeek-V4.1-Flash-1017, so TokenPriceDB lists no separate price for it.' },
+  'deepseek-v4-pro': { text: 'DeepSeek\u2019s pricing page lists only DeepSeek-V4-Pro-0813 as the version behind the deepseek-v4-pro model name.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page', desc: 'DeepSeek\u2019s pricing page lists only DeepSeek-V4-Pro-0813 under the deepseek-v4-pro name, so TokenPriceDB lists no price for the older version that OpenRouter calls DeepSeek V4 Pro 0423.', also: { text: 'The name \u201cDeepSeek V4 Pro 0423\u201d is OpenRouter\u2019s listing name; DeepSeek\u2019s pricing page and change log do not use the version number 0423.', url: DEEPSEEK_UPDATES, label: 'DeepSeek change log', also: { text: '', url: 'https://openrouter.ai/deepseek/deepseek-v4-pro', label: 'OpenRouter listing' } } },
+  'deepseek-v4-flash': { text: 'DeepSeek states that the models behind the legacy deepseek-v4-flash name have been retired: requests under that name are served by DeepSeek-V4.1-Flash-1017 and billed at the Flash price.', url: DEEPSEEK_PRICING, label: 'DeepSeek pricing page', desc: 'DeepSeek has retired the models behind the deepseek-v4-flash name: requests under it are served by DeepSeek-V4.1-Flash-1017, so TokenPriceDB lists no separate price for it.', also: { text: 'The name \u201cDeepSeek V4 Flash 0423\u201d is OpenRouter\u2019s listing name; DeepSeek\u2019s pricing page and change log do not use the version number 0423 (the change log names DeepSeek-V4-Flash-0731 under deepseek-v4-flash).', url: DEEPSEEK_UPDATES, label: 'DeepSeek change log', also: { text: '', url: 'https://openrouter.ai/deepseek/deepseek-v4-flash', label: 'OpenRouter listing' } } },
 }
 // Listed rows whose provider page states an end date, a second rate or a long-context tier for the price.
 const geminiStep = 'Google lists $2.00 input / $10.00 output per 1M tokens through November 30, 2026, and $4.00 / $20.00 starting December 1, 2026.'
@@ -50,7 +51,7 @@ const LONG_PROMPT = {
 }
 const listed = models.filter((m) => !HELD_BACK[m.slug])
 const src = (url, label = 'source') => `<a href="${esc(url)}" rel="nofollow noopener">${esc(label)}</a>`
-const noteLine = (n) => `${n.text} ${src(n.url, n.label)}, read ${NOTES_READ}.${n.also ? ` ${noteLine(n.also)}` : ''}`
+const noteLine = (n) => `${n.text ? `${n.text} ` : ''}${src(n.url, n.label)}, read ${NOTES_READ}.${n.also ? ` ${noteLine(n.also)}` : ''}`
 const priceNotes = (list = listed) => `<h3 id="price-notes">* Price notes</h3>
 <ul>
 ${list.filter((m) => PRICE_NOTES[m.slug]).map((m) => `<li><strong>${esc(m.model)}</strong>: ${noteLine(PRICE_NOTES[m.slug])}</li>`).join('\n')}
