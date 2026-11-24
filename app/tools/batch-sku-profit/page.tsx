@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   description: "Paste a batch of SKUs and see referral fee, creator commission, ads, net profit and margin for each one.",
 };
 
+const tiktokShopPages = [
+  { href: "/tiktok-shop-affiliate-commission", label: "TikTok Shop affiliate commission" },
+  { href: "/tiktok-shop-refund-fee", label: "TikTok Shop refund fee" },
+  { href: "/tiktok-shop-shipping-fees", label: "TikTok Shop shipping fees" },
+];
+
 export default function BatchSkuProfitPage() {
   return <main className="mx-auto max-w-6xl px-6 py-12 sm:py-16">
     <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-indigo-700">FeeFact Pro prototype</p>
@@ -24,7 +30,7 @@ export default function BatchSkuProfitPage() {
       </dl>
       <p className="mt-6 leading-relaxed text-slate-600">The rates are the ones you enter. They are not quotes from any platform, so check your own seller account for the rates that apply to you. This is the same calculation as the single-item calculator, run once per row. Payment processing fees (for example from Stripe or PayPal) are not included; subtract them separately if they apply to you.</p>
       <h3 className="mt-8 font-semibold">Fee pages</h3>
-      <ul className="mt-2 list-disc pl-5">{fees.map(fee => <li key={fee.slug}><Link className="font-semibold text-indigo-700 underline" href={`/fees/${fee.slug}`}>{fee.name} fees</Link></li>)}</ul>
+      <ul className="mt-2 list-disc pl-5">{fees.map(fee => <li key={fee.slug}><Link className="font-semibold text-indigo-700 underline" href={`/fees/${fee.slug}`}>{fee.name} fees</Link></li>)}{tiktokShopPages.map(page => <li key={page.href}><Link className="font-semibold text-indigo-700 underline" href={page.href}>{page.label}</Link></li>)}</ul>
     </section>
   </main>;
 }
