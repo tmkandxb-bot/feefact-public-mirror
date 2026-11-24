@@ -372,6 +372,8 @@ ${latest.map((c) => `<li><time datetime="${c.date}">${c.date}</time> <span class
 <a href="${base}token-cost-calculator/">Token cost calculator</a>
 <a href="${base}compare/cheapest-llm-api/">Cheapest LLM API</a>
 <a href="${base}price-changes/">Price changes</a>
+<a href="${base}openrouter-alternatives/">OpenRouter Alternatives</a>
+<a href="${base}llm-cost-calculator/">LLM Cost Calculator</a>
 </nav>` })
 
 // ---------- /sitemap.xml ----------
