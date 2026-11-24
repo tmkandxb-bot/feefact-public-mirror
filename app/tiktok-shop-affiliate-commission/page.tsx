@@ -114,7 +114,7 @@ export default function AffiliateCommissionPage() {
     </section>
 
     <section className="mt-14 max-w-3xl" aria-labelledby="faq-heading"><h2 id="faq-heading" className="text-2xl font-bold">Frequently asked questions</h2>{faqs.map(faq => <div key={faq.question} className="mt-6"><h3 className="font-semibold">{faq.question}</h3><p className="mt-2 leading-relaxed text-slate-600">{faq.answer}</p></div>)}</section>
-    <p className="mt-12 text-sm text-slate-500">FeeFact is an independent tool, not affiliated with TikTok or ByteDance. <Link className="text-indigo-700 underline" href="/">All FeeFact tools</Link></p>
+    <p className="mt-12 text-sm text-slate-500">FeeFact is an independent tool, not affiliated with TikTok or ByteDance. <Link className="text-indigo-700 underline" href="/">All FeeFact tools</Link> · <Link className="text-indigo-700 underline" href="/tiktok-shop-refund-fee">TikTok Shop refund fee</Link> · <Link className="text-indigo-700 underline" href="/tiktok-shop-shipping-fees">TikTok Shop shipping fees</Link> · <Link className="text-indigo-700 underline" href="/tools/batch-sku-profit">Batch SKU profit calculator</Link></p>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />
   </main>;
 }

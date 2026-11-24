@@ -212,8 +212,8 @@
     "cachedInputPer1M": 0.01,
     "contextWindow": 1000000,
     "tokenizer": null,
-    "sourceUrl": "https://openrouter.ai/anthropic/claude-haiku-5.5",
-    "checkedDate": "2026-11-21"
+    "sourceUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+    "checkedDate": "2026-11-23"
   },
   {
     "provider": "Anthropic",
@@ -315,13 +315,13 @@
     "provider": "Google",
     "model": "Gemini 3.8 Flash",
     "slug": "gemini-3-8-flash",
-    "inputPer1M": 0.825,
-    "outputPer1M": 4.125,
-    "cachedInputPer1M": 0.0825,
+    "inputPer1M": 0.75,
+    "outputPer1M": 3.75,
+    "cachedInputPer1M": 0.075,
     "contextWindow": 1048576,
     "tokenizer": null,
-    "sourceUrl": "https://openrouter.ai/google/gemini-3.8-flash",
-    "checkedDate": "2026-11-21"
+    "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+    "checkedDate": "2026-11-23"
   },
   {
     "provider": "Google",
@@ -363,13 +363,13 @@
     "provider": "DeepSeek",
     "model": "DeepSeek V4.1 Flash 1017",
     "slug": "deepseek-v4-1-flash-1017",
-    "inputPer1M": 0.15,
-    "outputPer1M": 0.6,
-    "cachedInputPer1M": 0.003,
+    "inputPer1M": 0.3,
+    "outputPer1M": 1.2,
+    "cachedInputPer1M": 0.006,
     "contextWindow": 1048576,
     "tokenizer": null,
-    "sourceUrl": "https://openrouter.ai/deepseek/deepseek-v4.1-flash-1017",
-    "checkedDate": "2026-11-21"
+    "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "checkedDate": "2026-11-23"
   },
   {
     "provider": "DeepSeek",
@@ -380,8 +380,8 @@
     "cachedInputPer1M": 0.044,
     "contextWindow": 1048576,
     "tokenizer": null,
-    "sourceUrl": "https://openrouter.ai/deepseek/deepseek-v4-pro-0813",
-    "checkedDate": "2026-11-21"
+    "sourceUrl": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "checkedDate": "2026-11-23"
   },
   {
     "provider": "DeepSeek",
