@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gemini 3.5 Flash API pricing — cost per 1M tokens | TokenPriceDB</title>
-<meta name="description" content="Google Gemini 3.5 Flash API pricing: $1.5 input / $9 output per 1M tokens, with worked cost examples.">
+<title>Gemini 3.5 Flash API pricing — no confirmed price | TokenPriceDB</title>
+<meta name="description" content="Google Gemini 3.5 Flash has no price on Google’s own pages, so TokenPriceDB does not list one.">
 <link rel="canonical" href="https://tokenpricedb.com/models/gemini-3-5-flash/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23111'/%3E%3Ctext x='8' y='12' font-size='11' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E$%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../assets/style.css">
@@ -20,28 +20,20 @@
 </header>
 <main>
 <h1>Gemini 3.5 Flash API pricing</h1>
-<p class="lead">Google · checked 2026-11-21 · <a href="https://openrouter.ai/google/gemini-3.5-flash" rel="nofollow noopener">source</a></p>
+<p class="lead">Google · no confirmed price</p>
+<p><strong>No price shown.</strong> Google’s deprecations page says gemini-3.5-flash “is no longer available in Google AI Studio; the endpoint is not shutting down and automatically routes API requests to gemini-3.6-flash”. Google’s pricing page lists no price for gemini-3.5-flash. <a href="https://ai.google.dev/gemini-api/docs/deprecations" rel="nofollow noopener">Google deprecations page</a>, read 2026-11-23. TokenPriceDB shows a price only when it is confirmed on the provider’s own pages, so this page lists none.</p>
 <div class="cards">
-<div class="card"><div class="k">Input / 1M tokens</div><div class="v">$1.5</div></div>
-<div class="card"><div class="k">Output / 1M tokens</div><div class="v">$9</div></div>
-<div class="card"><div class="k">Cached input / 1M tokens</div><div class="v">$0.15</div></div>
+<div class="card"><div class="k">Input / 1M tokens</div><div class="v">Not confirmed</div></div>
+<div class="card"><div class="k">Output / 1M tokens</div><div class="v">Not confirmed</div></div>
+<div class="card"><div class="k">Cached input / 1M tokens</div><div class="v">Not confirmed</div></div>
 <div class="card"><div class="k">Context window</div><div class="v">1,048,576</div></div>
 <div class="card"><div class="k">Provider</div><div class="v">Google</div></div>
 </div>
-<h2>Cost per typical task</h2>
-<p class="muted">Computed from the prices above. The token counts are illustrative task sizes, not measurements.</p>
-<div class="table-wrap"><table>
-<thead><tr><th>Task</th><th>Tokens</th><th>Arithmetic</th><th class="num">Cost</th></tr></thead>
-<tbody>
-<tr><td>Chat reply</td><td>1,000 input + 300 output</td><td class="arith">1,000 ÷ 1,000,000 × $1.5 + 300 ÷ 1,000,000 × $9 = $0.004200</td><td class="num"><strong>$0.004200</strong></td></tr>
-<tr><td>Summarize a long document</td><td>20,000 input + 1,000 output</td><td class="arith">20,000 ÷ 1,000,000 × $1.5 + 1,000 ÷ 1,000,000 × $9 = $0.0390</td><td class="num"><strong>$0.0390</strong></td></tr>
-<tr><td>Coding agent step (cached context)</td><td>5,000 input + 40,000 cached input + 2,000 output</td><td class="arith">5,000 ÷ 1,000,000 × $1.5 + 40,000 ÷ 1,000,000 × $0.15 + 2,000 ÷ 1,000,000 × $9 = $0.0315</td><td class="num"><strong>$0.0315</strong></td></tr>
-</tbody></table></div>
 <p><a href="../../">← Calculate the cost of your own prompt</a> · <a href="../../compare/cheapest-llm-api/">Compare with the cheapest LLM APIs</a></p>
 </main>
 <footer class="site">
-<p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked 2026-11-21. Every row links to its source.
-Batch, priority and long-context tiers are not included. Always confirm on the provider's pricing page before budgeting.</p>
+<p>Prices are standard pay-as-you-go list prices in USD per 1M tokens, last checked 2026-11-23. Every row links to its source.
+Batch, priority and long-context tiers are not included, except that the calculator prices Claude Haiku 5.5 at Anthropic’s published rate for prompts over 100,000 tokens when the input is above that size. The input token count is treated as one request’s prompt, not a monthly total. Always confirm on the provider's pricing page before budgeting.</p>
 </footer>
 
 <script>
